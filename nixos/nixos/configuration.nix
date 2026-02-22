@@ -3,11 +3,9 @@
 { config, pkgs, ... }:
 
 {
-  imports =
-    [
-    	./hardware-configuration.nix
-    ];
-
+  imports = [
+    ./hardware-configuration.nix
+  ];
 
   # Bootloader.
   boot.loader.limine.enable = true;
@@ -18,8 +16,8 @@
   boot.loader.grub.enable = false;
 
   hardware = {
-  	graphics.enable = true;
-	enableRedistributableFirmware = true; # may be useless
+    graphics.enable = true;
+    enableRedistributableFirmware = true; # may be useless
   };
 
   networking.hostName = "nixos"; # Define your hostname.
@@ -60,56 +58,62 @@
   users.users.alex = {
     isNormalUser = true;
     description = "alex";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
     packages = with pkgs; [
-    	tree
+      tree
     ];
     shell = pkgs.fish;
   };
 
   # List packages installed in system profile.
   environment.systemPackages = with pkgs; [
-  	vim
-	wget
-	neovim
-	fish
-	alacritty
-	ghostty
-	xwayland-satellite
-	gh
-	floorp-bin
+    vim
+    wget
+    neovim
+    fish
+    alacritty
+    ghostty
+    xwayland-satellite
+    gh
+    floorp-bin
   ];
 
   programs.niri.enable = true;
   programs.fish.enable = true;
 
   environment.sessionVariables = {
-  	EDITOR = "nvim";
-	TERMINAL = "alacritty";
-	SHELL = "fish";
+    EDITOR = "nvim";
+    TERMINAL = "alacritty";
+    SHELL = "fish";
   };
 
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
-	services.greetd = {
-		enable = true;
+  services.greetd = {
+    enable = true;
 
-		settings = {
-			default_session = {
-				command = "${pkgs.niri}/bin/niri";
-				user = "alex";
-			};
-		};
-	};
+    settings = {
+      default_session = {
+        command = "${pkgs.niri}/bin/niri";
+        user = "alex";
+      };
+    };
+  };
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   system.stateVersion = "25.11";
 }
