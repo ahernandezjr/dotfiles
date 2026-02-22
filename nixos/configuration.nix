@@ -12,10 +12,15 @@
   # Bootloader.
   boot.loader.limine.enable = true;
   boot.loader.limine.biosSupport = true;
-  boot.loader.limine.biosDevice = "/dev/sda";
+  boot.loader.limine.biosDevice = "/dev/nvme0n1";
   # boot.loader.limine.installDevice = "/dev/sda1";
   # boot.loader.grub.useOSProber = true;
   boot.loader.grub.enable = false;
+
+  hardware = {
+  	graphics.enable = true;
+	enableRedistributableFirmware = true; # may be useless
+  };
 
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -59,6 +64,7 @@
     packages = with pkgs; [
     	tree
     ];
+    shell = pkgs.fish;
   };
 
   # List packages installed in system profile.
@@ -67,15 +73,35 @@
 	wget
 	neovim
 	fish
+	alacritty
 	ghostty
+	xwayland-satellite
+	floorp-bin
   ];
 
   programs.niri.enable = true;
+  programs.fish.enable = true;
+
+  environment.sessionVariables = {
+  	EDITOR = "nvim";
+	TERMINAL = "alacritty";
+	SHELL = "fish";
+  };
 
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
+	services.greetd = {
+		enable = true;
+
+		settings = {
+			default_session = {
+				command = "${pkgs.niri}/bin/niri";
+				user = "alex";
+			};
+		};
+	};
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
