@@ -76,6 +76,7 @@
 	alacritty
 	ghostty
 	xwayland-satellite
+	gh
 	floorp-bin
   ];
 
