@@ -26,6 +26,8 @@
 		enable = true;
 		gitCredentialHelper.enable = true;
 	};
+
+  home.file.".config/vim/.vimrc".source = ./config/vim/.vimrc;
   # home.file.".config/xxx".source = ./config/xxx;
   };
 }
