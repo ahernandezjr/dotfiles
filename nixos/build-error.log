@@ -1,0 +1,36 @@
+warning: updating lock file "/home/alex/dotfiles/nixos/flake.lock":
+• Added input 'home-manager':
+    'github:nix-community/home-manager/5bd3589390b431a63072868a90c0f24771ff4cbb?narHash=sha256-Tl2I0YXdhSTufGqAaD1ySh8x%2BcvVsEI1mJyJg12lxhI%3D' (2026-02-22)
+• Added input 'home-manager/nixpkgs':
+    follows 'nixpkgs'
+• Added input 'nixpkgs':
+    'github:NixOS/nixpkgs/0182a361324364ae3f436a63005877674cf45efb?narHash=sha256-0NBlEBKkN3lufyvFegY4TYv5mCNHbi5OmBDrzihbBMQ%3D' (2026-02-17)
+• Added input 'nixpkgs-unstable':
+    'github:nixos/nixpkgs/0182a361324364ae3f436a63005877674cf45efb?narHash=sha256-0NBlEBKkN3lufyvFegY4TYv5mCNHbi5OmBDrzihbBMQ%3D' (2026-02-17)
+• Added input 'noctalia':
+    'github:noctalia-dev/noctalia-shell/81b08fc0e67b202b729013365ee0131c31a0f4e3?narHash=sha256-%2BHd0TEIEb7JxZ5Xm2njsTcJKcvVzQ4EZkoWoppaupmo%3D' (2026-02-23)
+• Added input 'noctalia/nixpkgs':
+    follows 'nixpkgs'
+building the system configuration...
+warning: updating lock file "/home/alex/dotfiles/nixos/flake.lock":
+• Added input 'home-manager':
+    'github:nix-community/home-manager/5bd3589390b431a63072868a90c0f24771ff4cbb?narHash=sha256-Tl2I0YXdhSTufGqAaD1ySh8x%2BcvVsEI1mJyJg12lxhI%3D' (2026-02-22)
+• Added input 'home-manager/nixpkgs':
+    follows 'nixpkgs'
+• Added input 'nixpkgs':
+    'github:NixOS/nixpkgs/0182a361324364ae3f436a63005877674cf45efb?narHash=sha256-0NBlEBKkN3lufyvFegY4TYv5mCNHbi5OmBDrzihbBMQ%3D' (2026-02-17)
+• Added input 'nixpkgs-unstable':
+    'github:nixos/nixpkgs/0182a361324364ae3f436a63005877674cf45efb?narHash=sha256-0NBlEBKkN3lufyvFegY4TYv5mCNHbi5OmBDrzihbBMQ%3D' (2026-02-17)
+• Added input 'noctalia':
+    'github:noctalia-dev/noctalia-shell/81b08fc0e67b202b729013365ee0131c31a0f4e3?narHash=sha256-%2BHd0TEIEb7JxZ5Xm2njsTcJKcvVzQ4EZkoWoppaupmo%3D' (2026-02-23)
+• Added input 'noctalia/nixpkgs':
+    follows 'nixpkgs'
+Checking switch inhibitors... done
+cleaning /boot/limine/xen
+removing unused boot files...
+activating the configuration...
+setting up /etc...
+reloading user units for alex...
+restarting sysinit-reactivation.target
+the following new units were started: NetworkManager-dispatcher.service
+Done. The new configuration is /nix/store/rsxzcf2irvx73sk5pq99bybma1dbs0jb-nixos-system-nixos-26.05.20260217.0182a36
