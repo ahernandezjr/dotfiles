@@ -33,14 +33,11 @@
           (import ./overlays)
         ];
       };
-    in
-    {
-      nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+      mkNixosSystem = profile: nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs = { inherit inputs; };
         modules = [
-          ./nixos/niri.nix # Add your local niri configuration
-          ./nixos/configuration.nix
+          ./hosts/${profile}/default.nix
           home-manager.nixosModules.home-manager
           {
             home-manager = {
@@ -51,8 +48,14 @@
               backupFileExtension = "backup";
             };
           }
-          ./nixos/noctalia.nix
         ];
+      };
+    in
+    {
+      nixosConfigurations = {
+        desktop = mkNixosSystem "desktop";
+        laptop = mkNixosSystem "laptop";
+        vm = mkNixosSystem "vm";
       };
       formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-tree;
     };
