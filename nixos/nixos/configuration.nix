@@ -9,8 +9,8 @@
 
   # Bootloader.
   boot.loader.limine.enable = true;
-  boot.loader.limine.biosSupport = true;
-  boot.loader.limine.biosDevice = "/dev/nvme0n1";
+  # boot.loader.limine.biosSupport = true;
+  # boot.loader.limine.biosDevice = "/dev/nvme0n1";
   # boot.loader.limine.installDevice = "/dev/sda1";
   # boot.loader.grub.useOSProber = true;
   boot.loader.grub.enable = false;

@@ -1,0 +1,1 @@
+This directory contains reusable home-manager modules. Each module should be in its own file. See https://nixos.wiki/wiki/Module for more information.

@@ -1,6 +1,11 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
+  imports = [
+    ./modules/niri.nix
+    ./modules/noctalia.nix
+  ];
+
   home.username = "alex";
   home.homeDirectory = "/home/alex";
   home.stateVersion = "25.11";
@@ -27,7 +32,7 @@
       gitCredentialHelper.enable = true;
     };
 
-    home.file.".config/vim/.vimrc".source = ./config/vim/.vimrc;
-    # home.file.".config/xxx".source = ./config/xxx;
   };
+  home.file.".config/vim/.vimrc".source = ./config/vim/.vimrc;
+  # home.file.".config/xxx".source = ./config/xxx;
 }
