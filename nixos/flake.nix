@@ -43,6 +43,7 @@
       ourOverlays = import ./overlays { inherit inputs; };
       pkgs = import nixpkgs {
         inherit system;
+        config.allowUnfree = true;
         overlays = [
           ourOverlays.additions
           ourOverlays.modifications
@@ -55,7 +56,7 @@
       # Single module tree: ./modules/system/default.nix recursively imports all .nix under it.
       # Hosts only set options (e.g. systemSettings.niri.enable), no ../../ paths.
       mkNixosSystem = profile: lib.nixosSystem {
-        inherit system;
+        inherit system pkgs;
         specialArgs = { inherit inputs; };
         modules = [
           ./modules/system

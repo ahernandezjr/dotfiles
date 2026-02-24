@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   imports = [ ../home.nix ];
@@ -8,4 +8,10 @@
     cuda.enable = true;
     niri.useDesktopOutputs = true;
   };
+
+  home.packages = with pkgs; [
+    networkmanager_dmenu
+    pavucontrol
+    wiremix
+  ];
 }

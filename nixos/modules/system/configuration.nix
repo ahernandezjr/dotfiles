@@ -2,8 +2,6 @@
 { config, pkgs, ... }:
 
 {
-  nixpkgs.config.allowUnfree = true;
-
   boot.loader.limine = {
     enable = true;
     efiSupport = true;
@@ -17,6 +15,30 @@
 
   networking.hostName = "nixos";
   networking.networkmanager.enable = true;
+
+  # Nix binary caches
+  nix.settings = {
+    substituters = [
+      "https://cache.nixos.org"
+      "https://niri.cachix.org"
+      "https://nix-community.cachix.org"
+    ];
+    trusted-public-keys = [
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+      "niri.cachix.org-1:Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964="
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+    ];
+  };
+
+  # Audio
+  services.pulseaudio.enable = false;
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };
 
   time.timeZone = "America/Chicago";
 
