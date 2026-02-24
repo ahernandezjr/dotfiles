@@ -43,7 +43,7 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
-              users.alex = import ./home-manager/home.nix;
+              users.alex = import ./home-manager/hosts/${profile}.nix;
               extraSpecialArgs = { inherit inputs; }; # Pass flake inputs to home-manager
               backupFileExtension = "backup";
             };

@@ -1,0 +1,18 @@
+{ config, lib, pkgs, ... }:
+
+let
+  cfg = config.userSettings.gaming;
+in
+{
+  options = {
+    userSettings.gaming = {
+      enable = lib.mkEnableOption "Enable gaming-related packages and config";
+    };
+  };
+
+  config = lib.mkIf cfg.enable {
+    home.packages = with pkgs; [
+      # Add gaming packages as needed, e.g. steam, gamemode, mangohud
+    ];
+  };
+}
