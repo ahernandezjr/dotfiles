@@ -56,7 +56,7 @@
               useGlobalPkgs = true;
               useUserPackages = true;
               users.alex = import ./home-manager/hosts/${profile}.nix;
-              extraSpecialArgs = { inherit inputs; }; # Pass flake inputs to home-manager
+              extraSpecialArgs = { inherit inputs; dotfilesNoctalia = ../config/noctalia; };
               backupFileExtension = "backup";
             };
           }
