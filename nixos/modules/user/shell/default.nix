@@ -12,6 +12,11 @@ in
         type = lib.types.enum [ "bash" "zsh" "fish" ];
         description = "Login shell to use";
       };
+      manageConfig = lib.mkOption {
+        default = false;
+        type = lib.types.bool;
+        description = "When true, Home Manager manages shell config (programs.fish/zsh/bash). When false, only SHELL and package are set; existing dotfiles are used.";
+      };
     };
   };
 

@@ -16,6 +16,11 @@
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    niri = {
+      url = "github:sodiboo/niri-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -32,6 +37,7 @@
         inherit system;
         overlays = [
           (import ./overlays)
+          inputs.niri.overlays.niri
         ];
       };
       hosts = lib.attrNames (lib.filterAttrs (_: type: type == "directory") (builtins.readDir ./hosts));
@@ -42,6 +48,7 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./modules/system
+          inputs.niri.nixosModules.niri
           ./hosts/${profile}/default.nix
           home-manager.nixosModules.home-manager
           {

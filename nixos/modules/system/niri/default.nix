@@ -9,12 +9,17 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    programs.niri.enable = true;
+    # Use nixpkgs niri and NixOS cache instead of niri-flake cache.
+    niri-flake.cache.enable = false;
+    programs.niri = {
+      enable = true;
+      package = pkgs.niri;
+    };
     services.greetd = {
       enable = true;
       settings = {
         default_session = {
-          command = "${pkgs.niri}/bin/niri";
+          command = "${config.programs.niri.package}/bin/niri";
           user = "alex";
         };
       };
