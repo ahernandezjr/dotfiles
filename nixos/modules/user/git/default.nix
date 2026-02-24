@@ -11,6 +11,11 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    programs.delta = {
+      enable = true;
+      enableGitIntegration = true;
+    };
+
     programs.git = {
       enable = true;
       settings.user = {

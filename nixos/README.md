@@ -55,3 +55,19 @@ This directory contains the NixOS configuration for multiple machines, structure
    ```bash
    sudo nixos-rebuild switch --flake .#desktop
    ```
+
+## Development
+
+- **Quick eval without rebuilding**
+
+  From `nixos/`, you can evaluate a host’s system derivation to catch config errors without doing a full rebuild:
+
+  ```bash
+  nix eval .#nixosConfigurations.<host>.config.system.build.toplevel.drvPath --no-warn-dirty
+  ```
+
+  For example, for the laptop profile:
+
+  ```bash
+  nix eval .#nixosConfigurations.laptop.config.system.build.toplevel.drvPath --no-warn-dirty
+  ```

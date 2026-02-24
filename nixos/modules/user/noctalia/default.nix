@@ -1,7 +1,7 @@
 # Noctalia-shell: Home Manager config using native options (Configuration Defaults schema).
 # Values from config/noctalia/*.json; structure follows docs default schema.
 # See https://docs.noctalia.dev/getting-started/nixos/
-{ config, inputs, ... }:
+{ config, inputs, lib, ... }:
 
 let
   home = config.home.homeDirectory;
@@ -12,7 +12,7 @@ in
   config.programs.noctalia-shell = {
     enable = true;
 
-    settings = {
+    settings = lib.mkForce {
       settingsVersion = 31;
 
       bar = {
@@ -454,25 +454,6 @@ in
         videoCodec = "h264";
         videoSource = "portal";
       };
-    };
-
-    colors = {
-      mPrimary = "#ebc248";
-      mOnPrimary = "#3d2f00";
-      mSecondary = "#d5c5a1";
-      mOnSecondary = "#392f15";
-      mTertiary = "#adcfad";
-      mOnTertiary = "#19361f";
-      mError = "#ffb4ab";
-      mOnError = "#690005";
-      mSurface = "#131313";
-      mOnSurface = "#e2e2e2";
-      mSurfaceVariant = "#1f1f1f";
-      mOnSurfaceVariant = "#c6c6c6";
-      mOutline = "#474747";
-      mShadow = "#000000";
-      mHover = "#adcfad";
-      mOnHover = "#19361f";
     };
 
     plugins = {

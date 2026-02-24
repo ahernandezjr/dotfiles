@@ -13,14 +13,13 @@ let
   files = dir: collect isString (mapAttrsRecursive (path: type: concatStringsSep "/" path) (getDir dir));
 
   # Exclude niri/*.nix except niri/default.nix (niri partials are imported by niri/default.nix).
-  importAll = dir: map
-    (file: ./. + "/${file}")
-    (filter
-      (file:
-        hasSuffix ".nix" file
-        && file != "default.nix"
-        && !(hasPrefix "niri/" file && file != "niri/default.nix"))
-      (files dir));
+  filtered = dir: filter
+    (file:
+      hasSuffix ".nix" file
+      && file != "default.nix"
+      && !(hasPrefix "niri/" file && file != "niri/default.nix"))
+    (files dir);
+  importAll = dir: map (file: ./. + "/${file}") (builtins.sort (a: b: a < b) (filtered dir));
 
 in
 {

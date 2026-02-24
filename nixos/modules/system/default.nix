@@ -12,11 +12,12 @@ let
 
   files = dir: collect isString (mapAttrsRecursive (path: type: concatStringsSep "/" path) (getDir dir));
 
+  filtered = dir: filter
+    (file: hasSuffix ".nix" file && file != "default.nix")
+    (files dir);
   importAll = dir: map
     (file: ./. + "/${file}")
-    (filter
-      (file: hasSuffix ".nix" file && file != "default.nix")
-      (files dir));
+    (builtins.sort (a: b: a < b) (filtered dir));
 
 in
 {

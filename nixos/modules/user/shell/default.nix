@@ -20,7 +20,68 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    # Shared CLI bits can go here (e.g. home.packages with direnv)
-  };
+  config = lib.mkIf cfg.enable (lib.mkMerge [
+    {
+      programs.zoxide = {
+        enable = true;
+        enableFishIntegration = true;
+        enableZshIntegration = true;
+        enableBashIntegration = true;
+        enableNushellIntegration = true;
+        options = [ "--cmd cd" ];
+      };
+      programs.fzf = {
+        enable = true;
+        enableFishIntegration = true;
+        enableZshIntegration = true;
+        enableBashIntegration = true;
+        defaultCommand = "fd --type f";
+        defaultOptions = [ "--height 40%" "--layout=reverse-list" "--border" ];
+        fileWidgetCommand = "fd --type f";
+        changeDirWidgetCommand = "fd --type d";
+        tmux.enableShellIntegration = true;
+        tmux.shellIntegrationOptions = [ "-d 40%" ];
+      };
+      programs.bat = {
+        enable = true;
+        config = {
+          pager = "less -FR";
+        };
+      };
+      programs.tmux = {
+        enable = true;
+        mouse = true;
+        baseIndex = 1;
+        sensibleOnTop = true;
+        terminal = "tmux-256color";
+        newSession = true;
+        historyLimit = 5000;
+      };
+      programs.starship = {
+        enable = true;
+        enableFishIntegration = true;
+        enableZshIntegration = true;
+        enableBashIntegration = true;
+        enableNushellIntegration = true;
+        settings = { scan_timeout = 10; };
+      };
+      programs.nushell = {
+        enable = true;
+        settings = { show_banner = false; };
+      };
+      home.packages = with pkgs; [
+        btop
+        claude-code
+        cursor-cli
+        eza
+        fd
+        gemini-cli
+        lazygit
+        lazydocker
+        neofetch
+        pnpm
+        ripgrep
+      ];
+    }
+  ]);
 }

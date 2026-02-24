@@ -40,10 +40,13 @@
     let
       lib = nixpkgs.lib;
       system = "x86_64-linux";
+      ourOverlays = import ./overlays { inherit inputs; };
       pkgs = import nixpkgs {
         inherit system;
         overlays = [
-          (import ./overlays)
+          ourOverlays.additions
+          ourOverlays.modifications
+          ourOverlays.unstable-packages
           inputs.niri.overlays.niri
           inputs.millennium.overlays.default
         ];
@@ -65,7 +68,6 @@
               useGlobalPkgs = true;
               useUserPackages = true;
               users.alex = import ./home-manager/hosts/${profile}.nix;
-              sharedModules = [ inputs.stylix.homeManagerModules.stylix ];
               extraSpecialArgs = { inherit inputs; dotfilesNoctalia = ../config/noctalia; };
               backupFileExtension = "backup";
             };
