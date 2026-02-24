@@ -71,15 +71,11 @@ in
       };
       home.packages = with pkgs; [
         btop
-        claude-code
-        cursor-cli
         eza
         fd
-        gemini-cli
         lazygit
         lazydocker
         neofetch
-        pnpm
         ripgrep
       ];
     }

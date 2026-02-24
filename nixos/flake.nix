@@ -28,6 +28,8 @@
       url = "github:nix-community/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    cursor.url = "github:TudorAndrei/cursor-nixos-flake";
   };
 
   outputs =
