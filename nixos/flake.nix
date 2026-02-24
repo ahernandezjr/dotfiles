@@ -21,6 +21,13 @@
       url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    millennium.url = "github:SteamClientHomebrew/Millennium?dir=packages/nix";
+
+    stylix = {
+      url = "github:nix-community/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -38,6 +45,7 @@
         overlays = [
           (import ./overlays)
           inputs.niri.overlays.niri
+          inputs.millennium.overlays.default
         ];
       };
       hosts = lib.attrNames (lib.filterAttrs (_: type: type == "directory") (builtins.readDir ./hosts));
@@ -49,6 +57,7 @@
         modules = [
           ./modules/system
           inputs.niri.nixosModules.niri
+          inputs.stylix.nixosModules.stylix
           ./hosts/${profile}/default.nix
           home-manager.nixosModules.home-manager
           {
@@ -56,6 +65,7 @@
               useGlobalPkgs = true;
               useUserPackages = true;
               users.alex = import ./home-manager/hosts/${profile}.nix;
+              sharedModules = [ inputs.stylix.homeManagerModules.stylix ];
               extraSpecialArgs = { inherit inputs; dotfilesNoctalia = ../config/noctalia; };
               backupFileExtension = "backup";
             };

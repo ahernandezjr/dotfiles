@@ -385,10 +385,11 @@ in
       };
 
       templates = {
-        activeTemplates = [ ];
+        activeTemplates = [ "Steam" ];
         enableUserTheming = false;
         enableUserTemplates = true;
         alacritty = true;
+        steam = true;
         cava = false;
         code = false;
         discord = true;
