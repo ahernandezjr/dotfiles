@@ -1,11 +1,8 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
-  imports =
-    [
-      ./hardware-configuration.nix
-      ../../common/configuration.nix
-    ];
+  imports = [ ./hardware-configuration.nix ];
 
-  # Add essential kernel modules for laptop hardware to prevent kernel panic.
+  systemSettings.niri.enable = true;
+
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "sd_mod" ];
 }

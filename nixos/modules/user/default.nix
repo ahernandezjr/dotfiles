@@ -1,3 +1,5 @@
+# Single entry for all Home Manager modules. home.nix imports this directory;
+# we recursively pull in every .nix under here.
 { lib, ... }:
 
 with lib;

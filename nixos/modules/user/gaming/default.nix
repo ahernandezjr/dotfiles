@@ -12,7 +12,9 @@ in
 
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
-      # Add gaming packages as needed, e.g. steam, gamemode, mangohud
+      steam
+      gamemode
+      mangohud
     ];
   };
 }

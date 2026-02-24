@@ -1,11 +1,7 @@
 { config, pkgs, inputs, ... }:
 
 {
-  imports = [
-    ./modules/user
-    ./modules/niri.nix
-    ./modules/noctalia.nix
-  ];
+  imports = [ ../modules/user ];
 
   home.username = "alex";
   home.homeDirectory = "/home/alex";
@@ -16,6 +12,7 @@
     email = "ahernandezjr0@gmail.com";
     git.enable = true;
     shell.enable = true;
+    xdg.enable = true;
   };
 
   home.file.".config/vim/.vimrc".source = ./config/vim/.vimrc;

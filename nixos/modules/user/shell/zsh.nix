@@ -4,18 +4,13 @@ let
   cfg = config.userSettings.shell;
 in
 {
-  options = {
-    userSettings.shell = {
-      enable = lib.mkEnableOption "Enable shell (bash) and base CLI config";
-    };
-  };
-
-  config = lib.mkIf cfg.enable {
-    programs.bash = {
+  config = lib.mkIf (cfg.enable && cfg.type == "zsh") {
+    programs.zsh = {
       enable = true;
       shellAliases = {
         btw = "echo placeholder for future alias";
       };
     };
+    home.sessionVariables.SHELL = "${pkgs.zsh}/bin/zsh";
   };
 }
