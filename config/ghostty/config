@@ -1,0 +1,61 @@
+term = "xterm-256color"
+title = "Ghostty@CachyOS"
+
+font-family = "monospace"
+font-size = 12
+
+window-width = 100
+window-height = 30
+
+background-opacity = 0.8
+
+cursor-style = underline
+
+scrollback-limit = 100000
+copy-on-select = true
+
+confirm-close-surface = false
+
+# Palette 0–7 (normal ANSI)
+palette = 0=#3B4252
+palette = 1=#BF616A
+palette = 2=#A3BE8C
+palette = 3=#EBCB8B
+palette = 4=#81A1C1
+palette = 5=#B48EAD
+palette = 6=#88C0D0
+palette = 7=#E5E9F0
+
+# Palette 8–15 (bright ANSI)
+palette = 8=#4C566A
+palette = 9=#BF616A
+palette = 10=#A3BE8C
+palette = 11=#EBCB8B
+palette = 12=#81A1C1
+palette = 13=#B48EAD
+palette = 14=#8FBCBB
+palette = 15=#ECEFF4
+
+background = "#3B4252"
+foreground = "#D8DEE9" 
+
+keybind = ctrl+shift+c=copy_to_clipboard
+keybind = ctrl+shift+v=paste_from_clipboard
+keybind = ctrl+0=reset_font_size
+
+# Tabs - nvim-style
+keybind = ctrl+h=previous_tab
+keybind = ctrl+l=next_tab
+keybind = ctrl+shift+t=new_tab
+keybind = ctrl+shift+w=close_tab:this
+
+# Splits - Vim-style
+keybind = alt+v=new_split:down
+keybind = alt+h=new_split:right
+
+# Navigate splits
+keybind = ctrl+alt+h=goto_split:left
+keybind = ctrl+alt+l=goto_split:right
+keybind = ctrl+alt+k=goto_split:up
+keybind = ctrl+alt+j=goto_split:down
+

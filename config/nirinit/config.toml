@@ -1,0 +1,14 @@
+# Nirinit Configuration
+# Automated session management for Niri compositor
+
+# Path to the state file where window layouts are saved
+state_file = "/home/alex/.local/share/nirinit/state.json"
+
+# Interval (in seconds) between automatic saves
+save_interval = 300
+
+# Save immediately when windows are created/moved/closed
+immediate_save = true
+
+# Enable debug logging
+debug = false

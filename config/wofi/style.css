@@ -1,0 +1,94 @@
+/* Wofi Theme - Nordic Dark */
+
+* {
+    font-family: "Hack", "JetBrainsMono Nerd Font", monospace;
+    font-size: 14px;
+}
+
+/* Main window */
+window {
+    margin: 0px;
+    border: 2px solid #4C566A;
+    background-color: rgba(59, 66, 82, 0.8);
+    border-radius: 8px;
+}
+
+/* Input box */
+#input {
+    margin: 8px;
+    padding: 8px 12px;
+    border: 1px solid #4C566A;
+    background-color: rgba(59, 66, 82, 0.8);
+    color: #ECEFF4;
+    border-radius: 4px;
+}
+
+#input:focus {
+    border-color: #88C0D0;
+    outline: none;
+}
+
+/* Inner box containing the list */
+#inner-box {
+    margin: 8px;
+    background-color: rgba(56, 60, 74, 0.8);
+}
+
+/* Outer box */
+#outer-box {
+    margin: 0px;
+    padding: 8px;
+    background-color: rgba(56, 60, 74, 0.8);
+}
+
+/* Scrollbar */
+#scroll {
+    margin: 0px;
+    background-color: #383C4A;
+}
+
+/* Text entries */
+#text {
+    margin: 4px;
+    padding: 4px;
+    color: #ECEFF4;
+}
+
+/* Entry container */
+#entry {
+    margin: 2px 4px;
+    padding: 8px 12px;
+    background-color: rgba(64, 69, 82, 0.8);
+    border-radius: 4px;
+}
+
+/* Alternate row coloring */
+#entry:nth-child(even) {
+    background-color: #404552;
+}
+
+/* Selected entry */
+#entry:selected {
+    background-color: #5E81AC;
+    border-left: 3px solid #88C0D0;
+}
+
+#entry:selected #text {
+    color: #ECEFF4;
+    font-weight: bold;
+}
+
+/* Hover state */
+#entry:hover {
+    background-color: #4C566A;
+}
+
+/* Image/icon styling */
+#img {
+    margin-right: 8px;
+}
+
+/* Transparent text background when selected */
+#text:selected {
+    background: transparent;
+}

@@ -1,0 +1,27 @@
+# Wofi Configuration - Hekarch
+# Main config for application launcher (drun mode)
+
+# Display mode
+mode=drun
+show=drun
+
+# Search and matching
+matching=fuzzy
+insensitive=true
+
+# Display settings
+lines=10
+width=600
+height=400
+
+# Visual settings
+prompt=Apps
+allow_images=true
+image_size=24
+
+# Behavior
+allow_markup=true
+no_actions=false
+hide_scroll=false
+term=alacritty
+gtk_dark=true

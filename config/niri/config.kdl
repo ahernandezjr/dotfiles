@@ -1,0 +1,483 @@
+// Niri configuration for CachyOS
+// For documentation and full reference, see: https://github.com/YaLTeR/niri/wiki
+
+// ────────────── Input Configuration ──────────────
+// https://github.com/YaLTeR/niri/wiki/Configuration:-Input
+
+input {
+    keyboard {
+        xkb {
+            layout "us" // Use the German keyboard layout
+        }
+        numlock // Enable numlock on startup
+    }
+
+    touchpad {
+        tap // Enable tap-to-click
+        natural-scroll // Enable natural (macOS-style) scrolling
+    }
+
+    mouse {
+    	scroll-method "on-button-down"
+    }
+
+    focus-follows-mouse // Automatically focus windows under the mouse pointer
+    workspace-auto-back-and-forth // Enable workspace back & forth switching
+}
+
+gestures {
+    dnd-edge-view-scroll {
+	trigger-width 30
+	delay-ms 500
+	max-speed 1500
+    }
+}
+
+// ────────────── Output Configuration ──────────────
+// You can run `niri msg outputs` to get the correct name for your displays.
+// You will have to remove "/-" and edit it before it takes effect.
+// https://github.com/YaLTeR/niri/wiki/Configuration:-Outputs
+
+output "DP-3" {
+    mode "1920x1080@59" // Max available for this monitor
+    scale 1
+    transform "90"
+    position x=0 y=0
+    layout {
+	default-column-width { proportion 1.0; }
+    }
+}
+
+output "HDMI-A-1" {
+    mode "3840x2160@143.999" // Set resolution and refresh rate
+    scale 1.25 // No scaling (use 2 for HiDPI)
+    position x=1080 y=192 // Aligned to bottom
+    focus-at-startup
+}
+
+output "DP-1" {
+    mode "2560x1440@143.998"
+    scale 1
+    position x=4152 y=480 // Aligned to bottom
+}
+
+// ────────────── Keybindings ──────────────
+// https://github.com/YaLTeR/niri/wiki/Configuration:-Key-Bindings
+
+binds {
+    MOD+SHIFT+ESCAPE                     { show-hotkey-overlay; }
+
+    // ─── Applications ───
+    MOD+RETURN                          hotkey-overlay-title="Open Terminal: ghostty" { spawn-sh "$TERMINAL"; }
+    // MOD+SPACE                           hotkey-overlay-title="Hekarch Menu" { spawn-sh "hek-menu"; } // Replaced by Noctalia launcher
+    MOD+B                               hotkey-overlay-title="Open Browser: floorp"{ spawn-sh "floorp"; }
+    // MOD+ALT+L                           hotkey-overlay-title="Lock Screen: swaylock" { spawn-sh "swaylock"; } // Replaced by Noctalia lock screen
+    
+    // Please choose your own file manager(s)
+    MOD+F                               hotkey-overlay-title="File Manager: Yazi" { spawn-sh "$TERMINAL -e yazi"; }
+    MOD+ALT+F                           hotkey-overlay-title="File Manager: Nautilus" { spawn-sh "nautilus"; }
+
+    // ─── Custom Application Launchers ───
+    MOD+T                               hotkey-overlay-title="System Monitor: btop" { spawn-sh "$TERMINAL -e btop"; }
+    MOD+Y                               hotkey-overlay-title="File Manager: yazi" { spawn-sh "$TERMINAL -e yazi"; }
+    MOD+Z                               hotkey-overlay-title="Fuzzy Finder: fzf" { spawn-sh "$TERMINAL -e fish -c 'fzf'"; }
+    MOD+N                               hotkey-overlay-title="Text Editor: nvim" { spawn-sh "$TERMINAL -e nvim"; }
+    MOD+ALT+D                           hotkey-overlay-title="LazyDocker" { spawn-sh "$TERMINAL -e lazydocker"; }
+    MOD+ALT+A                           hotkey-overlay-title="ChatGPT" { spawn-sh "/usr/lib/floorp/floorp --profile '/home/alex/.floorp/j0n3btx2.default-default' --start-ssb '{198b1a5e-b125-46de-9c44-7e3110bd20aa}'"; }
+    MOD+ALT+T                           hotkey-overlay-title="Trello" { spawn-sh "/usr/lib/floorp/floorp --profile '/home/alex/.floorp/j0n3btx2.default-default' --start-ssb '{c130a6a9-a4d4-49b3-b883-c267ac5a9d3c}'"; }
+    MOD+ALT+M                           hotkey-overlay-title="Stremio" { spawn-sh "stremio"; }
+    MOD+ALT+G                           hotkey-overlay-title="Vesktop (Discord)" { spawn-sh "vesktop"; }
+
+    // ─── Audio Controls ───
+    // Example volume keys mappings for PipeWire & WirePlumber.
+    // The allow-when-locked=true property makes them work even when the session is locked.
+    // XF86AudioRaiseVolume                allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+"; }
+    // XF86AudioLowerVolume                allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-"; }
+    // XF86AudioMute                       allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
+    XF86AudioMicMute                    allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
+    // XF86AudioNext                       allow-when-locked=true { spawn-sh "playerctl next"; }
+    // XF86AudioPause                      allow-when-locked=true { spawn-sh "playerctl play-pause"; }
+    // XF86AudioPlay                       allow-when-locked=true { spawn-sh "playerctl play-pause"; }
+    // XF86AudioPrev                       allow-when-locked=true { spawn-sh "playerctl previous"; }
+
+    // ─── Brightness Controls ───
+    XF86MonBrightnessUp                 allow-when-locked=true { spawn-sh "brightnessctl set 5%+"; }
+    XF86MonBrightnessDown               allow-when-locked=true { spawn-sh "brightnessctl set 5%-"; }
+
+    // ─── Window Movement and Focus ───
+    MOD+W                               { close-window; }
+
+    MOD+LEFT                            { focus-column-left; }
+    MOD+H                               { focus-column-left; }
+    MOD+RIGHT                           { focus-column-right; }
+    MOD+L                               { focus-column-right; }
+    MOD+UP                              { focus-window-up; }
+    MOD+K                               { focus-window-up; }
+    MOD+DOWN                            { focus-window-down; }
+    MOD+J                               { focus-window-down; }
+
+    MOD+COMMA                           { consume-window-into-column; }
+    MOD+PERIOD                          { expel-window-from-column; }
+   
+    // Move column on screen
+    MOD+SHIFT+LEFT                      { move-column-left; }
+    MOD+SHIFT+RIGHT                     { move-column-right; }
+    MOD+SHIFT+UP                        { move-window-up; }
+    MOD+SHIFT+DOWN                      { move-window-down; }
+
+    MOD+SHIFT+h                         { move-column-left; }
+    MOD+SHIFT+l                         { move-column-right; } 
+    MOD+SHIFT+k                         { move-window-up; }
+    MOD+SHIFT+j                         { move-window-down; }
+
+    MOD+HOME                            { focus-column-first; }
+    MOD+END                             { focus-column-last; }
+    MOD+SHIFT+HOME                      { move-column-to-first; }
+    MOD+SHIFT+END                       { move-column-to-last; }
+
+    // Focus monitors
+    MOD+ALT+LEFT                        { focus-monitor-left; }
+    MOD+ALT+RIGHT                       { focus-monitor-right; }
+    MOD+ALT+UP                          { focus-monitor-up; }
+    MOD+ALT+DOWN                        { focus-monitor-down; }
+
+    MOD+ALT+h                           { focus-monitor-left; }
+    MOD+ALT+l                           { focus-monitor-right; }
+    MOD+ALT+k                           { focus-monitor-up; }
+    MOD+ALT+j                           { focus-monitor-down; }
+
+    // Move columns to another monitor
+    MOD+SHIFT+ALT+LEFT                  { move-column-to-monitor-left; }
+    MOD+SHIFT+ALT+RIGHT                 { move-column-to-monitor-right; }
+    MOD+SHIFT+ALT+UP                    { move-column-to-monitor-up; }
+    MOD+SHIFT+ALT+DOWN                  { move-column-to-monitor-down; }
+
+    MOD+SHIFT+ALT+h                     { move-column-to-monitor-left; }
+    MOD+SHIFT+ALT+l                     { move-column-to-monitor-right; }
+    MOD+SHIFT+ALT+k                     { move-column-to-monitor-up; }
+    MOD+SHIFT+ALT+j                     { move-column-to-monitor-down; }
+
+    // ─── Workspace Switching ───
+    MOD+WHEELSCROLLDOWN                 cooldown-ms=150 { focus-workspace-down; }
+    MOD+WHEELSCROLLUP                   cooldown-ms=150 { focus-workspace-up; }
+    MOD+CTRL+WHEELSCROLLDOWN            cooldown-ms=150 { move-column-to-workspace-down; }
+    MOD+CTRL+WHEELSCROLLUP              cooldown-ms=150 { move-column-to-workspace-up; }
+
+    MOD+WHEELSCROLLRIGHT                { focus-column-right; }
+    MOD+WHEELSCROLLLEFT                 { focus-column-left; }
+    MOD+CTRL+WHEELSCROLLRIGHT           { move-column-right; }
+    MOD+CTRL+WHEELSCROLLLEFT            { move-column-left; }
+
+    MOD+SHIFT+WHEELSCROLLDOWN           { focus-column-right; }
+    MOD+SHIFT+WHEELSCROLLUP             { focus-column-left; }
+    MOD+CTRL+SHIFT+WHEELSCROLLDOWN      { move-column-right; }
+    MOD+CTRL+SHIFT+WHEELSCROLLUP        { move-column-left; }
+
+    MOD+1                               { focus-workspace 1; }
+    MOD+2                               { focus-workspace 2; }
+    MOD+3                               { focus-workspace 3; }
+    MOD+4                               { focus-workspace 4; }
+    MOD+5                               { focus-workspace 5; }
+    MOD+6                               { focus-workspace 6; }
+    MOD+7                               { focus-workspace 7; }
+    MOD+8                               { focus-workspace 8; }
+    MOD+9                               { focus-workspace 9; }
+
+    MOD+SHIFT+1                         { move-column-to-workspace 1; }
+    MOD+SHIFT+2                         { move-column-to-workspace 2; }
+    MOD+SHIFT+3                         { move-column-to-workspace 3; }
+    MOD+SHIFT+4                         { move-column-to-workspace 4; }
+    MOD+SHIFT+5                         { move-column-to-workspace 5; }
+    MOD+SHIFT+6                         { move-column-to-workspace 6; }
+    MOD+SHIFT+7                         { move-column-to-workspace 7; }
+    MOD+SHIFT+8                         { move-column-to-workspace 8; }
+    MOD+SHIFT+9                         { move-column-to-workspace 9; }
+
+    MOD+TAB                             { focus-workspace-previous; }
+
+    // ─── Layout Controls ───
+    MOD+CTRL+F                          { expand-column-to-available-width; }
+    MOD+C                               { center-column; } // Replaced by Noctalia calculator
+    MOD+CTRL+C                          { center-visible-columns; }
+    MOD+MINUS                           { set-column-width "-10%"; }
+    MOD+EQUAL                           { set-column-width "+10%"; }
+    MOD+SHIFT+MINUS                     { set-window-height "-10%"; }
+    MOD+SHIFT+EQUAL                     { set-window-height "+10%"; }
+
+    // ─── Modes ───
+    MOD+F11                             { fullscreen-window; }
+    MOD+Q                               { toggle-column-tabbed-display; }
+
+
+// ─── Screenshots (grim + slurp) ───
+
+    PRINT            			hotkey-overlay-title="Screenshot: Select Area"  { spawn-sh "grim -g \"$(slurp)\" ~/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png && wl-copy < ~/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png"; }
+    SHIFT+PRINT  			hotkey-overlay-title="Screenshot: Active Window" { spawn-sh "grim -g \"$(slurp -r)\" ~/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png && wl-copy < ~/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png"; }
+    CTRL+PRINT   			hotkey-overlay-title="Screenshot: All Screens"   { spawn-sh "grim ~/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png && wl-copy < ~/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png"; }
+
+
+    // ─── Emergency Escape Key ───
+    // Use this when a fullscreen app blocks your keybinds.
+    // It disables any active keyboard shortcut inhibitor, restoring control.
+    MOD+CTRL+ALT+DELETE                 allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+
+    // ─── Exit / Power ───
+    CTRL+ALT+DELETE                     { quit; } // Also quits Niri
+    MOD+SHIFT+P                         { power-off-monitors; } // Turn off screens (useful for OLED or privacy)
+    MOD+O                               repeat=false { toggle-overview; }
+
+    // ──────────────────────────────────────────────────────────────────────
+    // ─── Hekarch Keybindings (Noctalia Shell Integration) ───
+    // ──────────────────────────────────────────────────────────────────────
+
+    // ─── Core Noctalia Functions ───
+    MOD+SPACE                           hotkey-overlay-title="Noctalia Launcher" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
+    MOD+CTRL+ESCAPE                     hotkey-overlay-title="Noctalia Control Center" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "controlCenter" "toggle"; }
+    MOD+CTRL+ALT+ESCAPE                 hotkey-overlay-title="Noctalia Settings" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "settings" "toggle"; }
+    MOD+ESCAPE                          hotkey-overlay-title="Session Menu" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"; }
+    
+    // ─── Noctalia Quick Access ───
+    MOD+V                               hotkey-overlay-title="Clipboard History" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "clipboard"; }
+    // MOD+C                               hotkey-overlay-title="Calculator" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "calculator"; }
+    // MOD+L                               hotkey-overlay-title="Lock Screen" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "lockScreen" "lock"; }
+    // TODO: Choose keybind for calendar
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "calendar" "toggle"; }
+    // TODO: Choose keybind for session menu
+    // TODO: Choose keybind for lock & suspend
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "sessionMenu" "lockAndSuspend"; }
+    MOD+CTRL+SPACE			hotkey-overlay-title="Toggle Wallpaper Selector" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "wallpaper" "toggle"; }
+
+    // ─── Noctalia Audio Controls (Override defaults with Noctalia) ───
+    // Note: XF86 keys automatically have allow-when-locked=true behavior
+    // Uncomment these to use Noctalia audio instead of wpctl:
+    XF86AudioRaiseVolume                allow-when-locked=true { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "volume" "increase"; }
+    XF86AudioLowerVolume                allow-when-locked=true { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "volume" "decrease"; }
+    XF86AudioMute                       allow-when-locked=true { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "volume" "muteOutput"; }
+    // TODO: Choose keybinds for input volume controls
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "volume" "increaseInput"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "volume" "decreaseInput"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "volume" "muteInput"; }
+
+    // ─── Noctalia Media Controls ───
+    // TODO: Choose keybinds for media controls (or keep XF86 keys with playerctl)
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "media" "playPause"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "media" "play"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "media" "pause"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "media" "next"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "media" "previous"; }
+
+    XF86AudioNext                       allow-when-locked=true { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "media" "next"; }
+    XF86AudioPause                      allow-when-locked=true { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "media" "pause"; }
+    XF86AudioPlay                       allow-when-locked=true { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "media" "play"; }
+    XF86AudioPrev                       allow-when-locked=true { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "media" "previous"; }
+
+    // Note: seekRelative requires $offset parameter (seconds)
+    // Note: seekByRatio requires $position parameter (0.0 to 1.0)
+
+    // ─── Noctalia Brightness Controls (Override defaults with Noctalia) ───
+    // Uncomment these to use Noctalia brightness instead of brightnessctl:
+    // XF86MonBrightnessUp                 allow-when-locked=true { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "brightness" "increase"; }
+    // XF86MonBrightnessDown               allow-when-locked=true { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "brightness" "decrease"; }
+
+    // ─── Noctalia Screen Recording ───
+    // TODO: Choose keybind for screen recorder toggle
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "screenRecorder" "toggle"; }
+
+    // ─── Noctalia Battery Management ───
+    // TODO: Choose keybinds for battery management
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "batteryManager" "cycle"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "batteryManager" "set" "full"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "batteryManager" "set" "balanced"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "batteryManager" "set" "lifespan"; }
+
+    // ─── Noctalia Power Profile Management ───
+    // TODO: Choose keybinds for power profile management
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "powerProfile" "cycle"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "powerProfile" "set" "powersaver"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "powerProfile" "set" "balanced"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "powerProfile" "set" "performance"; }
+
+    // ─── Noctalia Security & Idle ───
+    // TODO: Choose keybind for idle inhibitor
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "idleInhibitor" "toggle"; }
+
+    // ─── Noctalia Notifications ───
+    // TODO: Choose keybinds for notification controls
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "toggleHistory"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "toggleDND"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "enableDND"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "disableDND"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "clear"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "dismissOldest"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "dismissAll"; }
+
+    // ─── Noctalia Appearance & Visibility ───
+    // TODO: Choose keybinds for bar and dock visibility
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "bar" "toggle"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "dock" "toggle"; }
+
+    // ─── Noctalia Theme Controls ───
+    // TODO: Choose keybinds for theme management
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "darkMode" "toggle"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "darkMode" "setDark"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "darkMode" "setLight"; }
+    // Note: setColorScheme requires theme name parameter
+
+    // ─── Noctalia Wallpaper Management ───
+    // TODO: Choose keybinds for wallpaper controls
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "wallpaper" "toggle"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "wallpaper" "random"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "wallpaper" "toggleAutomation"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "wallpaper" "enableAutomation"; }
+    // { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "wallpaper" "disableAutomation"; }
+    // Note: wallpaper set requires $path and $monitor parameters
+
+    // ──────────────────────────────────────────────────────────────────────
+}
+
+// ────────────── Startup Applications ──────────────
+// https://github.com/YaLTeR/niri/wiki/Configuration:-Miscellaneous#spawn-sh-at-startup
+
+   // spawn-sh-at-startup "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &" // Polkit
+    // spawn-sh-at-startup "swww-daemon" // Wallpaper daemon
+    // spawn-sh-at-startup "swww img /usr/share/wallpapers/cachyos-wallpapers/Skyscraper.png" // Set wallpaper
+    
+    // spawn-sh-at-startup "waybar" // Launch waybar
+
+    prefer-no-csd // Disable program decorations
+    screenshot-path null // Disable screenshot saving
+
+// // ────────────── Hekarch Auto-Starts ──────────────
+// Various auto-start applications.
+spawn-at-startup "qs" "-c" "noctalia-shell"
+
+// ────────────── Layout Settings ──────────────
+// https://github.com/YaLTeR/niri/wiki/Configuration:-Layout
+
+    layout {
+        gaps 16 // Gap between windows
+        center-focused-column "never" // Don’t auto-center focused column
+
+        preset-column-widths {
+            proportion 0.33333
+            proportion 0.5
+            proportion 0.66667
+        }
+
+        focus-ring {
+            width 3
+	    active-gradient from="#6b0c05" to="#ffffff" angle=135
+            // active-color "#00ac89"
+            // inactive-color "#505050"
+        }
+
+        shadow {
+            softness 30
+            spread 5
+            offset x=0 y=5
+            color "#0007"
+        }
+
+        struts {
+            // Fix to disable edge scrolling	
+	    left  -13;
+	    right -13;
+
+        }
+	
+	// Noctalia Option 2: Stationary Wallpaper
+	background-color "transparent"
+    }
+
+// ────────────── Animation Settings ──────────────
+// https://github.com/YaLTeR/niri/wiki/Configuration:-Animations
+    animations {
+        workspace-switch {
+            spring damping-ratio=1.0 stiffness=1000 epsilon=0.0001
+        }
+        window-open {
+            duration-ms 200
+            curve "ease-out-quad"
+        }
+        window-close {
+            duration-ms 200
+            curve "ease-out-cubic"
+        }
+        horizontal-view-movement {
+            spring damping-ratio=1.0 stiffness=900 epsilon=0.0001
+        }
+        window-movement {
+            spring damping-ratio=1.0 stiffness=800 epsilon=0.0001
+        }
+        window-resize {
+            spring damping-ratio=1.0 stiffness=1000 epsilon=0.0001
+        }
+        config-notification-open-close {
+            spring damping-ratio=0.6 stiffness=1200 epsilon=0.001
+        }
+        screenshot-ui-open {
+            duration-ms 300
+            curve "ease-out-quad"
+        }
+        overview-open-close {
+            spring damping-ratio=1.0 stiffness=900 epsilon=0.0001
+        }
+    }
+
+// ────────────── Window Rules ──────────────
+// https://github.com/YaLTeR/niri/wiki/Configuration:-Window-Rules
+
+    window-rule {
+        match app-id=r#"firefox$"# title="^Picture-in-Picture$"
+        open-floating true // Always float Firefox PiP windows
+    }
+
+// ────────────── Hekarch Window Rules ──────────────
+// https://docs.noctalia.dev/getting-started/compositor-settings/ 
+    // Niri Compositor Settings
+    window-rule {
+        geometry-corner-radius 20 // Set every window radius to 20
+        clip-to-geometry true
+    }
+
+    debug {
+  	// Allows notification actions and window activation from Noctalia.
+ 	 honor-xdg-activation-with-invalid-serial
+    }
+    
+    // Set the overview wallpaper on the backdrop.
+    layer-rule {
+  	match namespace="^noctalia-overview*"
+  	place-within-backdrop true
+    }
+ 
+    // Optionally, disable the workspace shadows in the overview.
+    overview {
+        workspace-shadow {
+            off
+      }
+    }
+
+    window-rule {
+	match app-id="vesktop"
+	open-on-output "PNP(BNQ) BenQ XL2420TE 3CD00511SL0"
+    }
+
+// ────────────── Environment Variables ──────────────
+// https://github.com/YaLTeR/niri/wiki/Configuration:-Miscellaneous#environment
+
+    environment {
+        DISPLAY ":1"
+        ELECTRON_OZONE_PLATFORM_HINT "auto"
+        QT_QPA_PLATFORM "wayland"
+        QT_WAYLAND_DISABLE_WINDOWDECORATION "1"
+        XDG_SESSION_TYPE "wayland"
+        XDG_CURRENT_DESKTOP "niri"
+        TERMINAL "ghostty"
+    }
+
+    hotkey-overlay {
+        skip-at-startup
+    }
+
+
