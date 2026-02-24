@@ -26,6 +26,7 @@
       ...
     }:
     let
+      lib = nixpkgs.lib;
       system = "x86_64-linux";
       pkgs = import nixpkgs {
         inherit system;
@@ -33,17 +34,21 @@
           (import ./overlays)
         ];
       };
-      mkNixosSystem = profile: nixpkgs.lib.nixosSystem {
+      hosts = lib.attrNames (lib.filterAttrs (_: type: type == "directory") (builtins.readDir ./hosts));
+      # Single module tree: ./modules/system/default.nix recursively imports all .nix under it.
+      # Hosts only set options (e.g. systemSettings.niri.enable), no ../../ paths.
+      mkNixosSystem = profile: lib.nixosSystem {
         inherit system;
         specialArgs = { inherit inputs; };
         modules = [
+          ./modules/system
           ./hosts/${profile}/default.nix
           home-manager.nixosModules.home-manager
           {
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
-              users.alex = import ./home-manager/home.nix;
+              users.alex = import ./home-manager/hosts/${profile}.nix;
               extraSpecialArgs = { inherit inputs; }; # Pass flake inputs to home-manager
               backupFileExtension = "backup";
             };
@@ -52,11 +57,7 @@
       };
     in
     {
-      nixosConfigurations = {
-        desktop = mkNixosSystem "desktop";
-        laptop = mkNixosSystem "laptop";
-        vm = mkNixosSystem "vm";
-      };
+      nixosConfigurations = builtins.listToAttrs (map (host: { name = host; value = mkNixosSystem host; }) hosts);
       formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-tree;
     };
 }
