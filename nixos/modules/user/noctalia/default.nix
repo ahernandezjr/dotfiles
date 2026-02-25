@@ -17,8 +17,8 @@ in
     xdg.configFile."noctalia/plugins.json".enable = lib.mkForce false;
     xdg.configFile."noctalia/user-templates.toml".enable = lib.mkForce false;
 
-    # Forcefully handle common conflicts
-    xdg.configFile."gtk-3.0/gtk.css".force = true;
+    # Previously used to override Stylix's GTK CSS; with Stylix removed, disable this file.
+    xdg.configFile."gtk-3.0/gtk.css".enable = lib.mkForce false;
 
     # Manually link them to the dotfiles directory (writable)
     home.file = {

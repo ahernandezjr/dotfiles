@@ -24,12 +24,11 @@
 
     millennium.url = "github:SteamClientHomebrew/Millennium?dir=packages/nix";
 
-    stylix = {
-      url = "github:nix-community/stylix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     cursor.url = "github:TudorAndrei/cursor-nixos-flake";
+    matugen = {
+      url = "github:InioX/Matugen";
+      # ref = "refs/tags/matugen-v0.10.0";
+    };
   };
 
   outputs =
@@ -55,15 +54,14 @@
         ];
       };
       hosts = lib.attrNames (lib.filterAttrs (_: type: type == "directory") (builtins.readDir ./hosts));
-      # Single module tree: ./modules/system/default.nix recursively imports all .nix under it.
-      # Hosts only set options (e.g. systemSettings.niri.enable), no ../../ paths.
+      # Path to this repo on disk so matugen can write generated .nix into it (matugen-dots style).
+      repoPath = "/home/alex/dotfiles";
       mkNixosSystem = profile: lib.nixosSystem {
         inherit system pkgs;
-        specialArgs = { inherit inputs; };
+        specialArgs = { inherit inputs repoPath; };
         modules = [
           ./modules/system
           inputs.niri.nixosModules.niri
-          inputs.stylix.nixosModules.stylix
           ./hosts/${profile}/default.nix
           home-manager.nixosModules.home-manager
           {
@@ -71,7 +69,7 @@
               useGlobalPkgs = true;
               useUserPackages = true;
               users.alex = import ./home-manager/hosts/${profile}.nix;
-              extraSpecialArgs = { inherit inputs; };
+              extraSpecialArgs = { inherit inputs repoPath; };
               backupFileExtension = "hmbkp";
             };
           }

@@ -1,5 +1,4 @@
 { ... }:
-oooo:
 
 {
   imports = [ ../home.nix ];

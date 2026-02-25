@@ -3,7 +3,9 @@
 { config, lib, pkgs, ... }:
 
 let
-  noctalia = cmd: [ "noctalia-shell" ] ++ (lib.splitString " " cmd);
+  noctalia = cmd:
+    [ "noctalia-shell" "ipc" "call" ]
+    ++ (lib.splitString " " cmd);
   term = config.home.sessionVariables.TERMINAL or "ghostty";
   parseMode = s:
     let
@@ -16,22 +18,36 @@ let
     };
   useDesktopOutputs = config.userSettings.niri.useDesktopOutputs;
   outputsFragment = lib.optional useDesktopOutputs (import ./outputs.nix { inherit lib parseMode; });
+  # matugen-dots style: matugen writes a .nix file into the repo; we import it if present.
+  matugenColorsPath = ./. + "/matugen-colors.nix";
+  matugenColorsSettings = let
+    raw = if builtins.pathExists matugenColorsPath then import matugenColorsPath else {};
+  in raw.programs.niri.settings or {};
 in
 {
   options.userSettings.niri.useDesktopOutputs = lib.mkOption {
     type = lib.types.bool;
     default = false;
-    description = "Use the desktop multi-monitor output config (DP-3, HDMI-A-1, DP-1). When false, niri auto-detects (single display for laptop/vm).";
+    description = "Use the desktop multi-monitor output config for the external Dell (DP-3), INNOCN 32M2V (HDMI-A-3), and BenQ XL2420TE (DP-5) monitors. When false, niri auto-detects (single display for laptop/vm).";
   };
 
   config = {
+    # Noctalia writes ~/.config/niri/noctalia.kdl at runtime; include it so theme updates apply without rebuild.
+    xdg.configFile.niri-config.source = lib.mkForce (pkgs.runCommand "niri-config-with-noctalia" {
+      config = (config.programs.niri.finalConfig or "") + "\ninclude \"./noctalia.kdl\"\n";
+      passAsFile = [ "config" ];
+    } ''
+      cp $configPath $out
+    '');
+
     programs.niri.settings = lib.mkMerge ([
       (import ./input.nix { inherit lib; })
       (import ./binds.nix { inherit config lib noctalia term; })
-      (import ./layout.nix { inherit lib; })
+      (import ./layout.nix { inherit lib config; })
       (import ./animations.nix { inherit lib; })
       (import ./rules.nix { inherit lib; })
       (import ./misc.nix { inherit config lib term; })
+      matugenColorsSettings
     ] ++ outputsFragment ++ [{
       xwayland-satellite = {
         enable = true;
