@@ -24,12 +24,19 @@ in
     description = "Use the desktop multi-monitor output config (DP-3, HDMI-A-1, DP-1). When false, niri auto-detects (single display for laptop/vm).";
   };
 
-  config.programs.niri.settings = lib.mkMerge ([
-    (import ./input.nix { inherit lib; })
-    (import ./binds.nix { inherit config lib noctalia term; })
-    (import ./layout.nix { inherit lib; })
-    (import ./animations.nix { inherit lib; })
-    (import ./rules.nix { inherit lib; })
-    (import ./misc.nix { inherit config lib term; })
-  ] ++ outputsFragment);
+  config = {
+    programs.niri.settings = lib.mkMerge ([
+      (import ./input.nix { inherit lib; })
+      (import ./binds.nix { inherit config lib noctalia term; })
+      (import ./layout.nix { inherit lib; })
+      (import ./animations.nix { inherit lib; })
+      (import ./rules.nix { inherit lib; })
+      (import ./misc.nix { inherit config lib term; })
+    ] ++ outputsFragment ++ [{
+      xwayland-satellite = {
+        enable = true;
+        path = lib.getExe pkgs.xwayland-satellite;
+      };
+    }]);
+  };
 }

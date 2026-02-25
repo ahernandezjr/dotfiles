@@ -72,7 +72,7 @@
               useUserPackages = true;
               users.alex = import ./home-manager/hosts/${profile}.nix;
               extraSpecialArgs = { inherit inputs; dotfilesNoctalia = ../config/noctalia; };
-              backupFileExtension = "backup";
+              backupFileExtension = "hmbkp";
             };
           }
         ];

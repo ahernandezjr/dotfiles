@@ -1,7 +1,7 @@
 # Outputs (run `niri msg outputs` for your display names)
 { lib, parseMode }: {
   outputs = {
-    "DP-3" = {
+    "DP-5" = {
       mode = parseMode "1920x1080@59";
       scale = 1;
       transform.rotation = 90;
@@ -13,7 +13,7 @@
       position = { x = 1080; y = 192; };
       focus-at-startup = true;
     };
-    "DP-1" = {
+    "DP-3" = {
       mode = parseMode "2560x1440@143.998";
       scale = 1;
       position = { x = 4152; y = 480; };

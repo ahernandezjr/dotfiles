@@ -6,6 +6,8 @@
   userSettings = {
     gaming.enable = true;
     cuda.enable = true;
+    editors.enable = true;
+    communication.enable = true;
     niri.useDesktopOutputs = true;
   };
 
