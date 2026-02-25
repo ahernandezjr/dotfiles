@@ -15,6 +15,7 @@
     development.enable = true;
     git.enable = true;
     shell.enable = true;
+    shell.manageConfig = true;
     xdg.enable = true;
   };
 

@@ -9,9 +9,22 @@ in
     (lib.mkIf cfg.manageConfig {
       programs.fish = {
         enable = true;
-        shellAliases = {
-          btw = "echo placeholder for future alias";
-        };
+        shellInit = ''
+          if test -f /usr/share/cachyos-fish-config/cachyos-config.fish
+              source /usr/share/cachyos-fish-config/cachyos-config.fish
+          end
+
+          set -gx PATH $HOME/.npm-global/bin $PATH
+
+          function reboot-windows
+              sudo efibootmgr -n 0 && sudo systemctl reboot
+          end
+        '';
+        interactiveShellInit = ''
+          if type -q neofetch
+              neofetch
+          end
+        '';
       };
     })
   ]);
