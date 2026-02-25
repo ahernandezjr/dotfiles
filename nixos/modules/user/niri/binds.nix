@@ -186,56 +186,56 @@
     # Noctalia
     "MOD+SPACE" = {
       hotkey-overlay.title = "Noctalia Launcher";
-      action.spawn = noctalia "launcher toggle";
+      action.spawn = noctalia "ipc call launcher toggle";
     };
     "MOD+CTRL+ESCAPE" = {
       hotkey-overlay.title = "Noctalia Control Center";
-      action.spawn = noctalia "controlCenter toggle";
+      action.spawn = noctalia "ipc call controlCenter toggle";
     };
     "MOD+CTRL+ALT+ESCAPE" = {
       hotkey-overlay.title = "Noctalia Settings";
-      action.spawn = noctalia "settings toggle";
+      action.spawn = noctalia "ipc call settings toggle";
     };
     "MOD+ESCAPE" = {
       hotkey-overlay.title = "Session Menu";
-      action.spawn = noctalia "sessionMenu toggle";
+      action.spawn = noctalia "ipc call sessionMenu toggle";
     };
     "MOD+V" = {
       hotkey-overlay.title = "Clipboard History";
-      action.spawn = noctalia "launcher clipboard";
+      action.spawn = noctalia "ipc call launcher clipboard";
     };
     "MOD+CTRL+SPACE" = {
       hotkey-overlay.title = "Toggle Wallpaper Selector";
-      action.spawn = noctalia "wallpaper toggle";
+      action.spawn = noctalia "ipc call wallpaper toggle";
     };
 
     "XF86AudioRaiseVolume" = {
       allow-when-locked = true;
-      action.spawn = noctalia "volume increase";
+      action.spawn = noctalia "ipc call volume increase";
     };
     "XF86AudioLowerVolume" = {
       allow-when-locked = true;
-      action.spawn = noctalia "volume decrease";
+      action.spawn = noctalia "ipc call volume decrease";
     };
     "XF86AudioMute" = {
       allow-when-locked = true;
-      action.spawn = noctalia "volume muteOutput";
+      action.spawn = noctalia "ipc call volume muteOutput";
     };
     "XF86AudioNext" = {
       allow-when-locked = true;
-      action.spawn = noctalia "media next";
+      action.spawn = noctalia "ipc call media next";
     };
     "XF86AudioPause" = {
       allow-when-locked = true;
-      action.spawn = noctalia "media pause";
+      action.spawn = noctalia "ipc call media pause";
     };
     "XF86AudioPlay" = {
       allow-when-locked = true;
-      action.spawn = noctalia "media play";
+      action.spawn = noctalia "ipc call media play";
     };
     "XF86AudioPrev" = {
       allow-when-locked = true;
-      action.spawn = noctalia "media previous";
+      action.spawn = noctalia "ipc call media previous";
     };
   };
 }

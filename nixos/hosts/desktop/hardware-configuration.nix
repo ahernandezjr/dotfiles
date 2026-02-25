@@ -12,6 +12,11 @@
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
+  boot.consoleLogLevel = 0;
+  boot.kernelParams = [ "quiet" ];
+  boot.plymouth.enable = true;
+  boot.initrd.verbose = false;
+  boot.loader.timeout = 0;
 
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/fd9312ef-1845-40fe-9233-70c77d350086";
@@ -27,6 +32,11 @@
   fileSystems."/home" =
     { device = "/dev/disk/by-uuid/00f2da24-f381-4e2b-9c26-6826b111dc3e";
       fsType = "btrfs";
+    };
+
+  fileSystems."/mnt/linuxgames" = 
+    { device = "dev/disk/by-uuid/757d02dc-f516-4f45-b1aa-922733eb90ae";
+      fsType = "ext4";
     };
 
   swapDevices = [ ];

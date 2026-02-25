@@ -1,6 +1,9 @@
 # spawn-at-startup, prefer-no-csd, screenshot-path, environment, hotkey-overlay
 { config, lib, term }: {
-  spawn-at-startup = [ { argv = [ "noctalia-shell" ]; } ];
+  spawn-at-startup = [
+    { argv = [ "noctalia-shell" ]; }
+    { argv = [ "sh" "-lc" "sleep 1.5; noctalia-shell ipc call wallpaper random; noctalia-shell ipc call lockScreen lock" ]; }
+  ];
   prefer-no-csd = true;
   screenshot-path = null;
   environment = {
@@ -14,3 +17,4 @@
   };
   hotkey-overlay.skip-at-startup = true;
 }
+

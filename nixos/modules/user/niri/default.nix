@@ -3,7 +3,7 @@
 { config, lib, pkgs, ... }:
 
 let
-  noctalia = cmd: [ "noctalia-shell" "ipc" "call" ] ++ (lib.splitString " " cmd);
+  noctalia = cmd: [ "noctalia-shell" ] ++ (lib.splitString " " cmd);
   term = config.home.sessionVariables.TERMINAL or "ghostty";
   parseMode = s:
     let
