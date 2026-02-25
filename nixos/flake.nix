@@ -71,7 +71,7 @@
               useGlobalPkgs = true;
               useUserPackages = true;
               users.alex = import ./home-manager/hosts/${profile}.nix;
-              extraSpecialArgs = { inherit inputs; dotfilesNoctalia = ../config/noctalia; };
+              extraSpecialArgs = { inherit inputs; };
               backupFileExtension = "hmbkp";
             };
           }

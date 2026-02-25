@@ -1,7 +1,8 @@
 {
     "sources": [
         {
-            "name": "Official Noctalia Plugins",
+            "enabled": null,
+            "name": "Noctalia Plugins",
             "url": "https://github.com/noctalia-dev/noctalia-plugins"
         },
         {
@@ -12,11 +13,13 @@
     ],
     "states": {
         "ai-chat": {
-            "enabled": false
+            "enabled": false,
+            "sourceUrl": "https://github.com/noctalia-dev/noctalia-plugins"
         },
         "keybind-cheatsheet": {
-            "enabled": true
+            "enabled": true,
+            "sourceUrl": "https://github.com/noctalia-dev/noctalia-plugins"
         }
     },
-    "version": 1
+    "version": 2
 }

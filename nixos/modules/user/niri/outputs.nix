@@ -2,12 +2,12 @@
 { lib, parseMode }: {
   outputs = {
     "DP-5" = {
-      mode = parseMode "1920x1080@59";
+      mode = parseMode "1920x1080@60";
       scale = 1;
       transform.rotation = 90;
       position = { x = 0; y = 0; };
     };
-    "HDMI-A-1" = {
+    "HDMI-A-3" = {
       mode = parseMode "3840x2160@143.999";
       scale = 1.25;
       position = { x = 1080; y = 192; };

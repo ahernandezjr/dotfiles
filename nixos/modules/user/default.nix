@@ -12,7 +12,7 @@ let
 
   files = dir: collect isString (mapAttrsRecursive (path: type: concatStringsSep "/" path) (getDir dir));
 
-  # Exclude niri/*.nix except niri/default.nix (niri partials are imported by niri/default.nix).
+  # Exclude partials (niri/*.nix) except their default.nix.
   filtered = dir: filter
     (file:
       hasSuffix ".nix" file
