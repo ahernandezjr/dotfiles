@@ -22,6 +22,13 @@ in
 
   config = lib.mkIf cfg.enable (lib.mkMerge [
     {
+      programs.ghostty = {
+        enable = true;
+        settings = {
+          theme = "noctalia";
+        };
+      };
+
       programs.zoxide = {
         enable = true;
         enableFishIntegration = true;
