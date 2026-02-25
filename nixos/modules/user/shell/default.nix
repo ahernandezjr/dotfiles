@@ -26,6 +26,7 @@ in
         enable = true;
         settings = {
           theme = "noctalia";
+	  background-opacity = 0.8;
         };
       };
 
