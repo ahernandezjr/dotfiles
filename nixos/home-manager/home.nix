@@ -2,6 +2,7 @@
 
 {
   imports = [
+    inputs.nvf.homeManagerModules.default
     ../modules/user
   ];
 

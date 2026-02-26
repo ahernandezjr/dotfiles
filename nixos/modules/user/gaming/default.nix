@@ -12,9 +12,17 @@ in
 
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
-      millennium-steam
+      # Optimizers and Utils
+      gamescope
       gamemode
       mangohud
+      protonup-qt
+
+      # Platforms
+      millennium-steam
+      lutris
+      heroic
+      prismlauncher
     ];
   };
 }

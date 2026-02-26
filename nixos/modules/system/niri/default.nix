@@ -15,11 +15,12 @@ in
       enable = true;
       package = pkgs.niri;
     };
+    environment.systemPackages = with pkgs; [ wl-clipboard ];
     services.greetd = {
       enable = true;
       settings = {
         default_session = {
-          command = "${config.programs.niri.package}/bin/niri";
+          command = "${config.programs.niri.package}/bin/niri-session";
           user = "alex";
         };
       };

@@ -1,7 +1,7 @@
 { config, pkgs, repoPath ? "/home/alex/dotfiles", ... }:
 
 let
-  wallpaper = pkgs.nixos-artwork.wallpapers.simple-blue + "/share/backgrounds/nixos/nix-wallpaper-simple-blue.png";
+  wallpaper = "${repoPath}/images/wallpaper.jpg";
   # matugen-dots style: template is a .nix fragment; matugen fills placeholders and writes to repo.
   niriNixTemplate = ''
     {

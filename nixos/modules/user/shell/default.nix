@@ -25,8 +25,14 @@ in
       programs.ghostty = {
         enable = true;
         settings = {
+          font-family = "JetBrains Mono";
           theme = "noctalia";
-	  background-opacity = 0.85;
+          background-opacity = 0.85;
+          copy-on-select = true;
+          keybind = [
+            "ctrl+shift+c=copy_to_clipboard"
+            "ctrl+shift+v=paste_from_clipboard"
+          ];
         };
       };
 
@@ -56,6 +62,10 @@ in
           pager = "less -FR";
         };
       };
+      programs.eza = {
+        enable = true;
+        enableFishIntegration = false; # keep custom ls alias in fish
+      };
       programs.tmux = {
         enable = true;
         mouse = true;
@@ -79,12 +89,12 @@ in
       };
       home.packages = with pkgs; [
         btop
-        eza
         fd
         lazygit
         lazydocker
         neofetch
         ripgrep
+        yazi
       ];
     }
   ]);
