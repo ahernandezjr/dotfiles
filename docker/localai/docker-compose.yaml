@@ -1,0 +1,122 @@
+---
+# Hekarch AI Stack Docker Compose
+# Unified AI services with shared model storage
+# Location: ~/.hai/docker-compose.yml
+
+services:
+  # llama.cpp - High-performance CPU/GPU inference (GGUF models)
+  llamacpp:
+    image: ghcr.io/ggml-org/llama.cpp:server-cuda
+    container_name: hai-llamacpp
+    restart: unless-stopped
+    ports:
+      - "3420:8080"
+    volumes:
+      - ${HOME}/.hai/models/llm/gguf:/models
+      - ${HOME}/.hai/cache/llamacpp:/cache
+    environment:
+      - MODEL_PATH=/models
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: cdi
+              capabilities: [gpu]
+              device_ids:
+                - nvidia.com/gpu=all
+    # The command is now static to enable multi-model router mode.
+    # It discovers all models in the /models directory on startup.
+    # Models are loaded/unloaded on-demand via API requests.
+    command: --host 0.0.0.0 --port 8080 -m /models/gpt-oss-120b-mxfp4-00001-of-00003.gguf --n-gpu-layers 999 --n-cpu-moe 24 --ctx-size 49152 --flash-attn
+
+  # vLLM - Advanced inference engine with OpenAI-compatible API (HuggingFace models)
+  vllm:
+    image: vllm/vllm-openai:latest
+    container_name: hai-vllm
+    restart: unless-stopped
+    ports:
+      - "3421:3421"
+    volumes:
+      - ${HOME}/.hai/models/llm/huggingface:/models/llm/huggingface
+      - ${HOME}/.hai/cache/vllm:/root/.cache/huggingface
+    environment:
+      - HF_HOME=/root/.cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: cdi
+              capabilities: [gpu]
+              device_ids:
+                - nvidia.com/gpu=all
+    ipc: host
+    shm_size: 2gb
+    entrypoint: ["sleep", "infinity"]
+
+  # Open WebUI - Web interface for LLMs (connects to vLLM and llama.cpp)
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: hai-open-webui
+    restart: unless-stopped
+    ports:
+      - "3430:3430"
+    volumes:
+      - ${HOME}/.hai/data/open-webui:/app/backend/data
+    environment:
+      - PORT=3430
+      - OPENAI_API_BASE_URL=http://vllm:3421/v1
+      - OPENAI_API_KEY=hai-local-not-needed
+      - WEBUI_SECRET_KEY=hai-secret-change-me
+    depends_on:
+      - llamacpp
+      - vllm
+
+  # ComfyUI - Node-based Stable Diffusion image generation
+  comfyui:
+    image: yanwk/comfyui-boot:nightly
+    container_name: hai-comfyui
+    restart: unless-stopped
+    ports:
+      - "3431:8188"
+    volumes:
+      # Model storage (shared across containers, large files)
+      - ${HOME}/.hai/models/sd:/root/ComfyUI/models
+      - ${HOME}/.hai/cache/huggingface:/root/.cache/huggingface/hub
+      - ${HOME}/.hai/cache/torch:/root/.cache/torch/hub
+      # User data (inputs, outputs, workflows, config)
+      - ${HOME}/.hai/data/comfyui/user:/root/ComfyUI/user
+      - ${HOME}/Pictures/hai.outputs/comfyui-input:/root/ComfyUI/input
+      - ${HOME}/Pictures/hai.outputs:/root/ComfyUI/output
+      # Custom nodes (for extensibility)
+      - ${HOME}/.hai/data/comfyui/custom_nodes:/root/ComfyUI/custom_nodes
+    environment:
+      - CLI_ARGS=--listen 0.0.0.0 --port 8188
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: cdi
+              capabilities: [gpu]
+              device_ids:
+                - nvidia.com/gpu=all
+
+  # n8n - Workflow automation tool
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: hai-n8n
+    restart: unless-stopped
+    ports:
+      - "3432:5678"
+    volumes:
+      - ${HOME}/.hai/n8n:/home/node/.n8n
+    environment:
+      - N8N_HOST=0.0.0.0
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://localhost:3432/
+      - GENERIC_TIMEZONE=America/Chicago
+      - N8N_LOG_LEVEL=info
+
+networks:
+  default:
+    name: hai-network

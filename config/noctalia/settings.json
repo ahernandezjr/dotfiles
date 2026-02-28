@@ -33,6 +33,7 @@
         "preferredPlayer": "",
         "visualizerType": "linear",
         "volumeFeedback": false,
+        "volumeFeedbackSoundFile": "",
         "volumeOverdrive": false,
         "volumeStep": 5
     },
@@ -43,6 +44,7 @@
         "barType": "simple",
         "capsuleColorKey": "none",
         "capsuleOpacity": 1,
+        "contentPadding": 0,
         "density": "comfortable",
         "displayMode": "always_visible",
         "floating": false,
@@ -215,6 +217,12 @@
                     "id": "Clock",
                     "tooltipFormat": "HH:mm ddd, MMM dd",
                     "useCustomFont": false
+                },
+                {
+                    "id": "plugin:privacy-indicator"
+                },
+                {
+                    "id": "plugin:assistant-panel"
                 }
             ]
         }
@@ -434,6 +442,14 @@
         "startup": "",
         "wallpaperChange": ""
     },
+    "idle": {
+        "customCommands": "[]",
+        "enabled": false,
+        "fadeDuration": 5,
+        "lockTimeout": 660,
+        "screenOffTimeout": 600,
+        "suspendTimeout": 1800
+    },
     "location": {
         "analogClockInCalendar": false,
         "firstDayOfWeek": -1,
@@ -566,6 +582,13 @@
                 "countdownEnabled": true,
                 "enabled": true,
                 "keybind": "6"
+            },
+            {
+                "action": "rebootToUefi",
+                "command": "",
+                "countdownEnabled": true,
+                "enabled": true,
+                "keybind": ""
             }
         ],
         "showHeader": true,
@@ -620,6 +643,26 @@
             {
                 "enabled": true,
                 "id": "pywalfox"
+            },
+            {
+                "enabled": true,
+                "id": "niri"
+            },
+            {
+                "enabled": true,
+                "id": "btop"
+            },
+            {
+                "enabled": true,
+                "id": "ghostty"
+            },
+            {
+                "enabled": true,
+                "id": "steam"
+            },
+            {
+                "enabled": true,
+                "id": "yazi"
             }
         ],
         "enableUserTheming": false
@@ -628,7 +671,7 @@
         "boxBorderEnabled": false,
         "fontDefault": "Roboto",
         "fontDefaultScale": 1,
-        "fontFixed": "MesloLGSDZ Nerd Font Mono",
+        "fontFixed": "JetBrains Mono",
         "fontFixedScale": 1,
         "panelBackgroundOpacity": 1,
         "panelsAttachedToBar": true,

@@ -1,17 +1,17 @@
 # Reference files
-/standard
-/refs
+standard/
+refs/
 
 # Excluded dotfiles
 config/noctalia/plugins
 
 # Dev
-.cursor
+.cursor/
 .env
 
 # Docker
-docker/config/*
-docker/vpn/*
+docker/**/config/
+docker/**/vpn/
 
 # Debugging
 result
