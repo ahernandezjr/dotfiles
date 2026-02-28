@@ -17,14 +17,17 @@ in
 
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
+      # Editors
       inputs.cursor.packages.x86_64-linux.cursor
       vscode
+
+      # Env Manager
       devenv
+
+      # LSPs
       pyright
       typescript-language-server
       omnisharp-roslyn
-      qt6.qtdeclarative
-      quickshell
     ];
 
     programs.vscode = {

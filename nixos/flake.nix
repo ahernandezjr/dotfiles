@@ -3,22 +3,21 @@
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
+    # Backup name for access to unstable packages, see overlays/default.nix
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Provides access to unstable packages, see overlays/default.nix
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-
-    noctalia = {
-      url = "github:noctalia-dev/noctalia-shell";
+    niri = {
+      url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    niri = {
-      url = "github:sodiboo/niri-flake";
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell/81b08fc0e67b202b729013365ee0131c31a0f4e3";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

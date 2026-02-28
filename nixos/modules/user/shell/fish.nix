@@ -28,7 +28,7 @@ in
         '';
         interactiveShellInit = ''
           if type -q neofetch
-              neofetch --source ~/dotfiles/images/blood_ascii --ascii_colors 1 1
+              neofetch --source ~/dotfiles/images/blood_ascii --ascii_colors 1 2
           end
         '';
 	shellAliases = {

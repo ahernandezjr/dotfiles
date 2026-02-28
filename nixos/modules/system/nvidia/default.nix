@@ -15,12 +15,9 @@ in
     hardware.nvidia = {
       # Modesetting is required for Wayland.
       modesetting.enable = true;
-
-      # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
-      powerManagement.enable = false;
-
-      # Fine-grained power management. Turns off GPU when not in use.
-      powerManagement.finegrained = false;
+      
+      # Enable to avoid niri blackscreen on reboot
+      powerManagement.enable = true;
 
       # Use the NVidia open source kernel module.
       open = true;

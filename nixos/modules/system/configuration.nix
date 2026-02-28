@@ -11,6 +11,7 @@
   hardware = {
     graphics.enable = true;
     enableRedistributableFirmware = true;
+    bluetooth.enable = true;
   };
 
   systemd.services.NetworkManager-wait-online.enable = false;
@@ -42,6 +43,13 @@
     pulse.enable = true;
   };
 
+  # Power Settings
+  services = {
+    power-profiles-daemon.enable = true;
+    upower.enable = true;
+  };
+
+  # Locale
   time.timeZone = "America/Chicago";
 
   i18n.defaultLocale = "en_US.UTF-8";
