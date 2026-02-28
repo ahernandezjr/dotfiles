@@ -1,8 +1,18 @@
-**.lock
+# Reference files
 /standard
 /refs
-.cursor
+
+# Excluded dotfiles
 config/noctalia/plugins
+
+# Dev
+.cursor
+.env
+
+# Docker
+docker/config/*
+docker/vpn/*
+
+# Debugging
 result
-docker/**/config
 
