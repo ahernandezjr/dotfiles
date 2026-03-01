@@ -2,8 +2,16 @@
 {
   imports = [ ./hardware-configuration.nix ];
 
+  users.users.alex.extraGroups = [ "gamemode" ];
+
   systemSettings = {
-    development.docker.enable = true;
+    docker = {
+      enable = true;
+      containers = {
+        qbittorentvpn.enable = true;
+        localai.enable = false;
+      };
+    };
     development.postgresql.enable = true;
     niri.enable = true;
     nvidia.enable = true;

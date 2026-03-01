@@ -9,6 +9,11 @@
     editors.enable = true;
     communication.enable = true;
     niri.useDesktopOutputs = true;
+    browsers = {
+      enable = true;
+      firefox.enable = true;
+      floorp.enable = true;
+    };
   };
 
   home.packages = with pkgs; [
