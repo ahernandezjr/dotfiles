@@ -18,6 +18,7 @@ in
         # Optimizers and Utils
         mangohud
         protonup-qt
+        vulkan-tools
 
         # Platforms
         millennium-steam
