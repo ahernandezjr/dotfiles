@@ -21,7 +21,7 @@ in
       enable = true;
       settings = {
         default_session = {
-          # Use systemd-cat for better logging and ensure session is registered.
+          # Use systemd-cat for better logging. Sources Nix profile via bash -l.
           command = "${pkgs.bash}/bin/bash -l -c 'exec ${pkgs.systemd}/bin/systemd-cat --identifier=niri ${config.programs.niri.package}/bin/niri-session'";
           user = "alex";
         };

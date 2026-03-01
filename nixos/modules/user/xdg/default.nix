@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   cfg = config.userSettings.xdg;
@@ -12,6 +12,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    home.packages = with pkgs; [ nautilus ];
     xdg.enable = true;
     xdg.userDirs = {
       enable = true;
@@ -21,11 +22,9 @@ in
       music = "${home}/Music";
       pictures = "${home}/Pictures";
       videos = "${home}/Videos";
-      templates = "${home}/Templates";
       desktop = null;
       publicShare = null;
       extraConfig = {
-        PROJECTS = "${home}/Projects";
         ARCHIVE = "${home}/Archive";
         DOTFILES = "${home}/.dotfiles";
       };

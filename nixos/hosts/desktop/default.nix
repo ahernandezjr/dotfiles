@@ -15,5 +15,6 @@
     development.postgresql.enable = true;
     niri.enable = true;
     nvidia.enable = true;
+    gaming.enable = true;
   };
 }

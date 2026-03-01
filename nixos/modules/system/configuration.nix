@@ -82,10 +82,15 @@
 
   programs.fish.enable = true;
 
+  # Modern D-Bus implementation (fixes many Gamescope communication errors)
+  services.dbus.implementation = "broker";
+
   environment.sessionVariables = {
     EDITOR = "nvim";
     TERMINAL = "alacritty";
     SHELL = "fish";
+    # Flicker fixes for NVIDIA Gamescope
+    WLR_DRM_NO_MODIFIERS = "1";
   };
 
   system.stateVersion = "25.11";

@@ -10,19 +10,21 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    home.packages = with pkgs; [
-      # Optimizers and Utils
-      gamescope
-      gamemode
-      mangohud
-      protonup-qt
+  config = lib.mkIf cfg.enable (lib.mkMerge [
+    {
+      home.packages = with pkgs; [
+        wine
 
-      # Platforms
-      millennium-steam
-      lutris
-      heroic
-      prismlauncher
-    ];
-  };
+        # Optimizers and Utils
+        mangohud
+        protonup-qt
+
+        # Platforms
+        millennium-steam
+        lutris
+        heroic
+        prismlauncher
+      ];
+    }
+  ]);
 }
