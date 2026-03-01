@@ -91,6 +91,7 @@
     SHELL = "fish";
     # Flicker fixes for NVIDIA Gamescope
     WLR_DRM_NO_MODIFIERS = "1";
+    WLR_DRM_NO_HDR = "1";
   };
 
   system.stateVersion = "25.11";
