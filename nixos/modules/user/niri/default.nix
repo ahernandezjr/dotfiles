@@ -32,13 +32,19 @@ in
   };
 
   config = {
-    # Noctalia writes ~/.config/niri/noctalia.kdl at runtime; include it so theme updates apply without rebuild.
-    xdg.configFile.niri-config.source = lib.mkForce (pkgs.runCommand "niri-config-with-noctalia" {
-      config = (config.programs.niri.finalConfig or "") + "\ninclude \"./noctalia.kdl\"\n";
-      passAsFile = [ "config" ];
-    } ''
-      cp $configPath $out
-    '');
+    # The niri-flake home-manager module (homeModules.config) uses xdg.configFile.niri-config.
+    # We override it to add our noctalia.kdl include.
+    # We use lib.mkForce to ensure we override the module's own definition.
+    xdg.configFile.niri-config = lib.mkForce {
+      target = "niri/config.kdl";
+      source = pkgs.runCommand "niri-config-with-noctalia" {
+        baseConfig = config.programs.niri.finalConfig;
+      } ''
+        echo "$baseConfig" > config.kdl
+        echo 'include "./noctalia.kdl"' >> config.kdl
+        cp config.kdl $out
+      '';
+    };
 
     programs.niri.settings = lib.mkMerge ([
       (import ./input.nix { inherit lib; })

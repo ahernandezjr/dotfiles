@@ -13,9 +13,17 @@
     QT_QPA_PLATFORMTHEME = "qt6ct";
     QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
     XDG_SESSION_TYPE = "wayland";
+    XDG_SESSION_DESKTOP = "niri";
     XDG_CURRENT_DESKTOP = "niri";
     TERMINAL = term;
+    # So noctalia launcher and other children see Nix-installed desktop entries (greetd doesn't source profile).
+    XDG_DATA_DIRS = "${config.home.homeDirectory}/.nix-profile/share:/run/current-system/sw/share";
   };
   hotkey-overlay.skip-at-startup = true;
+  
+  # Reference the central Home Manager cursor settings
+  cursor = {
+    theme = config.home.pointerCursor.name;
+    size = config.home.pointerCursor.size;
+  };
 }
-

@@ -9,8 +9,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # Use nixpkgs niri and NixOS cache instead of niri-flake cache.
-    niri-flake.cache.enable = false;
+    # Enable binary cache for niri.
+    niri-flake.cache.enable = true;
     programs.niri = {
       enable = true;
       package = pkgs.niri;
@@ -21,14 +21,11 @@ in
       enable = true;
       settings = {
         default_session = {
-          command = "${config.programs.niri.package}/bin/niri";
+          # Use systemd-cat for better logging and ensure session is registered.
+          command = "${pkgs.bash}/bin/bash -l -c 'exec ${pkgs.systemd}/bin/systemd-cat --identifier=niri ${config.programs.niri.package}/bin/niri-session'";
           user = "alex";
         };
       };
-    };
-
-    systemd.user.services.niri = {
-      enable = false;
     };
   };
 }

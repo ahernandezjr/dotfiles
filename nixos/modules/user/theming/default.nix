@@ -17,9 +17,30 @@ let
   '';
   niriOutputPath = "${repoPath}/nixos/modules/user/niri/matugen-colors.nix";
 in {
+  home.pointerCursor = {
+    name = "Vimix-cursors";
+    package = pkgs.vimix-cursors;
+    size = 32;
+    gtk.enable = true;
+    x11.enable = true;
+  };
+
+  gtk = {
+    enable = true;
+    cursorTheme = {
+      name = config.home.pointerCursor.name;
+      package = config.home.pointerCursor.package;
+      size = config.home.pointerCursor.size;
+    };
+  };
+
   home.packages = [
     pkgs.matugen
     pkgs.qt6Packages.qt6ct
+    pkgs.bibata-cursors
+    pkgs.material-cursors
+    pkgs.lyra-cursors
+    pkgs.capitaine-cursors
   ];
 
   xdg.configFile = {

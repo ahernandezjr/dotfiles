@@ -15,11 +15,10 @@ in
           { name = "fzf-fish"; src = fishPlugins.fzf-fish; }
         ];
         shellInit = ''
-          if test -f /usr/share/cachyos-fish-config/cachyos-config.fish
-              source /usr/share/cachyos-fish-config/cachyos-config.fish
-          end
+          # Add custom paths using the idiomatic fish_add_path (handles duplicates and existence checks)
+          fish_add_path $HOME/.npm-global/bin
+          fish_add_path /run/wrappers/bin
 
-          set -gx PATH $HOME/.npm-global/bin $PATH
           set -gx fish_browser floorp
 
           function reboot-windows
@@ -35,7 +34,7 @@ in
 	  cat = "bat";
 	  grep = "rg";
 	  ls = "eza -lah --git --smart-group --color=always --classify=always --hyperlink --follow-symlinks --group-directories-first";
-          nyx-rb = "sudo nixos-rebuild switch --flake ~/dotfiles/nixos#desktop";
+          nyx-rb = "/run/wrappers/bin/sudo nixos-rebuild switch --flake ~/dotfiles/nixos#desktop";
 	};
       };
     })
