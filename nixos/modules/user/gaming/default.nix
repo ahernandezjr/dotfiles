@@ -15,6 +15,7 @@ in
       home.packages = with pkgs; [
         # Better wine package for 32/64 bit support
         wineWow64Packages.staging
+        wine-wayland
         winetricks
 
         # Optimizers and Utils

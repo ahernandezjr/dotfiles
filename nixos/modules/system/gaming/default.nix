@@ -31,10 +31,6 @@ in
     ];
 
     environment.sessionVariables = {
-      # Disable driver-side VRR globally to reduce flicker.
-      __GL_VRR_ALLOWED = "0";
-      # Prefer FIFO present mode to avoid tearing/flicker.
-      MESA_VK_WSI_PRESENT_MODE = "fifo";
     };
   };
 }

@@ -39,8 +39,8 @@ in
       # Enable the Nvidia settings menu, accessible via `nvidia-settings`.
       nvidiaSettings = true;
 
-      # Use the stable Nvidia branch from nixpkgs.
-      package = config.boot.kernelPackages.nvidiaPackages.stable;
+      # Use the production Nvidia branch from nixpkgs, which is better tested than latest.
+      package = config.boot.kernelPackages.nvidiaPackages.production;
     };
 
     # Add environment variables for Wayland sessions
@@ -56,12 +56,10 @@ in
       extraPackages = with pkgs; [
         nvidia-vaapi-driver
         libvdpau-va-gl
-        vulkan-loader
       ];
       extraPackages32 = with pkgs.pkgsi686Linux; [
         nvidia-vaapi-driver
         libvdpau-va-gl
-        vulkan-loader
       ];
     };
   };
