@@ -17,7 +17,8 @@
     XDG_CURRENT_DESKTOP = "niri";
     TERMINAL = term;
     # So noctalia launcher and other children see Nix-installed desktop entries (greetd doesn't source profile).
-    XDG_DATA_DIRS = "${config.home.homeDirectory}/.nix-profile/share:/run/current-system/sw/share";
+    XDG_DATA_DIRS = "${config.home.profileDirectory}/share:/run/current-system/sw/share";
+    PATH = "${config.home.profileDirectory}/bin:/run/current-system/sw/bin:/run/wrappers/bin:$PATH";
   };
   hotkey-overlay.skip-at-startup = true;
   
