@@ -18,12 +18,12 @@ in
 
     programs.git = {
       enable = true;
-      extraConfig = {
+      settings = {
         url."https://github.com/".insteadOf = "gh:";
-      };
-      settings.user = {
-        name = config.userSettings.name;
-        email = config.userSettings.email;
+        user = {
+          name = config.userSettings.name;
+          email = config.userSettings.email;
+        };
       };
     };
 

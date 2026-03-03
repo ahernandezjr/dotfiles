@@ -163,8 +163,8 @@
     "MOD+Q" = { action."toggle-column-tabbed-display" = [ ]; };
 
     "PRINT" = {
-      hotkey-overlay.title = "Screenshot: Select Area";
-      action.spawn-sh = "grim -g \"$(slurp)\" ~/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png && wl-copy < ~/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png";
+      hotkey-overlay.title = "Screenshot: Noctalia";
+      action.spawn-sh = "niri msg action screenshot";
     };
     "SHIFT+PRINT" = {
       hotkey-overlay.title = "Screenshot: Active Window";
