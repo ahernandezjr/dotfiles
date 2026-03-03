@@ -19,6 +19,12 @@
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.noctalia-qs.follows = "noctalia-qs";
+    };
+
+    noctalia-qs = {
+      url = "github:noctalia-dev/noctalia-qs";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     millennium.url = "github:SteamClientHomebrew/Millennium?dir=packages/nix";
@@ -31,6 +37,12 @@
     matugen = {
       url = "github:InioX/Matugen";
       # ref = "refs/tags/matugen-v0.10.0";
+    };
+
+    # Gamescope helpers (ScopeBuddy, etc.)
+    just-one-more-repo = {
+      url = "github:ProverbialPennance/just-one-more-repo";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -47,7 +59,10 @@
       ourOverlays = import ./overlays { inherit inputs; };
       pkgs = import nixpkgs {
         inherit system;
-        config.allowUnfree = true;
+        config = {
+          allowUnfree = true;
+          segger-jlink.acceptLicense = true;
+        };
         overlays = [
           ourOverlays.additions
           ourOverlays.modifications

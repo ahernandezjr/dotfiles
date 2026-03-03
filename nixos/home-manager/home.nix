@@ -21,4 +21,10 @@
   };
 
   home.file.".config/vim/.vimrc".source = ./config/vim/.vimrc;
+  home.file.".config/nixpkgs/config.nix".text = ''
+    {
+      allowUnfree = true;
+      segger-jlink.acceptLicense = true;
+    }
+  '';
 }

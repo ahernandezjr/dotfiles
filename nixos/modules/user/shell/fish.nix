@@ -33,7 +33,7 @@ in
 	shellAliases = {
 	  cat = "bat";
 	  grep = "rg";
-	  ls = "eza -lah --git --smart-group --color=always --classify=always --hyperlink --follow-symlinks --group-directories-first";
+	  ls = "eza -lah -s modified --git --smart-group --color=always --classify=always --hyperlink --follow-symlinks --group-directories-first";
           nyx-rb = "/run/wrappers/bin/sudo nixos-rebuild switch --flake ~/dotfiles/nixos#desktop";
 	};
       };

@@ -95,6 +95,9 @@ in
         neofetch
         ripgrep
         yazi
+        # Archiving
+        p7zip
+        unrar
       ];
     }
   ]);
