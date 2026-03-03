@@ -31,6 +31,8 @@
     ];
   };
 
+  # nixpkgs config is set when creating the nixpkgs instance in flake.nix.
+
   # Audio
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
@@ -89,9 +91,6 @@
     EDITOR = "nvim";
     TERMINAL = "alacritty";
     SHELL = "fish";
-    # Flicker fixes for NVIDIA Gamescope
-    WLR_DRM_NO_MODIFIERS = "1";
-    WLR_DRM_NO_HDR = "1";
   };
 
   system.stateVersion = "25.11";

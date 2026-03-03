@@ -39,7 +39,7 @@ in
       # Enable the Nvidia settings menu, accessible via `nvidia-settings`.
       nvidiaSettings = true;
 
-      # Select the appropriate driver version for your specific GPU.
+      # Use the stable Nvidia branch from nixpkgs.
       package = config.boot.kernelPackages.nvidiaPackages.stable;
     };
 
@@ -56,6 +56,12 @@ in
       extraPackages = with pkgs; [
         nvidia-vaapi-driver
         libvdpau-va-gl
+        vulkan-loader
+      ];
+      extraPackages32 = with pkgs.pkgsi686Linux; [
+        nvidia-vaapi-driver
+        libvdpau-va-gl
+        vulkan-loader
       ];
     };
   };

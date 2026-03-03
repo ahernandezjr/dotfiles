@@ -177,6 +177,26 @@
         "type": "github"
       }
     },
+    "just-one-more-repo": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1772435020,
+        "narHash": "sha256-BxyaoiA21ftAeshikXNesN1/0oi4W06SdVIjqZuxNeE=",
+        "owner": "ProverbialPennance",
+        "repo": "just-one-more-repo",
+        "rev": "91e1a0c4783166d07516ea80f0b0f953d18459dc",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ProverbialPennance",
+        "repo": "just-one-more-repo",
+        "type": "github"
+      }
+    },
     "libgit2-src": {
       "flake": false,
       "locked": {
@@ -546,7 +566,9 @@
         "nixpkgs": [
           "nixpkgs"
         ],
-        "noctalia-qs": "noctalia-qs"
+        "noctalia-qs": [
+          "noctalia-qs"
+        ]
       },
       "locked": {
         "lastModified": 1772246849,
@@ -565,16 +587,15 @@
     "noctalia-qs": {
       "inputs": {
         "nixpkgs": [
-          "noctalia",
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1772227064,
-        "narHash": "sha256-f821ZSoGpa/aXrWq0gPpea9qBnX8KDyavGKkptz2Mog=",
+        "lastModified": 1772415753,
+        "narHash": "sha256-QAeIW1Na9WCoGIDK4X9SzTLO79y2GGRMtWGY34lH6Tk=",
         "owner": "noctalia-dev",
         "repo": "noctalia-qs",
-        "rev": "0741d27d2f7db567270f139c5d1684614ecf9863",
+        "rev": "46e60df2d6ebb4d52d5bde8a63a9a6255e556097",
         "type": "github"
       },
       "original": {
@@ -629,12 +650,14 @@
       "inputs": {
         "cursor": "cursor",
         "home-manager": "home-manager",
+        "just-one-more-repo": "just-one-more-repo",
         "matugen": "matugen",
         "millennium": "millennium",
         "niri": "niri",
         "nixpkgs": "nixpkgs_4",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "noctalia": "noctalia",
+        "noctalia-qs": "noctalia-qs",
         "nvf": "nvf"
       }
     },
