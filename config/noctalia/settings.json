@@ -174,6 +174,35 @@
                 },
                 {
                     "defaultSettings": {
+                        "ai": {
+                            "apiKeys": {
+                            },
+                            "maxHistoryLength": 100,
+                            "model": "gemini-2.5-flash",
+                            "openaiBaseUrl": "https://api.openai.com/v1/chat/completions",
+                            "openaiLocal": false,
+                            "provider": "google",
+                            "systemPrompt": "You are a helpful assistant integrated into a Linux desktop shell. Be concise and helpful.",
+                            "temperature": 0.7
+                        },
+                        "maxHistoryLength": 100,
+                        "panelDetached": true,
+                        "panelHeightRatio": 0.85,
+                        "panelPosition": "right",
+                        "panelWidth": 520,
+                        "scale": 1,
+                        "translator": {
+                            "backend": "google",
+                            "deeplApiKey": "",
+                            "realTimeTranslation": true,
+                            "sourceLanguage": "auto",
+                            "targetLanguage": "en"
+                        }
+                    },
+                    "id": "plugin:assistant-panel"
+                },
+                {
+                    "defaultSettings": {
                         "autoHeight": true,
                         "cheatsheetData": [
                         ],
@@ -210,6 +239,18 @@
                     "textColor": "none"
                 },
                 {
+                    "defaultSettings": {
+                        "activeColor": "primary",
+                        "enableToast": true,
+                        "hideInactive": false,
+                        "iconSpacing": 4,
+                        "inactiveColor": "none",
+                        "micFilterRegex": "",
+                        "removeMargins": false
+                    },
+                    "id": "plugin:privacy-indicator"
+                },
+                {
                     "clockColor": "none",
                     "customFont": "",
                     "formatHorizontal": "HH:mm ddd, MMM dd",
@@ -219,10 +260,10 @@
                     "useCustomFont": false
                 },
                 {
-                    "id": "plugin:privacy-indicator"
-                },
-                {
-                    "id": "plugin:assistant-panel"
+                    "defaultSettings": {
+                        "mode": "region"
+                    },
+                    "id": "plugin:screenshot"
                 }
             ]
         }
@@ -688,7 +729,7 @@
         ],
         "fillColor": "#000000",
         "fillMode": "crop",
-        "hideWallpaperFilenames": false,
+        "hideWallpaperFilenames": true,
         "monitorDirectories": [
         ],
         "overviewBlur": 0.4,
@@ -697,10 +738,10 @@
         "panelPosition": "follow_bar",
         "randomIntervalSec": 300,
         "setWallpaperOnAllMonitors": true,
-        "showHiddenFiles": false,
+        "showHiddenFiles": true,
         "skipStartupTransition": false,
         "solidColor": "#1a1a2e",
-        "sortOrder": "name",
+        "sortOrder": "date_desc",
         "transitionDuration": 1500,
         "transitionEdgeSmoothness": 0.05,
         "transitionType": "random",
