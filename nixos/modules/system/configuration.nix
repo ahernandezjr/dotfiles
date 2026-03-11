@@ -1,12 +1,18 @@
 # Base system config (moved from common/configuration.nix). Applied to every host.
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
-  boot.loader.limine = {
-    enable = true;
-    efiSupport = true;
+  boot = {
+    loader = {
+      limine = {
+        enable = true;
+        efiSupport = true;
+      };  
+      grub.enable = false;
+    };
+
+    supportedFilesystems = [ "btrfs" "ext" "ntfs" ];
   };
-  boot.loader.grub.enable = false;
 
   hardware = {
     graphics.enable = true;
@@ -16,10 +22,16 @@
 
   systemd.services.NetworkManager-wait-online.enable = false;
 
-  networking.hostName = "nixos";
-  networking.networkmanager.enable = true;
+  networking = {
+    hostName = "nixos";
+    networkmanager.enable = true;
+    firewall = {
+      enable = true;
+      allowedTCPPorts = [ 25555 ];
+    };
+  };
 
-  # Nix binary caches
+  # Nix binary caches and flake registry
   nix.settings = {
     substituters = [
       "https://cache.nixos.org"
@@ -30,6 +42,9 @@
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
     ];
   };
+
+  # Pin default nixpkgs to our flake input so nix search / nix shell nixpkgs#... use nixos-unstable.
+  nix.registry.nixpkgs.flake = inputs.nixpkgs;
 
   # nixpkgs config is set when creating the nixpkgs instance in flake.nix.
 
@@ -83,6 +98,12 @@
   ];
 
   programs.fish.enable = true;
+
+  programs.nh = {
+    enable = true;
+    clean.enable = true;
+    clean.extraArgs = "--keep-since 7d --keep 5";
+  };
 
   # Modern D-Bus implementation (fixes many Gamescope communication errors)
   services.dbus.implementation = "broker";
