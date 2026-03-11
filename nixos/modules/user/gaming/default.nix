@@ -23,6 +23,7 @@ in
         protonup-qt
         vulkan-tools
 
+        deadlock-mod-manager
         # Platforms
         (lutris.override {
           extraPkgs = pkgs: [
