@@ -19,7 +19,10 @@ in
     programs.git = {
       enable = true;
       settings = {
-        url."https://github.com/".insteadOf = "gh:";
+        url."https://github.com/".insteadOf = [
+          "gh:"
+          "github:"
+        ];
         user = {
           name = config.userSettings.name;
           email = config.userSettings.email;
