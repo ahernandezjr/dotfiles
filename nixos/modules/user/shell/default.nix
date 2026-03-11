@@ -92,13 +92,60 @@ in
         fd
         lazygit
         lazydocker
-        neofetch
+        fastfetch
         ripgrep
         yazi
         # Archiving
         p7zip
         unrar
       ];
+
+      # Allow HM to overwrite existing fastfetch config so activation doesn't abort.
+      xdg.configFile."fastfetch/config.jsonc".force = true;
+      programs.fastfetch = {
+        enable = true;
+        settings = {
+          logo = {
+            source = "~/dotfiles/images/blood_ascii.txt";
+            type = "file";
+            color = {
+              "1" = "#ffffff";
+              "2" = "#8b0000";
+            };
+          };
+          modules = [
+            "title"
+            "separator"
+            "os"
+            "host"
+            "kernel"
+            "uptime"
+            "packages"
+            "shell"
+            "display"
+            "de"
+            "wm"
+            "wmtheme"
+            "theme"
+            "icons"
+            "font"
+            "cursor"
+            "terminal"
+            "terminalfont"
+            "cpu"
+            "gpu"
+            "memory"
+            "swap"
+            "disk"
+            "localip"
+            "battery"
+            "poweradapter"
+            "locale"
+            "break"
+            "colors"
+          ];
+        };
+      };
     }
   ]);
 }

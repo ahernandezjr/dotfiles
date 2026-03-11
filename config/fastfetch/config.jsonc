@@ -1,6 +1,13 @@
 {
   "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/master/doc/json_schema.json",
-  "logo": {},
+  "logo": {
+    "source": "~/dotfiles/images/blood_ascii.txt",
+    "type": "file",
+    "color": {
+      "1": "#ffffff",
+      "2": "#8b0000"
+    }
+  },
   "modules": [
     "title",
     "separator",

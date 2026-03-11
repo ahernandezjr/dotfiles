@@ -26,13 +26,12 @@ in
           end
         '';
         interactiveShellInit = ''
-          if type -q neofetch
-              neofetch --source ~/dotfiles/images/blood_ascii --ascii_colors 1 2
+          if type -q fastfetch
+              fastfetch
           end
         '';
 	shellAliases = {
 	  cat = "bat";
-	  grep = "rg";
 	  ls = "eza -lah -s modified --git --smart-group --color=always --classify=always --hyperlink --follow-symlinks --group-directories-first";
           nyx-rb = "/run/wrappers/bin/sudo nixos-rebuild switch --flake ~/dotfiles/nixos#desktop";
 	};
