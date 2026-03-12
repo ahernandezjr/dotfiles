@@ -10,6 +10,7 @@
       containers = {
         qbittorentvpn.enable = true;
         localai.enable = false;
+        dnd-kit.enable = true;
       };
     };
     development.postgresql.enable = true;

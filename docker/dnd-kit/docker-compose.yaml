@@ -1,0 +1,72 @@
+---
+# dnd-kit: Foundry VTT, STT, optional summarizer/image-api. Joins hai-network to use
+# hai-llamacpp (summarization) and hai-comfyui (image gen). Start localai first so
+# hai-network exists, or create it: docker network create hai-network
+# HOME is set by the NixOS docker module. For Foundry, create docker/dnd-kit/.env
+# (gitignored) with FOUNDRY_USERNAME, FOUNDRY_PASSWORD, FOUNDRY_ADMIN_KEY, or
+# FOUNDRY_RELEASE_URL from foundryvtt.com (Node.js timed URL).
+
+name: dnd-kit
+
+services:
+  foundry:
+    image: felddy/foundryvtt:13
+    container_name: dnd-kit-foundry
+    hostname: foundry
+    restart: unless-stopped
+    ports:
+      - "30000:30000"
+    volumes:
+      - ${HOME}/.dnd-kit/foundry/data:/data
+    env_file:
+      - .env
+    environment:
+      - FOUNDRY_PROXY_PORT=30000
+    # Optional: use Docker secrets instead of env_file (see felddy/foundryvtt-docker README)
+    # secrets:
+    #   - source: foundry_config
+    #     target: config.json
+
+  # Multi-speaker STT (Parakeet_Multitalk-style). No official image; replace with
+  # a build from docker/dnd-kit/Dockerfile or run on host and point UI here.
+  stt:
+    image: alpine:3.19
+    container_name: dnd-kit-stt
+    restart: unless-stopped
+    command: ["sleep", "infinity"]
+    # ports:
+    #   - "3450:3450"
+    # When implemented: build from Dockerfile or use NeMo/Parakeet image
+    # build: .
+
+  # Optional summarizer: calls http://hai-llamacpp:8080 to summarize dialogue.
+  # Uncomment and implement (e.g. Python/Node) when ready.
+  # summarizer:
+  #   image: python:3.12-slim
+  #   container_name: dnd-kit-summarizer
+  #   restart: unless-stopped
+  #   environment:
+  #     - LLAMACPP_URL=http://hai-llamacpp:8080
+  #   # command: ...
+  #   # ports: ...
+
+  # Optional image-api: accepts scene prompts, calls http://hai-comfyui:8188 (Z Turbo).
+  # Uncomment and implement when ready.
+  # image-api:
+  #   image: python:3.12-slim
+  #   container_name: dnd-kit-image-api
+  #   restart: unless-stopped
+  #   environment:
+  #     - COMFYUI_URL=http://hai-comfyui:8188
+  #   # command: ...
+  #   # ports: ...
+
+  # Voice changer: use Voicemeeter (or host PipeWire/JACK). Optional Docker
+  # service can be added later.
+  # voice-changer:
+  #   ...
+
+networks:
+  default:
+    name: hai-network
+    external: true

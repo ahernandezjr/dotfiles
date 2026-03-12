@@ -79,8 +79,9 @@ in
     {
       virtualisation.docker = {
         enable = true;
-        storageDriver = "btrfs";
+        storageDriver = "overlay2"; # "btrfs";
         enableOnBoot = true;
+        daemon.settings.data-root = "/mnt/linuxgames/docker";
       };
 
       users.users.${defaultUser}.extraGroups = [ "docker" ];
@@ -98,13 +99,18 @@ in
       systemd.services = lib.mapAttrs' (name: c:
         let
           startOnBoot = if c.startOnBoot == null then startOnBootDefault else c.startOnBoot;
+          isDndKit = name == "dnd-kit";
         in
         lib.nameValuePair "docker-compose-${name}" ({
           description = "Docker Compose: ${name}";
           after = [ "docker.service" "network-online.target" ];
           wants = [ "network-online.target" ];
           requires = [ "docker.service" ];
-          path = [ pkgs.docker-compose ];
+          path = [ pkgs.docker-compose ] ++ lib.optionals isDndKit [ pkgs.docker ];
+          preStart = lib.optionalString isDndKit ''
+            ${pkgs.docker}/bin/docker network create hai-network 2>/dev/null || true
+            mkdir -p ${defaultHome}/.dnd-kit/foundry/data
+          '';
           serviceConfig = {
             Type = "oneshot";
             RemainAfterExit = true;
