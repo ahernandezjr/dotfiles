@@ -8,6 +8,7 @@
     cuda.enable = true;
     editors.enable = true;
     communication.enable = true;
+    utilities.enable = true;
     niri.useDesktopOutputs = true;
     browsers = {
       enable = true;
