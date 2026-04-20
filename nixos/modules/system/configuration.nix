@@ -22,12 +22,13 @@
 
   systemd.services.NetworkManager-wait-online.enable = false;
 
+
   networking = {
     hostName = "nixos";
     networkmanager.enable = true;
     firewall = {
       enable = true;
-      allowedTCPPorts = [ 25555 ];
+      allowedTCPPorts = [ 25555 30000 ];
     };
   };
 
@@ -94,7 +95,16 @@
   };
 
   environment.systemPackages = with pkgs; [
-    vim wget neovim fish alacritty ghostty xwayland-satellite gh floorp-bin
+    sbctl
+    vim 
+    wget
+    neovim
+    fish
+    alacritty
+    ghostty
+    xwayland-satellite
+    gh
+    floorp-bin
   ];
 
   programs.fish.enable = true;
@@ -105,8 +115,9 @@
     clean.extraArgs = "--keep-since 7d --keep 5";
   };
 
-  # Modern D-Bus implementation (fixes many Gamescope communication errors)
   services.dbus.implementation = "broker";
+
+  services.gvfs.enable = true;
 
   environment.sessionVariables = {
     EDITOR = "nvim";

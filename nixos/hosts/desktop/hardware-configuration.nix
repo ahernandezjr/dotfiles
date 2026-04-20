@@ -19,19 +19,21 @@
   boot.loader.timeout = 0;
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/fd9312ef-1845-40fe-9233-70c77d350086";
+    { device = "/dev/disk/by-uuid/00f2da24-f381-4e2b-9c26-6826b111dc3e";
       fsType = "btrfs";
+      options = [ "subvol=@" ];
+    };
+
+  fileSystems."/home" =
+    { device = "/dev/disk/by-uuid/00f2da24-f381-4e2b-9c26-6826b111dc3e";
+      fsType = "btrfs";
+      options = [ "subvol=@home" ];
     };
 
   fileSystems."/boot" =
     { device = "/dev/disk/by-uuid/8F14-D8B1";
       fsType = "vfat";
       options = [ "fmask=0022" "dmask=0022" ];
-    };
-
-  fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/00f2da24-f381-4e2b-9c26-6826b111dc3e";
-      fsType = "btrfs";
     };
 
   fileSystems."/mnt/linuxgames" = 
