@@ -16,6 +16,10 @@ in
     services.xserver.videoDrivers = [ "nvidia" ];
 
     boot.kernelParams = [
+      # Fix sleep issues with deep sleep
+      "mem_sleep_default=s2idle"
+      "nvidia.NVreg_PreserveVideoMemoryAllocations=1"
+      "nvidia.NVreg_TemporaryFilePath=/var/tmp"
       # PAT: Improves memory mapping efficiency between CPU and GPU, reducing stutter.
       "nvidia.NVreg_UsePageAttributeTable=1"
       # GSP: Mandatory for Blackwell (50-series) stability; offloads initialization to GPU firmware.
@@ -31,7 +35,10 @@ in
       modesetting.enable = true;
       
       # Enable to avoid niri blackscreen on reboot
-      powerManagement.enable = true;
+      powerManagement = {
+        enable = true;
+        finegrained = false;
+      };
 
       # Use the NVidia open source kernel module.
       open = true;
