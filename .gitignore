@@ -12,6 +12,7 @@ config/noctalia/plugins
 # Docker
 docker/**/config/
 docker/**/vpn/
+docker/dnd-kit/.env
 
 # Debugging
 result
