@@ -3,6 +3,8 @@
 # Unified AI services with shared model storage
 # Location: ~/.hai/docker-compose.yml
 
+name: local-ai
+
 services:
   # llama.cpp - High-performance CPU/GPU inference (GGUF models)
   llamacpp:
@@ -27,13 +29,16 @@ services:
     # The command is now static to enable multi-model router mode.
     # It discovers all models in the /models directory on startup.
     # Models are loaded/unloaded on-demand via API requests.
-    command: --host 0.0.0.0 --port 8080 -m /models/gpt-oss-120b-mxfp4-00001-of-00003.gguf --n-gpu-layers 999 --n-cpu-moe 24 --ctx-size 49152 --flash-attn
+    command: --host 0.0.0.0 --port 8080 -m /models/Qwen3.5-35B-A3B-UD-Q4_K_XL.gguf --n-gpu-layers 99 --flash-attn auto --temp 0.6 --top-p 0.95 --batch-size 512 --ubatch-size 128 --n-cpu-moe 10 
+    # useful commands: --n-cpu-moe 22 --ctx-size 49151
 
   # vLLM - Advanced inference engine with OpenAI-compatible API (HuggingFace models)
   vllm:
     image: vllm/vllm-openai:latest
     container_name: hai-vllm
     restart: unless-stopped
+    profiles:
+      - donotstart
     ports:
       - "3421:3421"
     volumes:
@@ -64,12 +69,12 @@ services:
       - ${HOME}/.hai/data/open-webui:/app/backend/data
     environment:
       - PORT=3430
-      - OPENAI_API_BASE_URL=http://vllm:3421/v1
+      - OPENAI_API_BASE_URL=http://llamacpp:8080/v1
       - OPENAI_API_KEY=hai-local-not-needed
       - WEBUI_SECRET_KEY=hai-secret-change-me
     depends_on:
       - llamacpp
-      - vllm
+      # - vllm
 
   # ComfyUI - Node-based Stable Diffusion image generation
   comfyui:
@@ -105,6 +110,8 @@ services:
     image: n8nio/n8n:latest
     container_name: hai-n8n
     restart: unless-stopped
+    profiles:
+      - donotstart
     ports:
       - "3432:5678"
     volumes:
@@ -117,6 +124,45 @@ services:
       - GENERIC_TIMEZONE=America/Chicago
       - N8N_LOG_LEVEL=info
 
+ # Cognee - Knowledge engine for AI agent memory
+  cognee:
+    image: cognee/cognee:main
+    container_name: hai-cognee
+    restart: unless-stopped
+    profiles:
+      - cognee
+      - donotstart
+    ports:
+      - "3440:8000"
+    volumes:
+      - ${HOME}/.hai/cognee:/app/data
+    environment:
+      - LLM_API_BASE=http://host.docker.internal:3420/v1
+      - LLM_MODEL=Qwen3.5-35B-A3B-UD-Q4_K_XL
+      - LLM_API_KEY=hai-local-not-needed
+      - LLM_PROVIDER=local
+
+  # Cognee MCP Server - for IDE integration (cursor, claude desktop, vscode)
+  cognee-mcp:
+    image: cognee/cognee-mcp:main
+    container_name: hai-cognee-mcp
+    restart: unless-stopped
+    profiles:
+      - cognee-mcp
+      - donotstart
+    ports:
+      - "3441:8000"
+    environment:
+      - TRANSPORT_MODE=sse
+      - API_URL=http://hai-cognee:8000
+      - LLM_API_BASE=http://host.docker.internal:3420/v1
+      - LLM_MODEL=Qwen3.5-35B-A3B-UD-Q4_K_XL
+      - LLM_API_KEY=hai-local-not-needed
+      - LLM_PROVIDER=local
+    depends_on:
+      - cognee
+
 networks:
   default:
     name: hai-network
+    external: true

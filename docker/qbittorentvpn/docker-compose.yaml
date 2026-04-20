@@ -1,3 +1,5 @@
+name: qbitvpn
+
 services:
   surfshark:
     image: docker.io/qmcgaw/gluetun:latest

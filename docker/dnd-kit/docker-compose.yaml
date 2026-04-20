@@ -33,6 +33,8 @@ services:
     image: alpine:3.19
     container_name: dnd-kit-stt
     restart: unless-stopped
+    profiles:
+      - donotstart
     command: ["sleep", "infinity"]
     # ports:
     #   - "3450:3450"
