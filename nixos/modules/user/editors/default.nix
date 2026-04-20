@@ -18,8 +18,8 @@ in
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
       # Editors
-      inputs.cursor.packages.x86_64-linux.cursor
       vscode
+      code-cursor
 
       # Env Manager
       devenv

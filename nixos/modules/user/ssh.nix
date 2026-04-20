@@ -7,10 +7,10 @@
   programs.ssh = {
     enable = true;
     addKeysToAgent = "yes";
-    startAgent = true;
     matchBlocks."github.com" = {
       identityFile = [ "~/.ssh/id_ed25519" ];
       hostname = "github.com";
     };
   };
+  services.ssh-agent.enable = true;
 }

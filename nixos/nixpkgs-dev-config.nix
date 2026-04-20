@@ -3,6 +3,5 @@
 {
   enable = true;
   packageNames = [
-    "deadlock-mod-manager"
   ];
 }

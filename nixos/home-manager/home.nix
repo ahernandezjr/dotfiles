@@ -8,7 +8,7 @@
 
   home.username = "alex";
   home.homeDirectory = "/home/alex";
-  home.stateVersion = "25.11";
+  home.stateVersion = "26.05";
 
   userSettings = {
     name = "Alexander Hernandez";
