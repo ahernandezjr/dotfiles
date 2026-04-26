@@ -74,7 +74,7 @@ in
               enable = true;
               lsp = { servers = [ "omnisharp" ]; };
             };
-            ts.enable = true;
+            typescript.enable = true;
             qml.enable = true;
           };
         };

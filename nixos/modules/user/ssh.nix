@@ -6,7 +6,10 @@
 {
   programs.ssh = {
     enable = true;
-    addKeysToAgent = "yes";
+    enableDefaultConfig = false;
+    matchBlocks."*" = {
+      addKeysToAgent = "yes";
+    };
     matchBlocks."github.com" = {
       identityFile = [ "~/.ssh/id_ed25519" ];
       hostname = "github.com";

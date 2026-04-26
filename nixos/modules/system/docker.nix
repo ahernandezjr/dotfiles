@@ -121,7 +121,22 @@ in
               "HOME=${defaultHome}"
               "USER=${defaultUser}"
             ];
-            ExecStart = "${pkgs.docker-compose}/bin/docker-compose up -d";
+            ExecStart = pkgs.writeShellScript "docker-compose-${name}-up" ''
+              if ! ${pkgs.docker-compose}/bin/docker-compose up -d 2>/tmp/docker-compose-${name}.err; then
+                if grep -q "Conflict. The container name" /tmp/docker-compose-${name}.err; then
+                  echo "--------------------------------------------------------------------------------"
+                  echo "WARNING: Docker container conflict detected for project: ${name}"
+                  echo "The containers already exist but aren't managed by this project's current state."
+                  echo "To fix this and update your containers, please run:"
+                  echo "  cd ${repoPath}/docker/${name} && docker-compose down && docker rm -f surfshark && docker-compose up -d"
+                  echo "--------------------------------------------------------------------------------"
+                  exit 0
+                else
+                  cat /tmp/docker-compose-${name}.err
+                  exit 1
+                fi
+              fi
+            '';
             ExecStop = "${pkgs.docker-compose}/bin/docker-compose down";
             TimeoutStartSec = "10min";
           };
@@ -133,7 +148,6 @@ in
     }
 
     # Apply changes on switch *after* /etc updates (so unit files exist).
-    # Non-blocking so a big image pull doesn't hang `nixos-rebuild switch`.
     {
       system.activationScripts.dockerComposeApplyOnSwitch =
         lib.mkIf applyOnSwitchDefault (lib.stringAfter [ "etc" ] ''
@@ -146,7 +160,11 @@ in
               applyOnSwitch = if c.applyOnSwitch == null then applyOnSwitchDefault else c.applyOnSwitch;
             in
             if enabled && applyOnSwitch then
-              "${pkgs.systemd}/bin/systemctl restart --no-block docker-compose-${name}.service 2>/dev/null || true\n"
+              ''
+                ${pkgs.systemd}/bin/systemctl restart docker-compose-${name}.service || true
+                # Capture and print the warning from the service logs if it just soft-failed
+                ${pkgs.systemd}/bin/journalctl -u docker-compose-${name}.service -n 20 | grep -A 10 "WARNING: Docker container conflict" || true
+              ''
             else if (!enabled) then
               "${pkgs.systemd}/bin/systemctl stop --no-block docker-compose-${name}.service 2>/dev/null || true\n"
             else

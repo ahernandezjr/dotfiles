@@ -46,13 +46,30 @@ in
         Type = "oneshot";
         RemainAfterExit = true;
         WorkingDirectory = "${repoPath}/docker/${name}";
-        ExecStart = "${pkgs.docker-compose}/bin/docker-compose up -d";
+        ExecStart = pkgs.writeShellScript "docker-compose-${name}-up" ''
+          if ! ${pkgs.docker-compose}/bin/docker-compose up -d 2>/tmp/docker-compose-${name}.err; then
+            if grep -q "Conflict. The container name" /tmp/docker-compose-${name}.err; then
+              echo "--------------------------------------------------------------------------------"
+              echo "WARNING: Docker container conflict detected for user project: ${name}"
+              echo "To fix this and update your containers, please run:"
+              echo "  cd ${repoPath}/docker/${name} && docker-compose down && docker rm -f surfshark && docker-compose up -d"
+              echo "--------------------------------------------------------------------------------"
+              exit 0
+            else
+              cat /tmp/docker-compose-${name}.err
+              exit 1
+            fi
+          fi
+        '';
       };
     }) enabledContainers;
 
     # Start enabled containers on activation (so they run after home-manager switch, not only after login).
     home.activation.startDockerContainers = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      ${lib.concatMapStrings (name: "systemctl --user start docker-compose-${name} 2>/dev/null || true\n") (lib.attrNames enabledContainers)}
+      ${lib.concatMapStrings (name: ''
+        systemctl --user start docker-compose-${name} || true
+        journalctl --user -u docker-compose-${name} -n 20 | grep -A 10 "WARNING: Docker container conflict" || true
+      '') (lib.attrNames enabledContainers)}
     '';
   };
 }
