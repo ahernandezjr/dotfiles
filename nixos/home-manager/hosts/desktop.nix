@@ -14,6 +14,8 @@
       enable = true;
       firefox.enable = true;
       floorp.enable = true;
+      brave.enable = true;
+      default = "brave";
     };
   };
 
