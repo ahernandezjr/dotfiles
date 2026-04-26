@@ -8,8 +8,8 @@
       action.spawn-sh = term;
     };
     "MOD+B" = {
-      hotkey-overlay.title = "Open Browser: floorp";
-      action.spawn-sh = "floorp";
+      hotkey-overlay.title = "Open Browser: brave";
+      action.spawn-sh = "brave";
     };
     "MOD+F" = {
       hotkey-overlay.title = "File Manager: Yazi";

@@ -70,7 +70,7 @@ binds {
     // ─── Applications ───
     MOD+RETURN                          hotkey-overlay-title="Open Terminal: ghostty" { spawn-sh "$TERMINAL"; }
     // MOD+SPACE                           hotkey-overlay-title="Hekarch Menu" { spawn-sh "hek-menu"; } // Replaced by Noctalia launcher
-    MOD+B                               hotkey-overlay-title="Open Browser: floorp"{ spawn-sh "floorp"; }
+    MOD+B                               hotkey-overlay-title="Open Browser: brave"{ spawn-sh "brave"; }
     // MOD+ALT+L                           hotkey-overlay-title="Lock Screen: swaylock" { spawn-sh "swaylock"; } // Replaced by Noctalia lock screen
     
     // Please choose your own file manager(s)
