@@ -45,8 +45,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-cachyos-kernel = {
+      url = "github:xddxdd/nix-cachyos-kernel/release";
+    };
+
     # Local nixpkgs clone; only packages listed in nixpkgs-dev-config.nix use this until PR is merged.
-    nixpkgs-dev.url = "path:/home/alex/repos/nixpkgs-dev";
+    # nixpkgs-dev.url = "path:/home/alex/repos/nixpkgs-dev";
   };
 
   outputs =
@@ -61,9 +65,9 @@
       system = "x86_64-linux";
       nixpkgsDevConfig = import ./nixpkgs-dev-config.nix;
       ourOverlays = import ./overlays { inherit inputs; };
-      overlayNixpkgsDev = final: prev:
-        lib.genAttrs nixpkgsDevConfig.packageNames
-          (name: inputs.nixpkgs-dev.legacyPackages.${prev.system}.${name});
+      # overlayNixpkgsDev = final: prev:
+      #  lib.genAttrs nixpkgsDevConfig.packageNames
+      #    (name: inputs.nixpkgs-dev.legacyPackages.${prev.system}.${name});
       pkgs = import nixpkgs {
         inherit system;
         config = {
@@ -76,7 +80,8 @@
           ourOverlays.unstable-packages
           inputs.niri.overlays.niri
           inputs.millennium.overlays.default
-        ] ++ (lib.optionals nixpkgsDevConfig.enable [ overlayNixpkgsDev ]);
+          inputs.nix-cachyos-kernel.overlays.pinned
+        ] ++ (lib.optionals nixpkgsDevConfig.enable [ ]);
       };
       hosts = lib.attrNames (lib.filterAttrs (_: type: type == "directory") (builtins.readDir ./hosts));
       # Path to this repo on disk so matugen can write generated .nix into it (matugen-dots style).
