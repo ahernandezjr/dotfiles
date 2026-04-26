@@ -10,7 +10,7 @@ in
 
   config = lib.mkIf cfg.enable {
     # Blackwell (RTX 50-series) requires the most recent hardware support available.
-    boot.kernelPackages = pkgs.linuxPackages_latest;
+    boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
 
     # Load nvidia driver for Xorg and Wayland
     services.xserver.videoDrivers = [ "nvidia" ];
@@ -46,8 +46,8 @@ in
       # Enable the Nvidia settings menu, accessible via `nvidia-settings`.
       nvidiaSettings = true;
 
-      # Use the production Nvidia branch from nixpkgs, which is better tested than latest.
-      package = config.boot.kernelPackages.nvidiaPackages.production;
+      # Use the production Nvidia branch from nixpkgs
+      package = config.boot.kernelPackages.nvidiaPackages.beta;
     };
 
     # Add environment variables for Wayland sessions
