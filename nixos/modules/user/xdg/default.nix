@@ -12,7 +12,12 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.packages = with pkgs; [ nautilus ];
+    home.packages = with pkgs; [ 
+      nautilus
+      file-roller
+      p7zip
+      unrar
+    ];
     xdg.enable = true;
     xdg.userDirs = {
       enable = true;

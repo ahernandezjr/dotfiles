@@ -4,6 +4,7 @@ let
   cfg = config.userSettings.xdg;
   browser = [ "floorp.desktop" ];
   fileManager = [ "nautilus.desktop" ];
+  archiveManager = [ "org.gnome.FileRoller.desktop" ];
 in
 {
   config = lib.mkIf cfg.enable {
@@ -20,6 +21,16 @@ in
         "application/pdf" = browser;
 
         "inode/directory" = fileManager;
+
+        "application/zip" = archiveManager;
+        "application/x-zip-compressed" = archiveManager;
+        "application/x-rar" = archiveManager;
+        "application/x-rar-compressed" = archiveManager;
+        "application/vnd.rar" = archiveManager;
+        "application/x-7z-compressed" = archiveManager;
+        "application/x-tar" = archiveManager;
+        "application/x-gzip" = archiveManager;
+        "application/x-bzip2" = archiveManager;
 
         "image/jpeg" = [ "floorp.desktop" ];
         "image/png" = [ "floorp.desktop" ];
