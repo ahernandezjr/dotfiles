@@ -17,6 +17,7 @@
       zoom.enable = true;
     };
     niri.useDesktopOutputs = false; # Laptop screen focus
+    niri.useWorkOutputs = true;
     browsers = {
       enable = true;
       firefox.enable = true;

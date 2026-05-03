@@ -15,6 +15,7 @@
     vfio.enable = false; # Disabled for work laptop unless needed
     cachyos-kernel.enable = true;
     browsers.brave.enable = true;
+    virtualization.enable = true;
     drivers = {
       peripherals.enable = true;
       lenovo-legion.enable = true;
