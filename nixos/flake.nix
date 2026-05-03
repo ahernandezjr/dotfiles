@@ -108,6 +108,7 @@
     in
     {
       nixosConfigurations = builtins.listToAttrs (map (host: { name = host; value = mkNixosSystem host; }) hosts);
-      formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-tree;
+      packages.${system} = pkgs;
+      formatter.${system} = pkgs.nixfmt-tree;
     };
 }

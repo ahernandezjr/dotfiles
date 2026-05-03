@@ -5,14 +5,6 @@
   users.users.alex.extraGroups = [ "gamemode" ];
 
   systemSettings = {
-    docker = {
-      enable = true;
-      containers = {
-        qbittorentvpn.enable = true;
-        localai.enable = false;
-        dnd-kit.enable = true;
-      };
-    };
     development.postgresql.enable = true;
     niri.enable = true;
     nvidia.enable = true;

@@ -8,9 +8,10 @@
   # You can change versions, add patches, set compilation flags, anything really.
   # https://nixos.wiki/wiki/Overlays
   modifications = final: prev: {
-    # example = prev.example.overrideAttrs (oldAttrs: rec {
-    #   ...
-    # });
+    # Disable tests for openldap as they are flaky and failing in the current nixpkgs revision
+    openldap = prev.openldap.overrideAttrs (oldAttrs: {
+      doCheck = false;
+    });
   };
 
   # When applied, the unstable nixpkgs set (declared in the flake inputs) will

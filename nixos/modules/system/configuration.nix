@@ -7,6 +7,7 @@
       limine = {
         enable = true;
         efiSupport = true;
+        secureBoot.enable = true;
       };  
       grub.enable = false;
     };
@@ -88,9 +89,13 @@
     LC_TIME = "en_US.UTF-8";
   };
 
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
+  services.xserver = {
+    libinput.mouse.middleEmulation = false;
+
+    xkb = {
+      layout = "us";
+      variant = "";
+    };
   };
 
   users.users.alex = {
