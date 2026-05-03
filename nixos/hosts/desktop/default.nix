@@ -20,6 +20,6 @@
     vfio.enable = true;
     cachyos-kernel.enable = true;
     browsers.brave.enable = true;
-    peripherals.enable = true;
+    drivers.peripherals.enable = true;
   };
 }

@@ -41,7 +41,7 @@ in
         baseConfig = config.programs.niri.finalConfig;
       } ''
         echo "$baseConfig" > config.kdl
-        echo 'include "./noctalia.kdl"' >> config.kdl
+        echo 'include optional=true "./noctalia.kdl"' >> config.kdl
         cp config.kdl $out
       '';
     };
