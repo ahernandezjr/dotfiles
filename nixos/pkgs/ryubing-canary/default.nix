@@ -25,20 +25,19 @@
   libxi,
   libxrandr,
   udev,
-  SDL2,
-  SDL2_mixer,
+  sdl3,
   gtk3,
   wrapGAppsHook3,
 }:
 
 buildDotnetModule rec {
   pname = "ryubing-canary";
-  version = "1.3.277";
+  version = "1.3.284";
 
   src = fetchgit {
-    url = "https://git.ryujinx.app/Ryubing/Ryujinx.git";
+    url = "https://git.ryujinx.app/projects/Ryubing.git";
     rev = "Canary-${version}";
-    hash = "sha256-CkXvI20b4QL1uFSxo3y+il6PvmO+DOZmP5Z3sTzTpaM=";
+    hash = "sha256-lFGNvG+LCi8aFGwBpmw7SZPUPDluU/YTZKgda+AlAjw=";
   };
 
   nativeBuildInputs =
@@ -64,7 +63,6 @@ buildDotnetModule rec {
   runtimeDeps = [
     libx11
     libgdiplus
-    SDL2_mixer
     openal
     libsoundio
     sndio
@@ -83,7 +81,7 @@ buildDotnetModule rec {
 
     # Headless executable
     libGL
-    SDL2
+    sdl3
   ]
   ++ lib.optional (!stdenv.hostPlatform.isDarwin) [
     udev
