@@ -50,6 +50,7 @@ in
         })
         adwaita-icon-theme
         heroic
+        ryubing-canary
         prismlauncher
         # ScopeBuddy (gamescope helper)
         (inputs.just-one-more-repo.packages.${pkgs.stdenv.hostPlatform.system}.scopebuddy)

@@ -7,7 +7,7 @@ in
   options = {
     userSettings.productivity = {
       enable = lib.mkEnableOption "Productivity programs (onedrive, Microsoft integration, etc.)";
-      onedrive.enable = lib.mkEnableOption "OneDrive synchronization";
+      onedrive.enable = lib.mkEnableOption "OneDrive synchronization package";
       teams.enable = lib.mkEnableOption "Microsoft Teams";
       edge.enable = lib.mkEnableOption "Microsoft Edge";
       zoom.enable = lib.mkEnableOption "Zoom video conferencing";
@@ -21,7 +21,5 @@ in
       (lib.optional cfg.edge.enable pkgs.microsoft-edge)
       (lib.optional cfg.zoom.enable pkgs.zoom-us)
     ];
-
-    services.onedrive.enable = cfg.onedrive.enable;
   };
 }

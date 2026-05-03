@@ -14,6 +14,7 @@
     name = "Alexander Hernandez";
     email = "ahernandezjr0@gmail.com";
     development.enable = true;
+    creativity.enable = true;
     git.enable = true;
     shell.enable = true;
     shell.manageConfig = true;
