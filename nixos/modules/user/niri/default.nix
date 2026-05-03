@@ -17,7 +17,11 @@ let
       refresh = (builtins.fromJSON (builtins.elemAt m 2)) + 0.0;
     };
   useDesktopOutputs = config.userSettings.niri.useDesktopOutputs;
-  outputsFragment = lib.optional useDesktopOutputs (import ./outputs.nix { inherit lib parseMode; });
+  useWorkOutputs = config.userSettings.niri.useWorkOutputs;
+  outputsFragment = 
+    if useDesktopOutputs then [ (import ./outputs.nix { inherit lib parseMode; }) ]
+    else if useWorkOutputs then [ (import ./work-outputs.nix { inherit lib parseMode; }) ]
+    else [];
   # matugen-dots style: matugen writes a .nix file into the repo; we import it if present.
   matugenColorsPath = ./. + "/matugen-colors.nix";
   matugenColorsSettings = let
@@ -29,6 +33,12 @@ in
     type = lib.types.bool;
     default = false;
     description = "Use the desktop multi-monitor output config for the external Dell (DP-3), INNOCN 32M2V (HDMI-A-3), and BenQ XL2420TE (DP-5) monitors. When false, niri auto-detects (single display for laptop/vm).";
+  };
+
+  options.userSettings.niri.useWorkOutputs = lib.mkOption {
+    type = lib.types.bool;
+    default = false;
+    description = "Use the work laptop multi-monitor output config (eDP-1 scaled, and two DP-1/DP-2 1080p monitors).";
   };
 
   config = {
