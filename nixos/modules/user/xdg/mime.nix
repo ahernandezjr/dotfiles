@@ -2,7 +2,7 @@
 
 let
   cfg = config.userSettings.xdg;
-  browser = [ "floorp.desktop" ];
+  browser = [ config.userSettings.browsers.activeDesktop ];
   fileManager = [ "nautilus.desktop" ];
   archiveManager = [ "org.gnome.FileRoller.desktop" ];
 in
@@ -32,10 +32,10 @@ in
         "application/x-gzip" = archiveManager;
         "application/x-bzip2" = archiveManager;
 
-        "image/jpeg" = [ "floorp.desktop" ];
-        "image/png" = [ "floorp.desktop" ];
-        "image/gif" = [ "floorp.desktop" ];
-        "image/webp" = [ "floorp.desktop" ];
+        "image/jpeg" = browser;
+        "image/png" = browser;
+        "image/gif" = browser;
+        "image/webp" = browser;
 
         "video/mp4" = [ "mpv.desktop" "vlc.desktop" ];
         "video/mpeg" = [ "mpv.desktop" "vlc.desktop" ];

@@ -18,6 +18,7 @@
     git.enable = true;
     shell.enable = true;
     shell.manageConfig = true;
+    browsers.enable = true;
     xdg.enable = true;
   };
 
