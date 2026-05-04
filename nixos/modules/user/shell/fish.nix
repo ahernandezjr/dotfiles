@@ -24,6 +24,30 @@ in
           function reboot-windows
               sudo efibootmgr -n 0 && sudo systemctl reboot
           end
+
+          function nyx-rb --description 'Rebuild NixOS system based on current hostname or specified profile'
+              set -l host (hostname)
+              set -l flake_path "$HOME/dotfiles/nixos"
+              
+              if set -q argv[1]; and not string match -r "^-" -- $argv[1]
+                  set host $argv[1]
+                  set -e argv[1]
+              end
+
+              if test -d $flake_path
+                  if test "$host" = "nixos"
+                      echo "Warning: Hostname is still 'nixos'. You may need to specify the profile name (e.g., 'nyx-rb work')."
+                      echo "Available profiles: (desktop, laptop, vm, work)"
+                      return 1
+                  end
+
+                  echo "Rebuilding NixOS for host: $host..."
+                  sudo nixos-rebuild switch --flake "$flake_path#$host" $argv
+              else
+                  echo "Error: Flake directory not found at $flake_path"
+                  return 1
+              end
+          end
         '';
         interactiveShellInit = ''
           if type -q fastfetch
@@ -33,7 +57,6 @@ in
 	shellAliases = {
 	  cat = "bat";
 	  ls = "eza -lah -s modified --git --smart-group --color=always --classify=always --hyperlink --follow-symlinks --group-directories-first";
-          nyx-rb = "/run/wrappers/bin/sudo nixos-rebuild switch --flake ~/dotfiles/nixos#desktop";
 	};
       };
     })

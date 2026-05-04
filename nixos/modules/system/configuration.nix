@@ -1,5 +1,5 @@
 # Base system config (moved from common/configuration.nix). Applied to every host.
-{ config, pkgs, inputs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 {
   boot = {
@@ -25,7 +25,7 @@
 
 
   networking = {
-    hostName = "nixos";
+    hostName = lib.mkDefault "nixos";
     networkmanager.enable = true;
     firewall = {
       enable = true;

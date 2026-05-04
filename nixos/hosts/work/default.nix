@@ -2,6 +2,8 @@
 {
   imports = [ ./hardware-configuration.nix ];
 
+  networking.hostName = "work";
+
   users.users.alex.extraGroups = [ "gamemode" ];
 
   systemSettings = {

@@ -2,6 +2,8 @@
 {
   imports = [ ./hardware-configuration.nix ];
 
+  networking.hostName = "laptop";
+
   systemSettings = {
     docker.enable = true;
     development.postgresql.enable = true;
