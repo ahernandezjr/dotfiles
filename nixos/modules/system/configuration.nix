@@ -89,9 +89,9 @@
     LC_TIME = "en_US.UTF-8";
   };
 
-  services.xserver = {
-    libinput.mouse.middleEmulation = false;
+  services.libinput.mouse.middleEmulation = false;
 
+  services.xserver = {
     xkb = {
       layout = "us";
       variant = "";

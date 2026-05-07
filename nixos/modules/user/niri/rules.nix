@@ -10,5 +10,8 @@
     { matches = [ { namespace = "^noctalia-overview*"; } ]; place-within-backdrop = true; }
   ];
   overview.workspace-shadow.enable = false;
-  debug.honor-xdg-activation-with-invalid-serial = true;
+  debug = {
+    honor-xdg-activation-with-invalid-serial = true;
+    # keep-laptop-panel-on-when-lid-is-closed = true;
+  };
 }
