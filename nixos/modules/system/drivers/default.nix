@@ -13,6 +13,11 @@ in
     (lib.mkIf cfg.peripherals.enable {
       hardware.openrazer.enable = true;
 
+      hardware.logitech.wireless = {
+        enable = true;
+        enableGraphical = true;
+      };
+
       environment.systemPackages = with pkgs; [
         openrazer-daemon
         polychromatic
