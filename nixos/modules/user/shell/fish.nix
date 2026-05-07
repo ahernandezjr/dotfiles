@@ -48,6 +48,12 @@ in
                   return 1
               end
           end
+
+          # function mount-work --description 'Mount the Windows VM OneDrive folder'
+          #     sudo mkdir -p /mnt/onedrive
+          #     sudo mount -t cifs //192.168.122.1/OneDrive /mnt/onedrive -o username=alex,uid=1000,gid=100,vers=3.0,soft
+          #     echo "OneDrive mounted at /mnt/onedrive"
+          # end
         '';
         interactiveShellInit = ''
           if type -q fastfetch
