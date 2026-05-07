@@ -23,4 +23,15 @@
       lenovo-legion.enable = true;
     };
   };
+
+  # Prevent lid close from suspending and fix Nvidia Wayland suspend issues
+  services.logind = {
+    lidSwitch = "ignore";
+    lidSwitchExternalPower = "ignore";
+    lidSwitchDocked = "ignore";
+  };
+
+  environment.variables = {
+    SYSTEMD_SLEEP_FREEZE_USER_SESSIONS = "false";
+  };
 }
