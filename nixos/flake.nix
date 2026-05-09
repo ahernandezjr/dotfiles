@@ -51,6 +51,11 @@
 
     # Local nixpkgs clone; only packages listed in nixpkgs-dev-config.nix use this until PR is merged.
     # nixpkgs-dev.url = "path:/home/alex/repos/nixpkgs-dev";
+
+    custom-pkgs = {
+      url = "path:./private-stub";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -92,6 +97,7 @@
         modules = [
           ./modules/system
           inputs.niri.nixosModules.niri
+          inputs.custom-pkgs.nixosModules.default
           ./hosts/${profile}/default.nix
           home-manager.nixosModules.home-manager
           {

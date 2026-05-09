@@ -1,0 +1,3 @@
+[submodule "nixos/pkgs-private"]
+	path = nixos/pkgs-private
+	url = ./nixos/pkgs-private

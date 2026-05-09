@@ -28,6 +28,10 @@ in
           function nyx-rb --description 'Rebuild NixOS system based on current hostname or specified profile'
               set -l host (hostname)
               set -l flake_path "$HOME/dotfiles/nixos"
+              set -l flags ""
+              if test -d $flake_path/pkgs-private/pkgs
+                  set flags --override-input custom-pkgs "git+file://$flake_path/pkgs-private"
+              end
               
               if set -q argv[1]; and not string match -r "^-" -- $argv[1]
                   set host $argv[1]
@@ -42,7 +46,7 @@ in
                   end
 
                   echo "Rebuilding NixOS for host: $host..."
-                  sudo nixos-rebuild switch --flake "$flake_path#$host" $argv
+                  sudo nixos-rebuild switch --flake "$flake_path#$host" $flags $argv
               else
                   echo "Error: Flake directory not found at $flake_path"
                   return 1

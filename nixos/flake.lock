@@ -83,6 +83,17 @@
         "type": "github"
       }
     },
+    "custom-pkgs": {
+      "locked": {
+        "path": "./private-stub",
+        "type": "path"
+      },
+      "original": {
+        "path": "./private-stub",
+        "type": "path"
+      },
+      "parent": []
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -736,6 +747,7 @@
     },
     "root": {
       "inputs": {
+        "custom-pkgs": "custom-pkgs",
         "home-manager": "home-manager",
         "just-one-more-repo": "just-one-more-repo",
         "matugen": "matugen",
