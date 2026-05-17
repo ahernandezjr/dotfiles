@@ -9,6 +9,8 @@
     editors.enable = true;
     communication.enable = true;
     utilities.enable = true;
+    office.enable = true;
+    entertainment.enable = true;
     niri.useDesktopOutputs = true;
     browsers = {
       enable = true;

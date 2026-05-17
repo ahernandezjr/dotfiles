@@ -9,6 +9,7 @@
     editors.enable = true;
     communication.enable = true;
     utilities.enable = true;
+    office.enable = true;
     productivity = {
       enable = true;
       onedrive.enable = true;
