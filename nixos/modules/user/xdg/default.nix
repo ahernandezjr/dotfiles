@@ -39,5 +39,15 @@ in
         DOTFILES = "${home}/.dotfiles";
       };
     };
+
+    dconf.settings = {
+      "org/gnome/nautilus/preferences" = {
+        default-folder-viewer = "list-view";
+        search-view = "list-view";
+      };
+      "org/gnome/nautilus/list-view" = {
+        use-tree-view = true;
+      };
+    };
   };
 }
