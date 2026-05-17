@@ -27,7 +27,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    millennium.url = "github:SteamClientHomebrew/Millennium?dir=packages/nix";
+    millennium.url = "github:SteamClientHomebrew/Millennium/19741152e4237810141a0f18868a6993939e556a?dir=packages/nix";
 
     nvf = {
       url = "github:NotAShelf/nvf";
@@ -49,9 +49,6 @@
       url = "github:xddxdd/nix-cachyos-kernel/release";
     };
 
-    # Local nixpkgs clone; only packages listed in nixpkgs-dev-config.nix use this until PR is merged.
-    # nixpkgs-dev.url = "path:/home/alex/repos/nixpkgs-dev";
-
     custom-pkgs = {
       url = "path:./private-stub";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -68,11 +65,7 @@
     let
       lib = nixpkgs.lib;
       system = "x86_64-linux";
-      nixpkgsDevConfig = import ./nixpkgs-dev-config.nix;
       ourOverlays = import ./overlays { inherit inputs; };
-      # overlayNixpkgsDev = final: prev:
-      #  lib.genAttrs nixpkgsDevConfig.packageNames
-      #    (name: inputs.nixpkgs-dev.legacyPackages.${prev.system}.${name});
       pkgs = import nixpkgs {
         inherit system;
         config = {
@@ -86,7 +79,7 @@
           inputs.niri.overlays.niri
           inputs.millennium.overlays.default
           inputs.nix-cachyos-kernel.overlays.pinned
-        ] ++ (lib.optionals nixpkgsDevConfig.enable [ ]);
+        ];
       };
       hosts = lib.attrNames (lib.filterAttrs (_: type: type == "directory") (builtins.readDir ./hosts));
       # Path to this repo on disk so matugen can write generated .nix into it (matugen-dots style).
