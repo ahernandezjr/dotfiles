@@ -1,0 +1,18 @@
+{
+  mPrimary = "#aec6ff";
+  mOnPrimary = "#002e6a";
+  mSecondary = "#bfc6dc";
+  mOnSecondary = "#293041";
+  mTertiary = "#debcdf";
+  mOnTertiary = "#402843";
+  mError = "#ffb4ab";
+  mOnError = "#690005";
+  mSurface = "#121316";
+  mOnSurface = "#e3e2e6";
+  mSurfaceVariant = "#1f1f23";
+  mOnSurfaceVariant = "#c5c6d0";
+  mOutline = "#44474f";
+  mShadow = "#000000";
+  mHover = "#debcdf";
+  mOnHover = "#402843";
+}

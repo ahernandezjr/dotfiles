@@ -10,6 +10,7 @@ let
     hasSuffix ".nix" file
     && file != "default.nix"
     && !(hasPrefix "niri/" file && file != "niri/default.nix")
+    && !(hasPrefix "noctalia/" file && file != "noctalia/default.nix")
     && !(hasPrefix "theming/templates/" file);
 in
 {

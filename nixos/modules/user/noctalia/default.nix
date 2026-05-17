@@ -1,36 +1,41 @@
-# Noctalia-shell: Home Manager config using native options (Configuration Defaults schema).
-# Config files are linked to dotfiles via mkOutOfStoreSymlink to remain writable.
-{ config, inputs, lib, ... }:
+# Noctalia-shell: Home Manager config using native options.
+# Settings are declared as Nix attribute sets for a fully declarative approach.
+{ config, inputs, lib, pkgs, osConfig, ... }:
 
 let
-  home = config.home.homeDirectory;
-  # Points to the writable dotfiles on disk.
-  dotfilesNoctalia = "${home}/dotfiles/config/noctalia";
+  isPortable = osConfig.networking.hostName == "work" || osConfig.networking.hostName == "laptop";
+  
+  # Import base settings, colors, and plugins from Nix files
+  baseSettings = import ./settings.nix;
+  baseColors = import ./colors.nix;
+  basePlugins = import ./plugins.nix;
+
+  # Define the battery widget to be added for portable hosts
+  batteryWidget = {
+    id = "Battery";
+  };
+
+  # If portable, add the battery widget to the right side of the bar
+  # We do this by modifying the attribute set directly in Nix
+  finalSettings = if isPortable then 
+    lib.recursiveUpdate baseSettings {
+      bar.widgets.right = baseSettings.bar.widgets.right ++ [ batteryWidget ];
+    }
+  else baseSettings;
+
 in
 {
   imports = [ inputs.noctalia.homeModules.default ];
 
   config = {
-    # Disable HM module's automatic file generation to avoid Nix store read-only symlinks
-    xdg.configFile."noctalia/settings.json".enable = lib.mkForce false;
-    xdg.configFile."noctalia/colors.json".enable = lib.mkForce false;
-    xdg.configFile."noctalia/plugins.json".enable = lib.mkForce false;
-    xdg.configFile."noctalia/user-templates.toml".enable = lib.mkForce false;
-
-    # Previously used to override Stylix's GTK CSS; with Stylix removed, disable this file.
-    xdg.configFile."gtk-3.0/gtk.css".enable = lib.mkForce false;
-
-    # Manually link them to the dotfiles directory (writable)
-    home.file = {
-      ".config/noctalia/settings.json".source = config.lib.file.mkOutOfStoreSymlink "${dotfilesNoctalia}/settings.json";
-      ".config/noctalia/colors.json".source = config.lib.file.mkOutOfStoreSymlink "${dotfilesNoctalia}/colors.json";
-      ".config/noctalia/plugins.json".source = config.lib.file.mkOutOfStoreSymlink "${dotfilesNoctalia}/plugins.json";
-      ".config/noctalia/user-templates.toml".source = config.lib.file.mkOutOfStoreSymlink "${dotfilesNoctalia}/user-templates.toml";
-    };
-
     programs.noctalia-shell = {
       enable = true;
-      # No 'settings' here; the app uses the symlinked files above as source of truth.
+      settings = finalSettings;
+      colors = baseColors;
+      plugins = basePlugins;
     };
+
+    # Manage user-templates.toml separately
+    xdg.configFile."noctalia/user-templates.toml".source = ./../../../../config/noctalia/user-templates.toml;
   };
 }
