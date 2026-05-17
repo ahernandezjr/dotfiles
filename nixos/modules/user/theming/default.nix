@@ -33,8 +33,8 @@ in {
       size = config.home.pointerCursor.size;
     };
     iconTheme = {
-      name = "breeze-dark";
-      package = pkgs.kdePackages.breeze-icons;
+      name = "Material-Black-Blueberry-Numix";
+      package = pkgs.material-black-colors;
     };
   };
 
@@ -47,7 +47,7 @@ in {
   home.packages = [
     pkgs.matugen
     pkgs.qt6Packages.qt6ct
-    pkgs.kdePackages.breeze-icons
+    pkgs.material-black-colors
     pkgs.bibata-cursors
     pkgs.material-cursors
     pkgs.lyra-cursors
