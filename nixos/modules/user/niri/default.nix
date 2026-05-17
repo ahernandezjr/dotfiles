@@ -43,14 +43,45 @@ in
 
   config = {
     # The niri-flake home-manager module (homeModules.config) uses xdg.configFile.niri-config.
-    # We override it to add our noctalia.kdl include.
-    # We use lib.mkForce to ensure we override the module's own definition.
+    # We override it to add our noctalia.kdl include and raw blur config.
     xdg.configFile.niri-config = lib.mkForce {
       target = "niri/config.kdl";
       source = pkgs.runCommand "niri-config-with-noctalia" {
         baseConfig = config.programs.niri.finalConfig;
       } ''
         echo "$baseConfig" > config.kdl
+        cat >> config.kdl <<EOF
+/* Global Blur Fine-tuning */
+blur {
+    passes 2
+    offset 3.0
+    noise 0.03
+    saturation 1.0
+}
+
+/* Apps: blur them all without xray for a better look */
+window-rule {
+    background-effect {
+        blur true
+        xray false
+    }
+}
+
+/* Ensure Ghostty is transparent enough to see the blur */
+window-rule {
+    match app-id="ghostty"
+    opacity 0.9
+}
+
+/* Noctalia: blur everywhere without xray for a better look */
+layer-rule {
+    match namespace="^noctalia-(background|launcher-overlay|dock)-.*$"
+    background-effect {
+        blur true
+        xray false
+    }
+}
+EOF
         echo 'include optional=true "./noctalia.kdl"' >> config.kdl
         cp config.kdl $out
       '';
