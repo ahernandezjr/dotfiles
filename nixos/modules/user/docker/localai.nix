@@ -2,5 +2,6 @@
 { config, lib, ... }:
 
 {
+  imports = [ ./llamaswap.nix ];
   config.userSettings.docker.containers.localai.enable = lib.mkDefault true;
 }

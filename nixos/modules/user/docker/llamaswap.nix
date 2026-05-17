@@ -1,6 +1,7 @@
-{ pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 let
+  cfg = config.userSettings.docker.containers.localai or { enable = false; };
   llamaswap = pkgs.writeShellApplication {
     name = "llamaswap";
     runtimeInputs = with pkgs; [ fzf docker-compose coreutils findutils gnused ];
@@ -39,5 +40,7 @@ let
   };
 in
 {
-  home.packages = [ llamaswap ];
+  config = lib.mkIf (cfg.enable or false) {
+    home.packages = [ llamaswap ];
+  };
 }
