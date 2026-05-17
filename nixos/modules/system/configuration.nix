@@ -117,6 +117,7 @@
     ghostty
     xwayland-satellite
     gh
+    jq
   ];
 
   programs.fish.enable = true;
