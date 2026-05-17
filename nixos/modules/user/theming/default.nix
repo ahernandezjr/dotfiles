@@ -32,11 +32,22 @@ in {
       package = config.home.pointerCursor.package;
       size = config.home.pointerCursor.size;
     };
+    iconTheme = {
+      name = "breeze-dark";
+      package = pkgs.kdePackages.breeze-icons;
+    };
+  };
+
+  qt = {
+    enable = true;
+    platformTheme.name = "gtk";
+    style.name = "adwaita-dark";
   };
 
   home.packages = [
     pkgs.matugen
     pkgs.qt6Packages.qt6ct
+    pkgs.kdePackages.breeze-icons
     pkgs.bibata-cursors
     pkgs.material-cursors
     pkgs.lyra-cursors

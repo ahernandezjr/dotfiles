@@ -100,6 +100,9 @@ in
         unrar
       ];
 
+      home.file.".local/share/icons/hicolor/scalable/apps/com.mitchellh.ghostty.svg".source = ./../../../../images/ghost.svg;
+      home.file.".local/share/icons/hicolor/scalable/apps/ghostty.svg".source = ./../../../../images/ghost.svg;
+
       # Allow HM to overwrite existing fastfetch config so activation doesn't abort.
       xdg.configFile."fastfetch/config.jsonc".force = true;
       programs.fastfetch = {

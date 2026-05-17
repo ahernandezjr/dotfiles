@@ -32,10 +32,10 @@ in
         "application/x-gzip" = archiveManager;
         "application/x-bzip2" = archiveManager;
 
-        "image/jpeg" = browser;
-        "image/png" = browser;
-        "image/gif" = browser;
-        "image/webp" = browser;
+        "image/jpeg" = [ "org.gnome.Loupe.desktop" ];
+        "image/png" = [ "org.gnome.Loupe.desktop" ];
+        "image/gif" = [ "org.gnome.Loupe.desktop" ];
+        "image/webp" = [ "org.gnome.Loupe.desktop" ];
 
         "video/mp4" = [ "mpv.desktop" "vlc.desktop" ];
         "video/mpeg" = [ "mpv.desktop" "vlc.desktop" ];

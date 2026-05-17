@@ -17,6 +17,11 @@ in
       file-roller
       p7zip
       unrar
+      loupe
+      grim
+      slurp
+      tesseract
+      wl-clipboard
     ];
     xdg.enable = true;
     xdg.userDirs = {
