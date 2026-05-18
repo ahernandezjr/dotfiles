@@ -17,10 +17,13 @@
       enable = true;
       sunshine.enable = true;
     };
-    vfio.enable = false; # Disabled for work laptop unless needed
+    vfio.enable = true; 
     cachyos-kernel.enable = true;
     browsers.brave.enable = true;
-    virtualization.enable = true;
+    virtualization = {
+      enable = true;
+      waydroid.enable = true;
+    };
     drivers = {
       peripherals.enable = true;
       lenovo-legion.enable = true;
@@ -28,10 +31,10 @@
   };
 
   # Prevent lid close from suspending and fix Nvidia Wayland suspend issues
-  services.logind = {
-    lidSwitch = "ignore";
-    lidSwitchExternalPower = "ignore";
-    lidSwitchDocked = "ignore";
+  services.logind.settings.Login = {
+    HandleLidSwitch = "ignore";
+    HandleLidSwitchExternalPower = "ignore";
+    HandleLidSwitchDocked = "ignore";
   };
 
   environment.variables = {

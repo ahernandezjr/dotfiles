@@ -118,7 +118,7 @@
     xwayland-satellite
     gh
     jq
-    inputs.agenix.packages.${pkgs.system}.default
+    inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 
   programs.fish.enable = true;
