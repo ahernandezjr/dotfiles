@@ -13,7 +13,10 @@
     development.postgresql.enable = true;
     niri.enable = true;
     nvidia.enable = true;
-    gaming.enable = true;
+    gaming = {
+      enable = true;
+      sunshine.enable = true;
+    };
     vfio.enable = false; # Disabled for work laptop unless needed
     cachyos-kernel.enable = true;
     browsers.brave.enable = true;

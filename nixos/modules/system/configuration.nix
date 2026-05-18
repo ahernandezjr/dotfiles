@@ -118,6 +118,7 @@
     xwayland-satellite
     gh
     jq
+    inputs.agenix.packages.${pkgs.system}.default
   ];
 
   programs.fish.enable = true;
@@ -132,10 +133,17 @@
 
   services.gvfs.enable = true;
 
+  services.openssh = {
+    enable = true;
+    settings.PasswordAuthentication = false;
+    settings.KbdInteractiveAuthentication = false;
+  };
+
   environment.sessionVariables = {
     EDITOR = "nvim";
     TERMINAL = "alacritty";
     SHELL = "fish";
+    NIXPKGS_ALLOW_UNFREE = "1";
   };
 
   system.stateVersion = "25.11";

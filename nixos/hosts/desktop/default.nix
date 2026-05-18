@@ -18,7 +18,10 @@
     development.postgresql.enable = true;
     niri.enable = true;
     nvidia.enable = true;
-    gaming.enable = true;
+    gaming = {
+      enable = true;
+      sunshine.enable = true;
+    };
     vfio.enable = true;
     cachyos-kernel.enable = true;
     browsers.brave.enable = true;

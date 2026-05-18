@@ -49,6 +49,11 @@
       url = "github:xddxdd/nix-cachyos-kernel/release";
     };
 
+    agenix = {
+      url = "github:ryantm/agenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     custom-pkgs = {
       url = "path:./private-stub";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -91,6 +96,7 @@
           ./modules/system
           inputs.niri.nixosModules.niri
           inputs.custom-pkgs.nixosModules.default
+          inputs.agenix.nixosModules.default
           ./hosts/${profile}/default.nix
           home-manager.nixosModules.home-manager
           {
