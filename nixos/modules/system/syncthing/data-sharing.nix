@@ -35,7 +35,7 @@
         };
         "work" = {
           # Device 2
-          id = "REPLACE-WITH-WORK-ID";
+          id = "B6SBSS4-M256RJE-WLXCBO2-NCEWR7G-SG6S3EA-PPTD2ME-ILHH432-3JYBWAB";
         };
         "laptop" = {
           id = "REPLACE-WITH-LAPTOP-ID";
