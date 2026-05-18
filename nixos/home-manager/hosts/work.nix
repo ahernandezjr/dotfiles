@@ -4,7 +4,10 @@
   imports = [ ../home.nix ];
 
   userSettings = {
-    gaming.enable = true;
+    gaming = {
+      enable = true;
+      sunshine.enable = true;
+    };
     cuda.enable = true; # Enabled to match desktop NVIDIA focus
     editors.enable = true;
     communication.enable = true;

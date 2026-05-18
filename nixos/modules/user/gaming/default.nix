@@ -7,6 +7,9 @@ in
   options = {
     userSettings.gaming = {
       enable = lib.mkEnableOption "Enable gaming-related packages and config";
+      sunshine = {
+        enable = lib.mkEnableOption "Sunshine user-level configuration (web app)";
+      };
     };
   };
 
@@ -54,6 +57,14 @@ in
         # ScopeBuddy (gamescope helper)
         (inputs.just-one-more-repo.packages.${pkgs.stdenv.hostPlatform.system}.scopebuddy)
       ];
+
+      xdg.desktopEntries.sunshine-ui = lib.mkIf cfg.sunshine.enable {
+        name = "Sunshine Web UI";
+        exec = "${pkgs.brave}/bin/brave --app=https://localhost:47990";
+        icon = "sunshine";
+        terminal = false;
+        categories = [ "Settings" "Game" "X-Gaming" ];
+      };
 
       home.file = {
         scb-config = {
