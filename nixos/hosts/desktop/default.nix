@@ -25,6 +25,7 @@
     vfio.enable = true;
     cachyos-kernel.enable = true;
     browsers.brave.enable = true;
+    virtualization.waydroid.enable = true;
     drivers.peripherals.enable = true;
   };
 }

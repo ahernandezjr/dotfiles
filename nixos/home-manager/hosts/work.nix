@@ -13,6 +13,7 @@
     communication.enable = true;
     utilities.enable = true;
     office.enable = true;
+    entertainment.enable = true;
     productivity = {
       enable = true;
       onedrive.enable = true;
