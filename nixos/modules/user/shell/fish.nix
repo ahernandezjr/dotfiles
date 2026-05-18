@@ -30,7 +30,7 @@ in
               set -l flake_path "$HOME/dotfiles/nixos"
               set -l flags ""
               if test -d $flake_path/pkgs-private/pkgs
-                  set flags --override-input custom-pkgs "git+file://$flake_path/pkgs-private"
+                  set flags --override-input custom-pkgs "path:$flake_path/pkgs-private"
               end
               
               if set -q argv[1]; and not string match -r "^-" -- $argv[1]
