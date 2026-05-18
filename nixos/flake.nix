@@ -55,7 +55,7 @@
     };
 
     custom-pkgs = {
-      url = "path:./private-stub";
+      url = "git+file:///home/alex/dotfiles/nixos/pkgs-private";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
