@@ -61,6 +61,13 @@
             "work"
           ];
         };
+        "Nix-Private-Pkgs" = {
+          path = "/home/alex/dotfiles/nixos/pkgs-private";
+          devices = [
+            "desktop"
+            "work"
+          ];
+        };
       };
     };
   };
