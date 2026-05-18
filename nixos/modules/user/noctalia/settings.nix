@@ -95,6 +95,18 @@
           showLabelsOnlyWhenOccupied = true;
           unfocusedIconsOpacity = 1;
         }
+        {
+          id = "plugin:privacy-indicator";
+          defaultSettings = {
+            activeColor = "primary";
+            enableToast = true;
+            hideInactive = true;
+            iconSpacing = 7;
+            inactiveColor = "none";
+            micFilterRegex = "";
+            removeMargins = false;
+          };
+        }
       ];
       left = [
         {
@@ -208,18 +220,6 @@
           iconColor = "none";
           showUnreadBadge = true;
           unreadBadgeColor = "primary";
-        }
-        {
-          id = "plugin:privacy-indicator";
-          defaultSettings = {
-            activeColor = "primary";
-            enableToast = true;
-            hideInactive = false;
-            iconSpacing = 4;
-            inactiveColor = "none";
-            micFilterRegex = "";
-            removeMargins = false;
-          };
         }
         {
           id = "SystemMonitor";

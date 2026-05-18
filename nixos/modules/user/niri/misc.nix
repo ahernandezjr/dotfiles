@@ -2,7 +2,7 @@
 { config, lib, term }: {
   spawn-at-startup = [
     { argv = [ "noctalia-shell" ]; }
-    { argv = [ "sh" "-lc" "sleep 3; noctalia-shell ipc call wallpaper random; noctalia-shell ipc call lockScreen lock" ]; }
+    { argv = [ "sh" "-lc" "noctalia-shell ipc call lockScreen lock; noctalia-shell ipc call wallpaper random;" ]; }
   ];
   prefer-no-csd = true;
   screenshot-path = null;
