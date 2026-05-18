@@ -54,6 +54,13 @@
             "vm"
           ];
         };
+        "Ryujinx-Config" = {
+          path = "/home/alex/.config/Ryujinx";
+          devices = [
+            "desktop"
+            "work"
+          ];
+        };
       };
     };
   };
