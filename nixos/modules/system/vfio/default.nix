@@ -86,13 +86,13 @@ in
             sleep 2
             
             # 6. Unload GPU drivers
-            modprobe -r nvidia_drm nvidia_modeset nvidia_uvm nvidia
+            modprobe -r nvidia_drm nvidia_modeset nvidia_uvm nvidia nvidia_gpu
             
             # 7. Detach GPU from host
             ${concatMapStringsSep "\n" (id: "virsh nodedev-detach pci_${replaceStrings ["." ":" "-"] ["_" "_" "_"] id}") cfg.pciBusIds}
             
-            # 8. Load VFIO
-            modprobe vfio-pci
+            # 8. Load VFIO with specific IDs
+            modprobe vfio-pci ids=${concatStringsSep "," cfg.gpuIds}
             
         elif [[ "$OPERATION" == "release" && "$SUB_OPERATION" == "end" ]]; then
             # 1. Reattach GPU to host

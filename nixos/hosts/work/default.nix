@@ -17,7 +17,11 @@
       enable = true;
       sunshine.enable = true;
     };
-    vfio.enable = true; 
+    vfio = {
+      enable = false;
+      gpuIds = [ "10de:2860" "10de:22bd" ];
+      pciBusIds = [ "0000:01:00.0" "0000:01:00.1" ];
+    };
     cachyos-kernel.enable = true;
     browsers.brave.enable = true;
     virtualization = {
