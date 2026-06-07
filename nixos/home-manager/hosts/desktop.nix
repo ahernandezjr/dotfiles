@@ -28,5 +28,6 @@
     networkmanager_dmenu
     pavucontrol
     wiremix
+    obsidian
   ];
 }
