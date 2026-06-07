@@ -37,12 +37,12 @@
           # Device 2
           id = "B6SBSS4-M256RJE-WLXCBO2-NCEWR7G-SG6S3EA-PPTD2ME-ILHH432-3JYBWAB";
         };
-        "laptop" = {
-          id = "REPLACE-WITH-LAPTOP-ID";
-        };
-        "vm" = {
-          id = "REPLACE-WITH-VM-ID";
-        };
+        # "laptop" = {
+        #   id = "REPLACE-WITH-LAPTOP-ID";
+        # };
+        # "vm" = {
+        #   id = "REPLACE-WITH-VM-ID";
+        # };
       };
       folders = {
         "Shared" = {
@@ -50,8 +50,8 @@
           devices = [
             "desktop"
             "work"
-            "laptop"
-            "vm"
+            # "laptop"
+            # "vm"
           ];
         };
         "Ryujinx-Config" = {

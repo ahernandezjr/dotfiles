@@ -1,5 +1,5 @@
 {
-  description = "Niri on Nixos";
+  description = "Niri on Nixos Unstable (26.05 era)";
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
