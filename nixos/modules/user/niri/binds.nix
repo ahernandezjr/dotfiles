@@ -95,6 +95,10 @@
       hotkey-overlay.title = "Trello";
       action.spawn-sh = "brave --app=https://trello.com";
     };
+    "MOD+ALT+E" = {
+      hotkey-overlay.title = "Excalidraw";
+      action.spawn-sh = "excalidraw";
+    };
     "MOD+ALT+M" = {
       hotkey-overlay.title = "Stremio";
       action.spawn-sh = "stremio";
