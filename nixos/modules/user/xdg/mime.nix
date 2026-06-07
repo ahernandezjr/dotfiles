@@ -20,6 +20,10 @@ in
 
         "application/pdf" = browser;
 
+        "application/epub+zip" = [ "com.github.johnfactotum.Foliate.desktop" ];
+        "application/x-mobipocket-ebook" = [ "com.github.johnfactotum.Foliate.desktop" ];
+        "application/x-fictionbook+xml" = [ "com.github.johnfactotum.Foliate.desktop" ];
+
         "inode/directory" = fileManager;
 
         "application/zip" = archiveManager;

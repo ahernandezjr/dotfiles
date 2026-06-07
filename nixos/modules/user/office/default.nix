@@ -6,14 +6,14 @@ in
 {
   options = {
     userSettings.office = {
-      enable = lib.mkEnableOption "Office and Document programs (LibreOffice, Calibre)";
+      enable = lib.mkEnableOption "Office and Document programs (LibreOffice, Foliate)";
     };
   };
 
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
       unstable.libreoffice
-      calibre
+      foliate
     ];
   };
 }
