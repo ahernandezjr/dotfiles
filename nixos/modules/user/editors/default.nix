@@ -2,6 +2,7 @@
 
 let
   cfg = config.userSettings.editors;
+  term = config.home.sessionVariables.TERMINAL or "ghostty";
   # Stub ftplugins so nvf's LSP configs (ts_ls, qmlls) don't trigger "Unknown filetype" warnings.
   nvfFiletypeStubs = pkgs.runCommand "nvf-ftplugin-stubs" { } ''
     mkdir -p $out/ftplugin
@@ -16,6 +17,17 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    xdg.desktopEntries.nvim = {
+      name = "Neovim";
+      genericName = "Text Editor";
+      comment = "Vim-fork focused on extensibility and usability";
+      exec = "${term} -e nvim %F";
+      icon = "nvim";
+      mimeType = [ "text/plain" ];
+      terminal = false;
+      categories = [ "Utility" "TextEditor" "Development" ];
+    };
+
     home.packages = with pkgs; [
       # Editors
       vscode
