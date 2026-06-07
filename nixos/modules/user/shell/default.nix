@@ -88,7 +88,8 @@ in
         settings = { show_banner = false; };
       };
       home.packages = with pkgs; [
-        btop
+        (btop.override { cudaSupport = true; })
+        nix-search-cli
         fd
         lazygit
         lazydocker
