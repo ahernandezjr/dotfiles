@@ -44,9 +44,11 @@ in
       "org/gnome/nautilus/preferences" = {
         default-folder-viewer = "list-view";
         search-view = "list-view";
+        show-directory-item-counts = "always";
       };
       "org/gnome/nautilus/list-view" = {
         use-tree-view = true;
+        default-visible-columns = [ "name" "size" "type" "date_modified" ];
       };
     };
   };

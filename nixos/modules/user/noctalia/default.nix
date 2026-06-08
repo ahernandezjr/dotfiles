@@ -23,6 +23,7 @@ let
     }
   else baseSettings;
 
+  jsonFormat = pkgs.formats.json { };
 in
 {
   imports = [ inputs.noctalia.homeModules.default ];
@@ -30,12 +31,33 @@ in
   config = {
     programs.noctalia-shell = {
       enable = true;
-      settings = finalSettings;
-      colors = baseColors;
-      plugins = basePlugins;
+      # Leave these empty so the home-manager module does not generate read-only config files
+      settings = { };
+      colors = { };
+      plugins = { };
     };
 
-    # Manage user-templates.toml separately
-    xdg.configFile."noctalia/user-templates.toml".source = ./../../../../config/noctalia/user-templates.toml;
+    # Copy files on activation instead of symlinking them to the Nix store.
+    # This keeps them writable so the wallpaper coloring and settings GUI work without read-only warnings.
+    home.activation.noctaliaWritableConfigs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      TARGET_DIR="$HOME/.config/noctalia"
+      mkdir -p "$TARGET_DIR"
+
+      copy_writable() {
+        local src="$1"
+        local dest="$TARGET_DIR/$2"
+        if [ -L "$dest" ]; then
+          rm "$dest"
+        fi
+        cp -f "$src" "$dest"
+        chmod +w "$dest"
+      }
+
+      copy_writable "${jsonFormat.generate "noctalia-settings.json" finalSettings}" "settings.json"
+      copy_writable "${jsonFormat.generate "noctalia-colors.json" baseColors}" "colors.json"
+      copy_writable "${jsonFormat.generate "noctalia-plugins.json" basePlugins}" "plugins.json"
+      copy_writable "${./../../../../config/noctalia/user-templates.toml}" "user-templates.toml"
+    '';
   };
 }
+
