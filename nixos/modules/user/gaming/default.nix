@@ -66,6 +66,24 @@ in
         categories = [ "Settings" "Game" "X-Gaming" ];
       };
 
+      xdg.desktopEntries."com.heroicgameslauncher.hgl" = {
+        name = "Heroic Games Launcher";
+        exec = "systemd-run --user --scope --description=\"Heroic Games Launcher\" ${pkgs.heroic}/bin/heroic %u";
+        icon = "com.heroicgameslauncher.hgl";
+        terminal = false;
+        categories = [ "Game" ];
+        mimeType = [ "x-scheme-handler/heroic" ];
+      };
+
+      xdg.desktopEntries.steam = {
+        name = "Steam";
+        exec = "systemd-run --user --scope --description=\"Steam\" steam %U";
+        icon = "steam";
+        terminal = false;
+        categories = [ "Network" "FileTransfer" "Game" ];
+        mimeType = [ "x-scheme-handler/steam" "x-scheme-handler/steamlink" ];
+      };
+
       home.file = {
         scb-config = {
           enable = true;
