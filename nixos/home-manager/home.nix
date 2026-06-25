@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, ... }:
+{ config, pkgs, inputs, lib, ... }:
 
 {
   imports = [
@@ -11,15 +11,15 @@
   home.stateVersion = "26.05";
 
   userSettings = {
-    name = "Alexander Hernandez";
-    email = "ahernandezjr0@gmail.com";
-    development.enable = true;
-    creativity.enable = true;
-    git.enable = true;
-    shell.enable = true;
-    shell.manageConfig = true;
-    browsers.enable = true;
-    xdg.enable = true;
+    name = lib.mkDefault "Alexander Hernandez";
+    email = lib.mkDefault "ahernandezjr0@gmail.com";
+    development.enable = lib.mkDefault true;
+    creativity.enable = lib.mkDefault true;
+    git.enable = lib.mkDefault true;
+    shell.enable = lib.mkDefault true;
+    shell.manageConfig = lib.mkDefault true;
+    browsers.enable = lib.mkDefault true;
+    xdg.enable = lib.mkDefault true;
   };
 
   home.file.".config/vim/.vimrc".source = ./config/vim/.vimrc;

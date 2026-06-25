@@ -7,4 +7,5 @@ in
 {
   "secrets/syncthing-password.age".publicKeys = [ alex_desktop alex_work desktop work ];
   "secrets/syncthing-user.age".publicKeys = [ alex_desktop alex_work desktop work ];
+  "secrets/obsidian-password.age".publicKeys = [ alex_desktop alex_work desktop work ];
 }
