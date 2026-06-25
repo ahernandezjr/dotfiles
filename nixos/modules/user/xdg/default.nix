@@ -8,15 +8,23 @@ in
   options = {
     userSettings.xdg = {
       enable = lib.mkEnableOption "Enable XDG user dirs and optional extra paths";
+      desktop = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Install desktop GUI utilities like nautilus, loupe, and screenshot tools";
+        };
+      };
     };
   };
 
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [ 
-      nautilus
-      file-roller
       p7zip
       unrar
+    ] ++ lib.optionals cfg.desktop.enable [
+      nautilus
+      file-roller
       loupe
       grim
       slurp

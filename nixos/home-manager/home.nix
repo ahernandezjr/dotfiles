@@ -20,6 +20,8 @@
     shell.manageConfig = lib.mkDefault true;
     browsers.enable = lib.mkDefault true;
     xdg.enable = lib.mkDefault true;
+    niri.enable = lib.mkDefault true;
+    noctalia.enable = lib.mkDefault true;
   };
 
   home.file.".config/vim/.vimrc".source = ./config/vim/.vimrc;

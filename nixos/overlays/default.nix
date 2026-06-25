@@ -8,8 +8,9 @@
   # You can change versions, add patches, set compilation flags, anything really.
   # https://nixos.wiki/wiki/Overlays
   modifications = final: prev: {
-    # Disable tests for openldap as they are flaky and failing in the current nixpkgs revision
-    openldap = prev.openldap.overrideAttrs (oldAttrs: {
+    # Disable tests for openldap as they are flaky and failing in the current nixpkgs revision.
+    # Bypass on aarch64 to ensure binary cache hits on resource-constrained target devices.
+    openldap = if final.stdenv.hostPlatform.isAarch64 then prev.openldap else prev.openldap.overrideAttrs (oldAttrs: {
       doCheck = false;
     });
   };

@@ -3,6 +3,7 @@
 { config, lib, pkgs, ... }:
 
 let
+  cfg = config.userSettings.niri;
   noctalia = cmd:
     [ "noctalia-shell" "ipc" "call" ]
     ++ (lib.splitString " " cmd);
@@ -16,8 +17,8 @@ let
       height = builtins.fromJSON (builtins.elemAt m 1);
       refresh = (builtins.fromJSON (builtins.elemAt m 2)) + 0.0;
     };
-  useDesktopOutputs = config.userSettings.niri.useDesktopOutputs;
-  useWorkOutputs = config.userSettings.niri.useWorkOutputs;
+  useDesktopOutputs = cfg.useDesktopOutputs;
+  useWorkOutputs = cfg.useWorkOutputs;
   outputsFragment = 
     if useDesktopOutputs then [ (import ./outputs.nix { inherit lib parseMode; }) ]
     else if useWorkOutputs then [ (import ./work-outputs.nix { inherit lib parseMode; }) ]
@@ -29,19 +30,23 @@ let
   in raw.programs.niri.settings or {};
 in
 {
-  options.userSettings.niri.useDesktopOutputs = lib.mkOption {
-    type = lib.types.bool;
-    default = false;
-    description = "Use the desktop multi-monitor output config for the external Dell (DP-3), INNOCN 32M2V (HDMI-A-3), and BenQ XL2420TE (DP-5) monitors. When false, niri auto-detects (single display for laptop/vm).";
+  options.userSettings.niri = {
+    enable = lib.mkEnableOption "Niri Wayland compositor user configuration";
+    
+    useDesktopOutputs = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Use the desktop multi-monitor output config for the external Dell (DP-3), INNOCN 32M2V (HDMI-A-3), and BenQ XL2420TE (DP-5) monitors. When false, niri auto-detects (single display for laptop/vm).";
+    };
+
+    useWorkOutputs = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Use the work laptop multi-monitor output config (eDP-1 scaled, and two DP-1/DP-2 1080p monitors).";
+    };
   };
 
-  options.userSettings.niri.useWorkOutputs = lib.mkOption {
-    type = lib.types.bool;
-    default = false;
-    description = "Use the work laptop multi-monitor output config (eDP-1 scaled, and two DP-1/DP-2 1080p monitors).";
-  };
-
-  config = {
+  config = lib.mkIf cfg.enable {
     # The niri-flake home-manager module (homeModules.config) uses xdg.configFile.niri-config.
     # We override it to add our noctalia.kdl include and raw blur config.
     xdg.configFile.niri-config = lib.mkForce {

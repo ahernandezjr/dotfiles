@@ -4,6 +4,7 @@
   imports = [ ../home.nix ];
 
   userSettings = {
+    noctalia.isPortable = true;
     gaming = {
       enable = true;
       sunshine.enable = true;

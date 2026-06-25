@@ -8,8 +8,8 @@
 
 {
   # LocalSend: cross-platform file transfer
-  programs.localsend.enable = true;
-  programs.localsend.openFirewall = true;
+  programs.localsend.enable = !config.systemSettings.minimal.enable;
+  programs.localsend.openFirewall = !config.systemSettings.minimal.enable;
 
   # Syncthing: continuous file synchronization
   services.syncthing = {

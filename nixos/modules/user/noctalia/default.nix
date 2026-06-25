@@ -1,9 +1,9 @@
 # Noctalia-shell: Home Manager config using native options.
 # Settings are declared as Nix attribute sets for a fully declarative approach.
-{ config, inputs, lib, pkgs, osConfig, ... }:
+{ config, inputs, lib, pkgs, ... }:
 
 let
-  isPortable = osConfig.networking.hostName == "work" || osConfig.networking.hostName == "laptop";
+  cfg = config.userSettings.noctalia;
   
   # Import base settings, colors, and plugins from Nix files
   baseSettings = import ./settings.nix;
@@ -16,8 +16,7 @@ let
   };
 
   # If portable, add the battery widget to the right side of the bar
-  # We do this by modifying the attribute set directly in Nix
-  finalSettings = if isPortable then 
+  finalSettings = if cfg.isPortable then 
     lib.recursiveUpdate baseSettings {
       bar.widgets.right = baseSettings.bar.widgets.right ++ [ batteryWidget ];
     }
@@ -28,7 +27,16 @@ in
 {
   imports = [ inputs.noctalia.homeModules.default ];
 
-  config = {
+  options.userSettings.noctalia = {
+    enable = lib.mkEnableOption "Noctalia shell configuration";
+    isPortable = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Enable battery widget for portable laptops/workstations";
+    };
+  };
+
+  config = lib.mkIf cfg.enable {
     programs.noctalia-shell = {
       enable = true;
       # Leave these empty so the home-manager module does not generate read-only config files
@@ -60,4 +68,3 @@ in
     '';
   };
 }
-
