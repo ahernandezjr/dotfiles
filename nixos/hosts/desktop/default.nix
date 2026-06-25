@@ -6,6 +6,11 @@
 
   users.users.alex.extraGroups = [ "gamemode" ];
 
+  swapDevices = [ { device = "/swap/swapfile"; } ];
+
+  boot.resumeDevice = "/dev/disk/by-uuid/00f2da24-f381-4e2b-9c26-6826b111dc3e";
+  boot.kernelParams = [ "resume_offset=88614144" ];
+
   systemSettings = {
     docker = {
       enable = true;

@@ -38,6 +38,7 @@ in
       powerManagement = {
         enable = true;
         finegrained = false;
+        kernelSuspendNotifier = false;
       };
 
       # Use the NVidia open source kernel module.
