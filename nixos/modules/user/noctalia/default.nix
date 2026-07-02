@@ -1,28 +1,13 @@
-# Noctalia-shell: Home Manager config using native options.
-# Settings are declared as Nix attribute sets for a fully declarative approach.
+# Noctalia: Home Manager config for Noctalia v5.
 { config, inputs, lib, pkgs, ... }:
 
 let
   cfg = config.userSettings.noctalia;
-  
-  # Import base settings, colors, and plugins from Nix files
-  baseSettings = import ./settings.nix;
   baseColors = import ./colors.nix;
-  basePlugins = import ./plugins.nix;
 
-  # Define the battery widget to be added for portable hosts
-  batteryWidget = {
-    id = "Battery";
-  };
-
-  # If portable, add the battery widget to the right side of the bar
-  finalSettings = if cfg.isPortable then 
-    lib.recursiveUpdate baseSettings {
-      bar.widgets.right = baseSettings.bar.widgets.right ++ [ batteryWidget ];
-    }
-  else baseSettings;
-
-  jsonFormat = pkgs.formats.json { };
+  endWidgets = [ "volume" "brightness" "tray" "notifications" "sysmon" ]
+    ++ lib.optional cfg.isPortable "battery"
+    ++ [ "clock" ];
 in
 {
   imports = [ inputs.noctalia.homeModules.default ];
@@ -37,34 +22,89 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    programs.noctalia-shell = {
+    programs.noctalia = {
       enable = true;
-      # Leave these empty so the home-manager module does not generate read-only config files
-      settings = { };
-      colors = { };
-      plugins = { };
+      package = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs (oldAttrs: {
+        postPatch = (oldAttrs.postPatch or "") + ''
+          substituteInPlace src/shell/hot_corners/hot_corners.cpp \
+            --replace-warn 'void HotCorners::onConfigReload() {' 'void HotCorners::onConfigReload() { if (m_config == nullptr) return;'
+        '';
+      });
+      settings = {
+        shell = {
+          ui_scale = 1.1;
+          font_family = "Roboto";
+          time_format = "{:%I:%M %p}";
+          telemetry_enabled = false;
+          avatar_path = "/home/alex/.face";
+          panel = {
+            transparency_mode = "glass";
+            launcher_placement = "floating";
+            launcher_position = "top_left";
+            clipboard_placement = "floating";
+            clipboard_position = "bottom_left";
+            control_center_placement = "attached";
+            control_center_position = "top_left";
+            wallpaper_placement = "attached";
+            wallpaper_position = "bottom_left";
+            session_placement = "floating";
+            session_position = "center";
+          };
+        };
+        theme = {
+          mode = "dark";
+          source = "wallpaper";
+          wallpaper_scheme = "m3-content";
+        };
+        location = {
+          auto_locate = false;
+          address = "Crown Point, IN";
+        };
+        weather = {
+          enabled = true;
+          unit = "fahrenheit";
+        };
+        wallpaper = {
+          directory = "/home/alex/Pictures/Wallpapers";
+          automation = {
+            enabled = true;
+            interval_minutes = 60;
+            order = "random";
+          };
+        };
+        bar.main = {
+          position = "left";
+          thickness = 34;
+          background_opacity = 0.83;
+          radius = 12;
+          radius_top_left = -80;
+          radius_bottom_right = -80;
+          radius_top_right = -10;
+          radius_bottom_left = -10;
+          margin_ends = 0;
+          margin_edge = 0;
+          widget_spacing = 6;
+          capsule = true;
+          start = [ "control-center" "active_window" "media" ];
+          center = [ "workspaces" ];
+          end = endWidgets;
+        };
+        widget = {
+          clock = {
+            format = "%I:%M %p\n%b %d";
+            vertical_format = "%m\n%d\n—\n%H\n%M";
+          };
+        };
+        hooks = {
+          started = [
+            "noctalia msg session lock"
+            "noctalia msg wallpaper-random"
+          ];
+        };
+      };
+      customPalettes = {
+        colors = baseColors;
+      };
     };
-
-    # Copy files on activation instead of symlinking them to the Nix store.
-    # This keeps them writable so the wallpaper coloring and settings GUI work without read-only warnings.
-    home.activation.noctaliaWritableConfigs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      TARGET_DIR="$HOME/.config/noctalia"
-      mkdir -p "$TARGET_DIR"
-
-      copy_writable() {
-        local src="$1"
-        local dest="$TARGET_DIR/$2"
-        if [ -L "$dest" ]; then
-          rm "$dest"
-        fi
-        cp -f "$src" "$dest"
-        chmod +w "$dest"
-      }
-
-      copy_writable "${jsonFormat.generate "noctalia-settings.json" finalSettings}" "settings.json"
-      copy_writable "${jsonFormat.generate "noctalia-colors.json" baseColors}" "colors.json"
-      copy_writable "${jsonFormat.generate "noctalia-plugins.json" basePlugins}" "plugins.json"
-      copy_writable "${./../../../../config/noctalia/user-templates.toml}" "user-templates.toml"
-    '';
   };
 }

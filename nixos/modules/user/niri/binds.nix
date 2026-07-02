@@ -10,15 +10,15 @@
     };
     "MOD+SPACE" = {
       hotkey-overlay.title = "Noctalia Launcher";
-      action.spawn = noctalia "launcher toggle";
+      action.spawn = noctalia "panel-toggle launcher";
     };
     "MOD+V" = {
       hotkey-overlay.title = "Clipboard History";
-      action.spawn = noctalia "launcher clipboard";
+      action.spawn = noctalia "panel-toggle clipboard";
     };
     "MOD+ESCAPE" = {
       hotkey-overlay.title = "Session Menu";
-      action.spawn = noctalia "sessionMenu toggle";
+      action.spawn = noctalia "panel-toggle session";
     };
     "MOD+W" = { action."close-window" = [ ]; };
     "MOD+TAB" = { action."focus-workspace-previous" = [ ]; };
@@ -109,11 +109,11 @@
     };
     "MOD+ALT+SPACE" = {
       hotkey-overlay.title = "Noctalia Control Center";
-      action.spawn = noctalia "controlCenter toggle";
+      action.spawn = noctalia "panel-toggle control-center";
     };
     "MOD+ALT+S" = {
       hotkey-overlay.title = "Noctalia Settings";
-      action.spawn = noctalia "settings toggle";
+      action.spawn = noctalia "settings-toggle";
     };
 
     # ─── Monitor (Super + Shift + Alt + Any) ───
@@ -167,7 +167,7 @@
     "MOD+F11" = { action."fullscreen-window" = [ ]; };
     "MOD+CTRL+SPACE" = {
       hotkey-overlay.title = "Toggle Wallpaper Selector";
-      action.spawn = noctalia "wallpaper toggle";
+      action.spawn = noctalia "panel-toggle wallpaper";
     };
 
     # ─── QoL & OCR (Grim/Slurp/Tesseract) ───
@@ -199,15 +199,15 @@
     };
     "XF86AudioRaiseVolume" = {
       allow-when-locked = true;
-      action.spawn = noctalia "volume increase";
+      action.spawn = noctalia "volume-up";
     };
     "XF86AudioLowerVolume" = {
       allow-when-locked = true;
-      action.spawn = noctalia "volume decrease";
+      action.spawn = noctalia "volume-down";
     };
     "XF86AudioMute" = {
       allow-when-locked = true;
-      action.spawn = noctalia "volume muteOutput";
+      action.spawn = noctalia "volume-mute";
     };
     "XF86AudioNext" = {
       allow-when-locked = true;
@@ -215,7 +215,7 @@
     };
     "XF86AudioPause" = {
       allow-when-locked = true;
-      action.spawn = noctalia "media pause";
+      action.spawn = noctalia "media stop";
     };
     "XF86AudioPlay" = {
       allow-when-locked = true;

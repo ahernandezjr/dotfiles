@@ -1,8 +1,7 @@
 # spawn-at-startup, prefer-no-csd, screenshot-path, environment, hotkey-overlay
 { config, lib, term }: {
   spawn-at-startup = [
-    { argv = [ "noctalia-shell" ]; }
-    { argv = [ "sh" "-lc" "noctalia-shell ipc call lockScreen lock; noctalia-shell ipc call wallpaper random;" ]; }
+    { argv = [ "noctalia" ]; }
   ];
   prefer-no-csd = true;
   screenshot-path = null;

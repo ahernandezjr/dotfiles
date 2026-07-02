@@ -19,15 +19,9 @@
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.noctalia-qs.follows = "noctalia-qs";
     };
 
-    noctalia-qs = {
-      url = "github:noctalia-dev/noctalia-qs";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    millennium.url = "github:SteamClientHomebrew/Millennium/19741152e4237810141a0f18868a6993939e556a?dir=packages/nix";
+    millennium.url = "github:SteamClientHomebrew/Millennium?dir=packages/nix";
 
     nvf = {
       url = "github:NotAShelf/nvf";
@@ -81,6 +75,9 @@
         config = {
           allowUnfree = true;
           segger-jlink.acceptLicense = true;
+          permittedInsecurePackages = [
+            "pnpm-10.29.2"
+          ];
         };
         overlays = [
           ourOverlays.additions
@@ -104,6 +101,9 @@
             config = {
               allowUnfree = true;
               segger-jlink.acceptLicense = true;
+              permittedInsecurePackages = [
+                "pnpm-10.29.2"
+              ];
             };
             overlays = [
               ourOverlays.additions
