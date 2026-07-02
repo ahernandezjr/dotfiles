@@ -55,6 +55,12 @@ in
           mode = "dark";
           source = "wallpaper";
           wallpaper_scheme = "m3-content";
+          templates = {
+            enable_builtin_templates = true;
+            builtin_ids = [ "btop" "gtk3" "gtk4" "ghostty" "niri" "qt" ];
+            enable_community_templates = true;
+            community_ids = [ "neovim" "obsidian" "discord" "steam" ];
+          };
         };
         location = {
           auto_locate = false;
