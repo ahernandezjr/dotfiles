@@ -51,8 +51,8 @@ in
         enableBashIntegration = true;
         defaultCommand = "fd --type f";
         defaultOptions = [ "--height 40%" "--layout=reverse-list" "--border" ];
-        fileWidgetCommand = "fd --type f";
-        changeDirWidgetCommand = "fd --type d";
+        fileWidget.command = "fd --type f";
+        changeDirWidget.command = "fd --type d";
         tmux.enableShellIntegration = true;
         tmux.shellIntegrationOptions = [ "-d 40%" ];
       };
