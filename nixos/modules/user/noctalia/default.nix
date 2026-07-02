@@ -38,9 +38,9 @@ in
           telemetry_enabled = false;
           avatar_path = "/home/alex/.face";
           panel = {
-            transparency_mode = "glass";
+            transparency_mode = "soft";
             launcher_placement = "floating";
-            launcher_position = "top_left";
+            launcher_position = "bottom_center";
             clipboard_placement = "floating";
             clipboard_position = "bottom_left";
             control_center_placement = "attached";
@@ -74,9 +74,10 @@ in
           directory = "/home/alex/Pictures/Wallpapers";
           automation = {
             enabled = true;
-            interval_minutes = 60;
+            interval_seconds = 3600;
             order = "random";
           };
+          transition_on_startup = true;
         };
         bar.main = {
           position = "left";
@@ -100,6 +101,10 @@ in
             format = "%I:%M %p\n%b %d";
             vertical_format = "%m\n%d\n—\n%H\n%M";
           };
+        };
+        launcher = { 
+          categories = false;
+          session_search = true; 
         };
         hooks = {
           started = [
