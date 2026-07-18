@@ -37,6 +37,10 @@
           # Device 2 (former work laptop)
           id = "B6SBSS4-M256RJE-WLXCBO2-NCEWR7G-SG6S3EA-PPTD2ME-ILHH432-3JYBWAB";
         };
+        "phone" = {
+          # Android Device
+          id = "BMOVJQX-Z4YDKHP-VZE7FL5-H5H4LY2-4E3PQ2B-DI7QMVT-HMMWJGJ-TYC4RAI";
+        };
       };
       folders = {
         "Shared" = {
@@ -44,6 +48,7 @@
           devices = [
             "desktop"
             "laptop"
+            "phone"
           ];
         };
         "Ryujinx-Config" = {
