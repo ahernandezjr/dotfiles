@@ -24,6 +24,7 @@ in
         # Optimizers and Utils
         mangohud
         protonup-qt
+        protontricks
         vulkan-tools
 
         deadlock-mod-manager

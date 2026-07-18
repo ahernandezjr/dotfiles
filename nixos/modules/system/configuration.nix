@@ -12,12 +12,16 @@
         limine = {
           enable = lib.mkDefault (!config.systemSettings.minimal.enable);
           efiSupport = lib.mkDefault (!config.systemSettings.minimal.enable);
-          secureBoot.enable = lib.mkDefault (!config.systemSettings.minimal.enable);
+          secureBoot = {
+            enable = lib.mkDefault (!config.systemSettings.minimal.enable);
+            autoGenerateKeys = lib.mkDefault (!config.systemSettings.minimal.enable);
+            autoEnrollKeys.enable = lib.mkDefault (!config.systemSettings.minimal.enable);
+          };
         };  
         grub.enable = lib.mkDefault false;
       };
 
-      supportedFilesystems = lib.mkDefault [ "btrfs" "ext" "ntfs" ];
+      supportedFilesystems = lib.mkDefault [ "btrfs" "ext" "ntfs" "fuse" ];
     };
 
     hardware = {

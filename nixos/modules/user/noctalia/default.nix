@@ -46,7 +46,7 @@ in
       targetSym = sym;
     }
   }
-  sym = targetSym;'
+  return targetSym == sym && chord.modifiers == modifiers;'
         '';
       });
       settings = {
@@ -134,7 +134,7 @@ in
         widget = {
           clock = {
             format = "%I:%M %p\n%b %d";
-            vertical_format = "%m\n%d\n—\n%H\n%M";
+            vertical_format = "%H\n%M\n—\n%m\n%d";
           };
         };
         launcher = { 

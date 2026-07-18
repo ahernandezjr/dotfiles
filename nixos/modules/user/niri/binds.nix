@@ -57,6 +57,7 @@
     "MOD+SHIFT+8" = { action."move-column-to-workspace" = 8; };
     "MOD+SHIFT+9" = { action."move-column-to-workspace" = 9; };
     "MOD+SHIFT+P" = { action."power-off-monitors" = [ ]; };
+    "MOD+SHIFT+F" = { action."toggle-window-floating" = [ ]; };
 
     # ─── Programs (Super + Alt + Any) ───
     "MOD+ALT+B" = {

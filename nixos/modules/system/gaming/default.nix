@@ -28,6 +28,7 @@ in
     environment.systemPackages = with pkgs; [
       gamescope-wsi # Required for HDR to work
       steam-run
+      fuse
     ];
 
     environment.sessionVariables = {
