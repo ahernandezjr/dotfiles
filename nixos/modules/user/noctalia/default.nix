@@ -136,6 +136,11 @@ in
             format = "%I:%M %p\n%b %d";
             vertical_format = "%H\n%M\n—\n%m\n%d";
           };
+        } // lib.optionalAttrs cfg.isPortable {
+          battery = {
+            type = "battery";
+            show_label = false;
+          };
         };
         launcher = { 
           categories = false;

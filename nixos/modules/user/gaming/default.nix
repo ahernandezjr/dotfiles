@@ -69,7 +69,13 @@ in
 
       xdg.desktopEntries."com.heroicgameslauncher.hgl" = {
         name = "Heroic Games Launcher";
-        exec = "systemd-run --user --scope --description=\"Heroic Games Launcher\" ${pkgs.heroic}/bin/heroic %u";
+        exec = "systemd-run --user --scope --description=\"Heroic Games Launcher\" ${pkgs.writeShellScript "heroic-wrapper" ''
+          if command -v nvidia-offload >/dev/null 2>&1; then
+            exec nvidia-offload ${pkgs.heroic}/bin/heroic "$@"
+          else
+            exec ${pkgs.heroic}/bin/heroic "$@"
+          fi
+        ''} %u";
         icon = "com.heroicgameslauncher.hgl";
         terminal = false;
         categories = [ "Game" ];
@@ -78,7 +84,13 @@ in
 
       xdg.desktopEntries.steam = {
         name = "Steam";
-        exec = "systemd-run --user --scope --description=\"Steam\" steam %U";
+        exec = "systemd-run --user --scope --description=\"Steam\" ${pkgs.writeShellScript "steam-wrapper" ''
+          if command -v nvidia-offload >/dev/null 2>&1; then
+            exec nvidia-offload steam "$@"
+          else
+            exec steam "$@"
+          fi
+        ''} %U";
         icon = "steam";
         terminal = false;
         categories = [ "Network" "FileTransfer" "Game" ];

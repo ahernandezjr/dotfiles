@@ -31,41 +31,33 @@
       devices = {
         "desktop" = {
           # Device 1
-          id = "GGIL74E-CAJM5ET-G3JSLBP-P2IIP7M-WEFVXTQ-ZXM522W-N2FA4BR-YAZXHAB";
+          id = "XIXQ3S6-7CO6V3C-3ZKVXRD-Y2DJIOI-DEB5OJR-UH6BZYP-3OPTN2U-HCSXHQT";
         };
-        "work" = {
-          # Device 2
+        "laptop" = {
+          # Device 2 (former work laptop)
           id = "B6SBSS4-M256RJE-WLXCBO2-NCEWR7G-SG6S3EA-PPTD2ME-ILHH432-3JYBWAB";
         };
-        # "laptop" = {
-        #   id = "REPLACE-WITH-LAPTOP-ID";
-        # };
-        # "vm" = {
-        #   id = "REPLACE-WITH-VM-ID";
-        # };
       };
       folders = {
         "Shared" = {
           path = "/home/alex/Shared";
           devices = [
             "desktop"
-            "work"
-            # "laptop"
-            # "vm"
+            "laptop"
           ];
         };
         "Ryujinx-Config" = {
           path = "/home/alex/.config/Ryujinx";
           devices = [
             "desktop"
-            "work"
+            "laptop"
           ];
         };
         "Nix-Private-Pkgs" = {
           path = "/home/alex/dotfiles/nixos/pkgs-private";
           devices = [
             "desktop"
-            "work"
+            "laptop"
           ];
         };
       };
@@ -86,5 +78,13 @@
   age.secrets.syncthing-user = {
     file = ../../../secrets/syncthing-user.age;
     owner = "alex";
+  };
+
+  # Delay Syncthing startup until the home directory partition is fully mounted.
+  # This prevents a race condition on boot where Syncthing starts too early,
+  # finds a blank /home/alex/ path on the root partition, and regenerates new keys.
+  systemd.services.syncthing = {
+    after = [ "home.mount" ];
+    requires = [ "home.mount" ];
   };
 }

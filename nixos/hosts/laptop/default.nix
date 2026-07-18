@@ -4,11 +4,51 @@
 
   networking.hostName = "laptop";
 
+  users.users.alex.extraGroups = [ "gamemode" ];
+
   systemSettings = {
-    docker.enable = true;
+    # Docker is explicitly omitted or disabled to fulfill "no docker containers"
+    docker.enable = false;
+
     development.postgresql.enable = true;
     niri.enable = true;
+    nvidia = {
+      enable = true;
+      prime = {
+        enable = true;
+        intelBusId = "PCI:0:2:0";
+        nvidiaBusId = "PCI:1:0:0";
+      };
+    };
+    gaming = {
+      enable = true;
+      sunshine.enable = true;
+    };
+    vfio = {
+      enable = false;
+      gpuIds = [ "10de:2860" "10de:22bd" ];
+      pciBusIds = [ "0000:01:00.0" "0000:01:00.1" ];
+    };
+    cachyos-kernel.enable = true;
+    browsers.brave.enable = true;
+    virtualization = {
+      enable = true;
+      waydroid.enable = true;
+    };
+    drivers = {
+      peripherals.enable = true;
+      lenovo-legion.enable = true;
+    };
   };
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "sd_mod" ];
+  # Prevent lid close from suspending and fix Nvidia Wayland suspend issues
+  services.logind.settings.Login = {
+    HandleLidSwitch = "ignore";
+    HandleLidSwitchExternalPower = "ignore";
+    HandleLidSwitchDocked = "ignore";
+  };
+
+  environment.variables = {
+    SYSTEMD_SLEEP_FREEZE_USER_SESSIONS = "false";
+  };
 }

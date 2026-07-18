@@ -6,6 +6,24 @@ in
 {
   options.systemSettings.nvidia = {
     enable = lib.mkEnableOption "NVIDIA drivers";
+    prime = {
+      enable = lib.mkEnableOption "NVIDIA Prime offload support";
+      intelBusId = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = "PCI:0:2:0";
+        description = "Bus ID of the Intel GPU";
+      };
+      amdgpuBusId = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Bus ID of the AMD GPU";
+      };
+      nvidiaBusId = lib.mkOption {
+        type = lib.types.str;
+        default = "PCI:1:0:0";
+        description = "Bus ID of the NVIDIA GPU";
+      };
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -37,9 +55,19 @@ in
       # Enable to avoid niri blackscreen on reboot
       powerManagement = {
         enable = true;
-        finegrained = false;
+        finegrained = cfg.prime.enable;
         kernelSuspendNotifier = false;
       };
+
+      prime = lib.mkIf cfg.prime.enable (lib.filterAttrs (n: v: v != null) {
+        offload = {
+          enable = true;
+          enableOffloadCmd = true;
+        };
+        intelBusId = cfg.prime.intelBusId;
+        amdgpuBusId = cfg.prime.amdgpuBusId;
+        nvidiaBusId = cfg.prime.nvidiaBusId;
+      });
 
       # Use the NVidia open source kernel module.
       open = true;
@@ -66,8 +94,8 @@ in
       # };
     };
 
-    # Add environment variables for Wayland sessions
-    environment.sessionVariables = {
+    # Add environment variables for Wayland sessions (only when not in Prime mode)
+    environment.sessionVariables = lib.mkIf (!cfg.prime.enable) {
       LIBVA_DRIVER_NAME = "nvidia";
       GBM_BACKEND = "nvidia-drm";
       __GLX_VENDOR_LIBRARY_NAME = "nvidia";
