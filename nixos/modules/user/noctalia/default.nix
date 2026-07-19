@@ -83,6 +83,14 @@ in
               }
               { action = "reboot"; shortcut = "5"; }
               { action = "shutdown"; shortcut = "6"; variant = "destructive"; }
+              {
+                action = "command";
+                label = "Windows";
+                glyph = "windows";
+                command = "/run/wrappers/bin/sudo /run/current-system/sw/bin/rb windows";
+                shortcut = "w";
+                variant = "destructive";
+              }
             ];
           };
         };

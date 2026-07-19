@@ -127,6 +127,7 @@
       inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
     ] ++ lib.optionals (!config.systemSettings.minimal.enable) [
       sbctl
+      efibootmgr
       alacritty
       ghostty
       xwayland-satellite
@@ -156,6 +157,7 @@
       SHELL = "fish";
       NIXPKGS_ALLOW_UNFREE = "1";
     };
+
 
     system.stateVersion = "26.05";
   };

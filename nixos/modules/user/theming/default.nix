@@ -18,6 +18,7 @@ let
   niriOutputPath = "${repoPath}/nixos/modules/user/niri/matugen-colors.nix";
 in {
   home.pointerCursor = {
+    enable = true;
     name = "Vimix-cursors";
     package = pkgs.vimix-cursors;
     size = 32;
