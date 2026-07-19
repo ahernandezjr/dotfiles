@@ -9,6 +9,7 @@
   config = {
     boot = {
       loader = {
+        efi.canTouchEfiVariables = lib.mkDefault true;
         limine = {
           enable = lib.mkDefault (!config.systemSettings.minimal.enable);
           efiSupport = lib.mkDefault (!config.systemSettings.minimal.enable);
