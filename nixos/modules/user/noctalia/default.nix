@@ -89,7 +89,7 @@ in
                 glyph = "windows";
                 command = "/run/wrappers/bin/sudo /run/current-system/sw/bin/rb windows";
                 shortcut = "w";
-                variant = "destructive";
+                variant = "secondary";
               }
             ];
           };
