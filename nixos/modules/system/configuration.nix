@@ -158,6 +158,12 @@
       NIXPKGS_ALLOW_UNFREE = "1";
     };
 
+    # Raise open file limits (ulimit -n) globally for Steam/Proton/Wine
+    systemd.settings.Manager.DefaultLimitNOFILE = "524288";
+    systemd.user.settings.Manager.DefaultLimitNOFILE = "524288";
+    security.pam.loginLimits = [
+      { domain = "*"; type = "-"; item = "nofile"; value = "524288"; }
+    ];
 
     system.stateVersion = "26.05";
   };
