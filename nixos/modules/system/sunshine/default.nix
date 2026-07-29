@@ -51,5 +51,17 @@ in
         userServices = true;
       };
     };
+
+    # Automatically fix read-only permissions on apps.json copied from Nix store
+    systemd.user.services.ensure-sunshine-writable = {
+      description = "Ensure Sunshine apps.json is writable";
+      before = [ "sunshine.service" ];
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = "${pkgs.bash}/bin/bash -c 'if [ -f %h/.config/sunshine/apps.json ]; then chmod 644 %h/.config/sunshine/apps.json; fi'";
+      };
+    };
+
+    systemd.user.services.sunshine.wants = [ "ensure-sunshine-writable.service" ];
   };
 }
