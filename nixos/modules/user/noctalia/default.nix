@@ -50,12 +50,17 @@ in
         '';
       });
       settings = {
-        shell = {
+        accessibility = {
           ui_scale = 1.1;
+        };
+        shell = {
           font_family = "Roboto";
           time_format = "{:%I:%M %p}";
           telemetry_enabled = false;
           avatar_path = "/home/alex/.face";
+          launcher = {
+            categories = false;
+          };
           panel = {
             transparency_mode = "soft";
             launcher_placement = "floating";
@@ -127,10 +132,11 @@ in
           thickness = 34;
           background_opacity = 0.83;
           radius = 12;
-          radius_top_left = -80;
-          radius_bottom_right = -80;
-          radius_top_right = -10;
-          radius_bottom_left = -10;
+          concave_edge_corners = true;
+          radius_top_left = 0;
+          radius_bottom_left = 0;
+          radius_top_right = 12;
+          radius_bottom_right = 12;
           margin_ends = 0;
           margin_edge = 0;
           widget_spacing = 6;
@@ -150,124 +156,11 @@ in
             show_label = false;
           };
         };
-        launcher = { 
-          categories = false;
-          session_search = true; 
-        };
         hooks = {
           started = [
             "noctalia msg session lock"
             "noctalia msg wallpaper-random"
           ];
-        };
-        lockscreen_widgets = {
-          enabled = true;
-          schema_version = 2;
-          widget_order = [
-            "lockscreen-login-box@DP-5"
-            "lockscreen-login-box@HDMI-A-3"
-            "lockscreen-login-box@DP-3"
-            "lockscreen-widget-0000000000000002"
-            "lockscreen-widget-0000000000000003"
-            "lockscreen-widget-0000000000000004"
-          ];
-          grid = {
-            cell_size = 16;
-            major_interval = 4;
-            visible = true;
-          };
-          widget = {
-            "lockscreen-login-box@DP-3" = {
-              box_height = 70.0;
-              box_width = 400.0;
-              cx = 1280.0;
-              cy = 1321.0;
-              output = "DP-3";
-              rotation = 0.0;
-              type = "login_box";
-              settings = {
-                background_color = "surface_variant";
-                background_opacity = 0.88;
-                background_radius = 12.0;
-                input_opacity = 1.0;
-                input_radius = 6.0;
-                show_caps_lock = true;
-                show_keyboard_layout = true;
-                show_login_button = true;
-                show_password_hint = true;
-              };
-            };
-            "lockscreen-login-box@DP-5" = {
-              box_height = 70.0;
-              box_width = 400.0;
-              cx = 540.0;
-              cy = 1801.0;
-              output = "DP-5";
-              rotation = 0.0;
-              type = "login_box";
-              settings = {
-                background_color = "surface_variant";
-                background_opacity = 0.88;
-                background_radius = 12.0;
-                input_opacity = 1.0;
-                input_radius = 6.0;
-                show_caps_lock = true;
-                show_keyboard_layout = true;
-                show_login_button = true;
-                show_password_hint = true;
-              };
-            };
-            "lockscreen-login-box@HDMI-A-3" = {
-              box_height = 70.0;
-              box_width = 400.0;
-              cx = 1536.0;
-              cy = 1411.0;
-              output = "HDMI-A-3";
-              rotation = 0.0;
-              type = "login_box";
-              settings = {
-                background_color = "surface_variant";
-                background_opacity = 0.88;
-                background_radius = 12.0;
-                input_opacity = 1.0;
-                input_radius = 6.0;
-                show_caps_lock = true;
-                show_keyboard_layout = true;
-                show_login_button = true;
-                show_password_hint = true;
-              };
-            };
-            lockscreen-widget-0000000000000002 = {
-              box_height = 96.0;
-              box_width = 224.0;
-              cx = 1404.0;
-              cy = 1504.5;
-              output = "HDMI-A-3";
-              rotation = 0.0;
-              type = "clock";
-            };
-            lockscreen-widget-0000000000000003 = {
-              box_height = 96.0;
-              box_width = 224.0;
-              cx = 1664.0;
-              cy = 1504.199951171875;
-              output = "HDMI-A-3";
-              rotation = 0.0;
-              type = "weather";
-            };
-            lockscreen-widget-0000000000000004 = {
-              box_height = 224.0;
-              box_width = 224.0;
-              cx = 1536.0;
-              cy = 1248.0;
-              output = "HDMI-A-3";
-              rotation = 0.0;
-              type = "fancy_audio_visualizer";
-              settings = {
-                background = false;
-              };
-            };
-          };
         };
       };
       customPalettes = {
