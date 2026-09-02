@@ -123,7 +123,13 @@ in
             ];
             ExecStart = pkgs.writeShellScript "docker-compose-${name}-up" ''
               if ! ${pkgs.docker-compose}/bin/docker-compose up -d 2>/tmp/docker-compose-${name}.err; then
-                if grep -q "Conflict. The container name" /tmp/docker-compose-${name}.err; then
+                if grep -q -E "network .* not found|failed to set up container networking" /tmp/docker-compose-${name}.err; then
+                  echo "--------------------------------------------------------------------------------"
+                  echo "WARNING: Docker network mismatch detected for project: ${name}. Recreating network..."
+                  echo "--------------------------------------------------------------------------------"
+                  ${pkgs.docker-compose}/bin/docker-compose down
+                  ${pkgs.docker-compose}/bin/docker-compose up -d
+                elif grep -q "Conflict. The container name" /tmp/docker-compose-${name}.err; then
                   echo "--------------------------------------------------------------------------------"
                   echo "WARNING: Docker container conflict detected for project: ${name}"
                   echo "The containers already exist but aren't managed by this project's current state."
