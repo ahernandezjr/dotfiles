@@ -237,7 +237,12 @@ def run_tui(stdscr):
     tab_mode = 0  # 0: All, 1: Common, 2: Unique, 3: Curated
     cat_filter_idx = 0
     show_help_overlay = False
-    status_msg = "Curator Active. Use hotkeys (press [h/?] for Help Window)"
+    
+    # 2 SEPARATE STATUS LINES:
+    # 1) last_action: Dedicated ONLY to showing the output of the last action taken (never overwritten by help text)
+    # 2) info_msg: Dedicated to general status info / help hint
+    last_action = "None (No actions performed yet)"
+    info_msg = "Curator Active | Press [h/?] for Full Hotkey Help Window"
 
     while True:
         stdscr.clear()
@@ -286,7 +291,7 @@ def run_tui(stdscr):
 
             filtered_mods.append(m)
 
-        # Draw Title Header
+        # Draw Title Header (Line 0)
         tab_names = ["All Mods", "Common", "Unique", "⭐ Curated Selection"]
         header_text = f"⚡ Wabbajack Curator | Modlists: {len(list_ids)} | Unique Mods: {len(all_mods)} | View: [{tab_names[tab_mode]}] | Cat: [{CATEGORIES_LIST[cat_filter_idx]}]"
         stdscr.attron(curses.color_pair(1) | curses.A_BOLD)
@@ -298,9 +303,9 @@ def run_tui(stdscr):
         stdscr.addstr(1, 0, hotkey_bar[:width-1], curses.color_pair(4) | curses.A_BOLD)
         stdscr.hline(2, 0, "-", width)
 
-        # List Area Dimensions
+        # List Area Dimensions (adjusted for 2 status lines at bottom)
         list_top = 3
-        list_height = height - 8
+        list_height = height - 9
         if list_height < 3:
             list_height = 3
 
@@ -316,7 +321,7 @@ def run_tui(stdscr):
         for i in range(list_height):
             idx = top_scroll + i
             row_y = list_top + i
-            if row_y >= height - 5:
+            if row_y >= height - 6:
                 break
             if idx < len(filtered_mods):
                 m = filtered_mods[idx]
@@ -352,7 +357,7 @@ def run_tui(stdscr):
                     stdscr.attroff(status_color)
 
         # Draw Divider & Details Footer Box
-        footer_top = height - 5
+        footer_top = height - 6
         stdscr.hline(footer_top, 0, "=", width)
 
         if filtered_mods and selected_index < len(filtered_mods):
@@ -367,8 +372,14 @@ def run_tui(stdscr):
             stdscr.addstr(footer_top + 2, 0, detail_2[:width-1], curses.color_pair(4))
             stdscr.addstr(footer_top + 3, 0, detail_3[:width-1], curses.color_pair(0))
 
-        # Bottom Action Feedback Bar (Dedicated to showing action output)
-        stdscr.addstr(height - 1, 0, f" ACTION STATUS: {status_msg}".ljust(width-1)[:width-1], curses.color_pair(2) | curses.A_BOLD)
+        # --- 2 SEPARATE STATUS LINES AT BOTTOM ---
+        # Line height - 2: LAST ACTION (Never overwritten by help text)
+        action_bar_text = f" LAST ACTION: {last_action}".ljust(width-1)[:width-1]
+        stdscr.addstr(height - 2, 0, action_bar_text, curses.color_pair(2) | curses.A_BOLD)
+
+        # Line height - 1: INFO / HELP HINT
+        info_bar_text = f" INFO: {info_msg}".ljust(width-1)[:width-1]
+        stdscr.addstr(height - 1, 0, info_bar_text, curses.color_pair(1) | curses.A_REVERSE)
 
         # Render Help Overlay Window if toggled
         if show_help_overlay:
@@ -377,7 +388,6 @@ def run_tui(stdscr):
             box_y = max(1, (height - box_h) // 2)
             box_x = max(1, (width - box_w) // 2)
 
-            # Clear box area
             for py in range(box_h):
                 stdscr.addstr(box_y + py, box_x, " " * box_w, curses.color_pair(6))
 
@@ -431,46 +441,38 @@ def run_tui(stdscr):
         elif ch in (curses.KEY_UP, ord('k')):
             if selected_index > 0:
                 selected_index -= 1
-                if filtered_mods and selected_index < len(filtered_mods):
-                    cur = filtered_mods[selected_index]
-                    cur_st = CURATION_DB["mods"].get(cur["key"], "UNMARKED")
-                    status_msg = f"Highlighted [{cur['name']}] | Status: {cur_st}"
         elif ch in (curses.KEY_DOWN, ord('j')):
             if selected_index < len(filtered_mods) - 1:
                 selected_index += 1
-                if filtered_mods and selected_index < len(filtered_mods):
-                    cur = filtered_mods[selected_index]
-                    cur_st = CURATION_DB["mods"].get(cur["key"], "UNMARKED")
-                    status_msg = f"Highlighted [{cur['name']}] | Status: {cur_st}"
         elif ch in (ord(' '), ord('s'), ord('S')): # Toggle Star / Select
             if filtered_mods and selected_index < len(filtered_mods):
                 k = filtered_mods[selected_index]["key"]
                 new_st = "NONE" if CURATION_DB["mods"].get(k) == "SELECTED" else "SELECTED"
                 CURATION_DB["mods"][k] = new_st
                 save_curation_db(CURATION_DB)
-                status_msg = f"⭐ Marked [{filtered_mods[selected_index]['name']}] as {new_st}"
+                last_action = f"⭐ Marked [{filtered_mods[selected_index]['name']}] as {new_st}"
         elif ch in (ord('x'), ord('r')): # Toggle Reject
             if filtered_mods and selected_index < len(filtered_mods):
                 k = filtered_mods[selected_index]["key"]
                 new_st = "NONE" if CURATION_DB["mods"].get(k) == "REJECTED" else "REJECTED"
                 CURATION_DB["mods"][k] = new_st
                 save_curation_db(CURATION_DB)
-                status_msg = f"✕ Marked [{filtered_mods[selected_index]['name']}] as {new_st}"
+                last_action = f"✕ Marked [{filtered_mods[selected_index]['name']}] as {new_st}"
         elif ch in (ord('c'), ord('C')): # Toggle Consider
             if filtered_mods and selected_index < len(filtered_mods):
                 k = filtered_mods[selected_index]["key"]
                 new_st = "NONE" if CURATION_DB["mods"].get(k) == "CONSIDERING" else "CONSIDERING"
                 CURATION_DB["mods"][k] = new_st
                 save_curation_db(CURATION_DB)
-                status_msg = f"? Marked [{filtered_mods[selected_index]['name']}] as {new_st}"
+                last_action = f"? Marked [{filtered_mods[selected_index]['name']}] as {new_st}"
         elif ch in (ord('o'), ord('O'), 10, 13): # Open Nexus URL in browser
             if filtered_mods and selected_index < len(filtered_mods):
                 url = filtered_mods[selected_index]["nexus_url"]
                 if url:
                     webbrowser.open(url)
-                    status_msg = f"🔗 Opened Nexus link: {url}"
+                    last_action = f"🔗 Opened Nexus link: {url}"
                 else:
-                    status_msg = "⚠️ No direct Nexus URL for this mod."
+                    last_action = "⚠️ No direct Nexus URL for this mod."
         elif ch in (ord('n'), ord('N')): # Edit Note
             if filtered_mods and selected_index < len(filtered_mods):
                 k = filtered_mods[selected_index]["key"]
@@ -485,7 +487,7 @@ def run_tui(stdscr):
                     CURATION_DB["notes"] = {}
                 CURATION_DB["notes"][k] = note_input
                 save_curation_db(CURATION_DB)
-                status_msg = f"📝 Saved note for [{filtered_mods[selected_index]['name']}]"
+                last_action = f"📝 Saved note for [{filtered_mods[selected_index]['name']}]"
         elif ch == ord('/'): # Search Query
             curses.echo()
             curses.curs_set(1)
@@ -495,15 +497,15 @@ def run_tui(stdscr):
             curses.noecho()
             curses.curs_set(0)
             selected_index = 0
-            status_msg = f"🔍 Filtered by query: '{search_query}'" if search_query else "🔍 Search cleared."
+            last_action = f"🔍 Filtered by query: '{search_query}'" if search_query else "🔍 Search cleared."
         elif ch == 9: # Tab Key -> Cycle Tabs
             tab_mode = (tab_mode + 1) % len(tab_names)
             selected_index = 0
-            status_msg = f"📑 Switched view to: [{tab_names[tab_mode]}]"
+            last_action = f"📑 Switched view to: [{tab_names[tab_mode]}]"
         elif ch in (ord('t'), ord('T')): # Cycle Categories
             cat_filter_idx = (cat_filter_idx + 1) % len(CATEGORIES_LIST)
             selected_index = 0
-            status_msg = f"🏷️ Switched category filter to: [{CATEGORIES_LIST[cat_filter_idx]}]"
+            last_action = f"🏷️ Switched category filter to: [{CATEGORIES_LIST[cat_filter_idx]}]"
         elif ch in (ord('l'), ord('L')): # Load .wabbajack File or URL
             curses.echo()
             curses.curs_set(1)
@@ -515,7 +517,7 @@ def run_tui(stdscr):
 
             if load_input:
                 def update_cb(msg):
-                    stdscr.addstr(height - 1, 0, f" ACTION STATUS: {msg}".ljust(width-1), curses.color_pair(1) | curses.A_BOLD)
+                    stdscr.addstr(height - 2, 0, f" LAST ACTION: {msg}".ljust(width-1), curses.color_pair(2) | curses.A_BOLD)
                     stdscr.refresh()
 
                 update_cb("Loading modlist...")
@@ -525,9 +527,9 @@ def run_tui(stdscr):
                     else:
                         parsed = extract_modlist_info(Path(load_input))
                     LOADED_MODLISTS[parsed["id"]] = parsed
-                    status_msg = f"📂 Successfully loaded {parsed['name']} ({len(parsed['mods'])} mods)"
+                    last_action = f"📂 Successfully loaded {parsed['name']} ({len(parsed['mods'])} mods)"
                 except Exception as e:
-                    status_msg = f"❌ Error loading modlist: {e}"
+                    last_action = f"❌ Error loading modlist: {e}"
         elif ch in (ord('e'), ord('E')): # Export Curated List
             export_path = Path.home() / "curated_skyrim_modlist.md"
             lines = ["# Curated Skyrim Modlist Draft\n", "Generated by Wabbajack Curator TUI\n"]
@@ -556,7 +558,7 @@ def run_tui(stdscr):
 
             with open(export_path, "w", encoding="utf-8") as f:
                 f.write("\n".join(lines))
-            status_msg = f"💾 Exported curated selection to {export_path}"
+            last_action = f"💾 Exported curated selection to {export_path}"
 
 def main():
     parser = argparse.ArgumentParser(description="Wabbajack Modlist Curator & Analyzer (Terminal TUI)")
