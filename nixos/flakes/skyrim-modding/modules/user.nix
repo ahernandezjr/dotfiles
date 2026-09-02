@@ -1,12 +1,13 @@
 # Home Manager User-level module for Skyrim SE/AE modding suite
 # Installs mod managers, tool runners, XDG desktop shortcuts, nxm:// URL protocol handlers,
-# and configures shared download/modlist directories between Amethyst, Jackify, and MO2.
+# and configures shared download/modlist directories between Amethyst, Jackify, Wabbajack Curator, and MO2.
 { config, lib, pkgs, ... }:
 
 let
   cfg = config.userSettings.gaming.skyrim;
   amethystPkg = pkgs."amethyst-mod-manager";
   jackifyPkg = pkgs.jackify;
+  wabbajackCuratorPkg = pkgs."wabbajack-curator";
   mo2Pkg = pkgs."mo2-fhs";
   runnerPkg = pkgs."skyrim-tools-runner";
   geProtonPkg = pkgs."ge-proton-10-34";
@@ -14,7 +15,7 @@ in
 {
   options = {
     userSettings.gaming.skyrim = {
-      enable = lib.mkEnableOption "Skyrim SE/AE modding suite (Amethyst, Jackify, MO2, GE-Proton10-34 runner, Bethesda tools)";
+      enable = lib.mkEnableOption "Skyrim SE/AE modding suite (Amethyst, Jackify, Wabbajack Curator, MO2, GE-Proton10-34 runner, Bethesda tools)";
 
       downloadDir = lib.mkOption {
         type = lib.types.str;
@@ -42,6 +43,13 @@ in
           description = "Enable Jackify (Linux-native Wabbajack installer)";
         };
       };
+      wabbajackCurator = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Enable Wabbajack Modlist Curator & Mod Comparison Suite";
+        };
+      };
       mo2 = {
         enable = lib.mkOption {
           type = lib.types.bool;
@@ -65,6 +73,8 @@ in
       amethystPkg
     ] ++ lib.optionals cfg.jackify.enable [
       jackifyPkg
+    ] ++ lib.optionals cfg.wabbajackCurator.enable [
+      wabbajackCuratorPkg
     ] ++ lib.optionals cfg.mo2.enable [
       mo2Pkg
     ];
@@ -82,31 +92,18 @@ in
       $DRY_RUN_CMD mkdir -p "${cfg.modlistsDir}"
     '';
 
-    # Configure Amethyst Mod Manager download location JSON file
-    xdg.configFile."AmethystModManager/download_locations.json" = {
-      force = true;
-      text = builtins.toJSON {
-        extras = [ cfg.downloadDir ];
-        default_disabled = false;
-        cache_disabled = false;
-      };
-    };
+    # Configure Amethyst Mod Manager defaults to use shared download directory
+    xdg.configFile."AmethystModManager/amethyst.ini".text = lib.mkDefault ''
+      [meta]
+      version = 2
 
-    # Configure Amethyst Mod Manager defaults
-    xdg.configFile."AmethystModManager/amethyst.ini" = {
-      force = true;
-      text = ''
-        [meta]
-        version = 2
+      [paths]
+      downloads = ${cfg.downloadDir}
+      modlists = ${cfg.modlistsDir}
 
-        [paths]
-        downloads = ${cfg.downloadDir}
-        modlists = ${cfg.modlistsDir}
-
-        [ui]
-        appearance_mode = dark
-      '';
-    };
+      [ui]
+      appearance_mode = dark
+    '';
 
     # Desktop Applications & Nexus nxm:// scheme handling using official application icon assets
     xdg.desktopEntries = lib.mkMerge [
@@ -126,6 +123,16 @@ in
           name = "Jackify (Wabbajack)";
           exec = "${jackifyPkg}/bin/jackify";
           icon = "com.jackify.app";
+          terminal = false;
+          categories = [ "Game" "Utility" ];
+        };
+      })
+
+      (lib.mkIf cfg.wabbajackCurator.enable {
+        wabbajack-curator = {
+          name = "Wabbajack Modlist Curator";
+          exec = "${wabbajackCuratorPkg}/bin/wabbajack-curator";
+          icon = "wabbajack-curator";
           terminal = false;
           categories = [ "Game" "Utility" ];
         };

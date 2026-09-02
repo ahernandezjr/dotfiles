@@ -1,8 +1,8 @@
 # Standalone Skyrim SE/AE Modding Suite Flake for NixOS
-# Exposes GE-Proton10-34, Amethyst Mod Manager, Jackify, MO2 FHS wrapper,
-# Skyrim Bethesda tools runner, NixOS system tuning, and Home Manager modules.
+# Exposes GE-Proton10-34, Amethyst Mod Manager, Jackify, Wabbajack Curator,
+# MO2 FHS wrapper, Skyrim Bethesda tools runner, NixOS system tuning, and Home Manager modules.
 {
-  description = "Skyrim SE/AE Modding Suite for NixOS (GE-Proton10-34, Amethyst, Jackify, MO2, Bethesda Tools Runner)";
+  description = "Skyrim SE/AE Modding Suite for NixOS (GE-Proton10-34, Amethyst, Jackify, Wabbajack Curator, MO2, Bethesda Tools Runner)";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -32,6 +32,9 @@
           # Native Wabbajack automated modlist installer
           jackify = pkgs.callPackage ./pkgs/jackify { };
 
+          # Wabbajack Modlist Curator & Mod Comparison Tool
+          "wabbajack-curator" = pkgs.callPackage ./pkgs/wabbajack-curator { };
+
           # Wine/Proton execution sandbox for Windows Bethesda modding tools
           "skyrim-tools-runner" = pkgs.callPackage ./pkgs/skyrim-tools-runner {
             ge-proton-10-34 = "ge-proton-10-34";
@@ -51,6 +54,7 @@
         "ge-proton-10-34" = final.callPackage ./pkgs/ge-proton-10-34 { };
         "amethyst-mod-manager" = final.callPackage ./pkgs/amethyst-mod-manager { };
         jackify = final.callPackage ./pkgs/jackify { };
+        "wabbajack-curator" = final.callPackage ./pkgs/wabbajack-curator { };
         "skyrim-tools-runner" = final.callPackage ./pkgs/skyrim-tools-runner {
           ge-proton-10-34 = final."ge-proton-10-34";
         };
