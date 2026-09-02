@@ -3,6 +3,7 @@
 {
   imports = [
     inputs.nvf.homeManagerModules.default
+    inputs.skyrim-modding.homeManagerModules.default
     ../modules/user
   ];
 

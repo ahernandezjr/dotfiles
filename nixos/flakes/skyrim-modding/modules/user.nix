@@ -1,3 +1,6 @@
+# Home Manager User-level module for Skyrim SE/AE modding suite
+# Installs mod managers, tool runners, XDG desktop shortcuts, nxm:// URL protocol handlers,
+# and configures shared download/modlist directories between Amethyst, Jackify, and MO2.
 { config, lib, pkgs, ... }:
 
 let
@@ -12,6 +15,19 @@ in
   options = {
     userSettings.gaming.skyrim = {
       enable = lib.mkEnableOption "Skyrim SE/AE modding suite (Amethyst, Jackify, MO2, GE-Proton10-34 runner, Bethesda tools)";
+
+      downloadDir = lib.mkOption {
+        type = lib.types.str;
+        default = "/mnt/linuxgames/modlists/mods";
+        description = "Shared directory for downloaded mod archives (.zip, .7z, .rar) across Amethyst, Jackify, and MO2";
+      };
+
+      modlistsDir = lib.mkOption {
+        type = lib.types.str;
+        default = "/mnt/linuxgames/modlists";
+        description = "Root directory for installed modlists and Mod Organizer 2 instances";
+      };
+
       amethyst = {
         enable = lib.mkOption {
           type = lib.types.bool;
@@ -37,6 +53,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    # Install requested modding packages into user PATH
     home.packages = [
       geProtonPkg
       runnerPkg
@@ -52,6 +69,33 @@ in
       mo2Pkg
     ];
 
+    # Environment variables for shared paths
+    home.sessionVariables = {
+      SKYRIM_MOD_DOWNLOAD_DIR = cfg.downloadDir;
+      SKYRIM_MODLISTS_DIR = cfg.modlistsDir;
+      MO2_EXE_PATH = "${cfg.modlistsDir}/skyrim/ModOrganizer.exe";
+    };
+
+    # Automatically create shared directories
+    home.activation.createSkyrimModdingDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      $DRY_RUN_CMD mkdir -p "${cfg.downloadDir}"
+      $DRY_RUN_CMD mkdir -p "${cfg.modlistsDir}"
+    '';
+
+    # Configure Amethyst Mod Manager defaults to use shared download directory
+    xdg.configFile."AmethystModManager/amethyst.ini".text = lib.mkDefault ''
+      [meta]
+      version = 2
+
+      [paths]
+      downloads = ${cfg.downloadDir}
+      modlists = ${cfg.modlistsDir}
+
+      [ui]
+      appearance_mode = dark
+    '';
+
+    # Desktop Applications & Nexus nxm:// scheme handling using official application icon assets
     xdg.desktopEntries = lib.mkMerge [
       (lib.mkIf cfg.amethyst.enable {
         amethyst-mod-manager = {
@@ -67,7 +111,7 @@ in
       (lib.mkIf cfg.jackify.enable {
         jackify = {
           name = "Jackify (Wabbajack)";
-          exec = "${jackifyPkg}/bin/jackify %u";
+          exec = "${jackifyPkg}/bin/jackify";
           icon = "com.jackify.app";
           terminal = false;
           categories = [ "Game" "Utility" ];

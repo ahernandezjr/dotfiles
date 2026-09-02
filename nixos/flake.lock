@@ -30,11 +30,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1788309624,
-        "narHash": "sha256-C+uF/R4nUMQ9G//fop4R8LEgfSTvu7gdMnkXD/oqX3Y=",
+        "lastModified": 1787894376,
+        "narHash": "sha256-0K6rPb99e7xVcO/Xzzre0RecKgk78Z5Xa6PiRnFOYVk=",
         "ref": "refs/heads/master",
-        "rev": "9913c17abd7c9825aa671cceaa16390fa406f998",
-        "revCount": 16,
+        "rev": "8137d802b686b8ebfdea9e37a821d8dd04cd5582",
+        "revCount": 15,
         "type": "git",
         "url": "file:///home/alex/dotfiles/nixos/pkgs-private"
       },
@@ -491,8 +491,25 @@
         "nixpkgs": "nixpkgs_4",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "noctalia": "noctalia",
-        "nvf": "nvf"
+        "nvf": "nvf",
+        "skyrim-modding": "skyrim-modding"
       }
+    },
+    "skyrim-modding": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "path": "./flakes/skyrim-modding",
+        "type": "path"
+      },
+      "original": {
+        "path": "./flakes/skyrim-modding",
+        "type": "path"
+      },
+      "parent": []
     },
     "systems": {
       "locked": {

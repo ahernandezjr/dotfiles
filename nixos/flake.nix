@@ -52,6 +52,11 @@
       url = "git+file:///home/alex/dotfiles/nixos/pkgs-private";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    skyrim-modding = {
+      url = "path:./flakes/skyrim-modding";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -83,6 +88,7 @@
           ourOverlays.additions
           ourOverlays.modifications
           ourOverlays.unstable-packages
+          inputs.skyrim-modding.overlays.default
           inputs.niri.overlays.niri
           inputs.millennium.overlays.default
           inputs.nix-cachyos-kernel.overlays.pinned
@@ -109,6 +115,7 @@
               ourOverlays.additions
               ourOverlays.modifications
               ourOverlays.unstable-packages
+              inputs.skyrim-modding.overlays.default
               inputs.niri.overlays.niri
               inputs.millennium.overlays.default
               inputs.nix-cachyos-kernel.overlays.pinned
@@ -121,6 +128,7 @@
           specialArgs = { inherit inputs repoPath; };
           modules = [
             ./modules/system
+            inputs.skyrim-modding.nixosModules.default
             inputs.niri.nixosModules.niri
             inputs.agenix.nixosModules.default
             ./hosts/${profile}/default.nix
