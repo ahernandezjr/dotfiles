@@ -182,10 +182,7 @@ def fetch_url_modlist(url, name=None, progress_cb=None):
     clean_url = url.strip()
     headers = {"User-Agent": "Mozilla/5.0"}
 
-    # Handle authored-files.wabbajack.org chunked download
     if "authored-files.wabbajack.org" in clean_url:
-        # Extract munged name
-        # e.g. https://authored-files.wabbajack.org/authored_files/download/Visions%20of%20Vaermina.wabbajack_6253b840...
         munged = clean_url.rstrip("/").split("/")[-1]
         def_url = f"https://authored-files.wabbajack.org/authored_files/{munged}/definition.json.gz"
 
@@ -239,7 +236,8 @@ def run_tui(stdscr):
     search_query = ""
     tab_mode = 0  # 0: All, 1: Common, 2: Unique, 3: Curated
     cat_filter_idx = 0
-    status_msg = "Press 'l' to Load .wabbajack file, '/' Search, 'Space' Select, 'o' Open Nexus, 'e' Export, 'q' Quit"
+    show_help_overlay = False
+    status_msg = "Press 'h' or '?' for Hotkey Help Window"
 
     while True:
         stdscr.clear()
@@ -270,17 +268,14 @@ def run_tui(stdscr):
         # Filter mods based on tab, category, and search query
         filtered_mods = []
         for m in all_mods:
-            # Search
             if search_query:
                 q = search_query.lower()
                 if q not in m["name"].lower() and q not in m["author"].lower() and q not in m["desc"].lower():
                     continue
-            # Category
             if cat_filter_idx > 0:
                 selected_cat = CATEGORIES_LIST[cat_filter_idx]
                 if m["category"] != selected_cat:
                     continue
-            # Tab
             num_p = len(m["presence"])
             if tab_mode == 1 and num_p < len(list_ids): # Common
                 continue
@@ -291,16 +286,16 @@ def run_tui(stdscr):
 
             filtered_mods.append(m)
 
-        # Draw Header
+        # Draw Title Header
         tab_names = ["All Mods", "Common", "Unique", "⭐ Curated Selection"]
         header_text = f"⚡ Wabbajack Curator | Modlists: {len(list_ids)} | Unique Mods: {len(all_mods)} | View: [{tab_names[tab_mode]}] | Cat: [{CATEGORIES_LIST[cat_filter_idx]}]"
         stdscr.attron(curses.color_pair(1) | curses.A_BOLD)
         stdscr.addstr(0, 0, header_text[:width-1])
         stdscr.attroff(curses.color_pair(1) | curses.A_BOLD)
 
-        # Draw Search Bar / Subheader
-        sub_text = f"Search: '{search_query}' | Filtered: {len(filtered_mods)} mods" if search_query else f"Use ↑/↓ scroll, 'Space' Star, 'x' Reject, 'o' Open Nexus, '/' Search, 'Tab' Cat, 'e' Export"
-        stdscr.addstr(1, 0, sub_text[:width-1], curses.color_pair(5))
+        # Draw Persistent HOTKEY BAR (Line 1)
+        hotkey_bar = "HOTKEYS: [Space] Star | [x] Reject | [n] Note | [o/Enter] Open Nexus | [/] Search | [Tab] View | [t] Category | [l] Load | [e] Export | [h/?] Help | [q] Quit"
+        stdscr.addstr(1, 0, hotkey_bar[:width-1], curses.color_pair(4) | curses.A_BOLD)
         stdscr.hline(2, 0, "-", width)
 
         # List Area Dimensions
@@ -340,9 +335,7 @@ def run_tui(stdscr):
                     status_icon = "[?]"
                     status_color = curses.color_pair(4)
 
-                # Format presence icons
                 pres_str = "".join(["[✓]" if lid in m["presence"] else "[-]" for lid in list_ids])
-
                 note = CURATION_DB.get("notes", {}).get(m["key"], "")
                 note_str = f" 📝 {note}" if note else ""
                 nexus_badge = " [NEXUS]" if m["nexus_url"] else ""
@@ -377,6 +370,43 @@ def run_tui(stdscr):
         # Bottom Status Bar
         stdscr.addstr(height - 1, 0, status_msg[:width-1], curses.color_pair(1) | curses.A_REVERSE)
 
+        # Render Help Overlay Window if toggled
+        if show_help_overlay:
+            box_h = 16
+            box_w = 70
+            box_y = max(1, (height - box_h) // 2)
+            box_x = max(1, (width - box_w) // 2)
+
+            # Clear box area
+            for py in range(box_h):
+                stdscr.addstr(box_y + py, box_x, " " * box_w, curses.color_pair(6))
+
+            stdscr.attron(curses.color_pair(6) | curses.A_BOLD)
+            stdscr.addstr(box_y, box_x + 2, " Wabbajack Curator - Keyboard Hotkeys & Help ")
+            stdscr.attroff(curses.color_pair(6) | curses.A_BOLD)
+
+            help_lines = [
+                "↑ / ↓ or k / j : Navigate up/down mod list",
+                "Space or s     : Toggle ⭐ Star / Select Mod (Add to My Custom List)",
+                "x or r         : Toggle ✕ Reject Mod",
+                "c              : Toggle ? Consider Mod",
+                "n              : Add / Edit custom note for highlighted mod",
+                "o or Enter     : Open Nexus Mods link in default web browser",
+                "/              : Live Search filter (by name, author, or desc)",
+                "Tab            : Cycle View (All, Common, Unique, Curated)",
+                "t              : Cycle Category filter",
+                "l              : Load local .wabbajack file or authored-files URL",
+                "e              : Export curated selection to Markdown report",
+                "h or ?         : Toggle this Help Window",
+                "q              : Quit application"
+            ]
+
+            for idx, hl in enumerate(help_lines):
+                if box_y + 2 + idx < height - 1:
+                    stdscr.addstr(box_y + 2 + idx, box_x + 3, hl[:box_w-4], curses.color_pair(6))
+
+            stdscr.addstr(box_y + box_h - 1, box_x + 2, " Press any key or 'h' to close help ", curses.color_pair(6) | curses.A_BOLD)
+
         stdscr.refresh()
 
         # Handle Keyboard Input
@@ -388,6 +418,14 @@ def run_tui(stdscr):
         if ch == -1:
             continue
 
+        if show_help_overlay:
+            show_help_overlay = False
+            continue
+
+        if ch in (ord('h'), ord('?')):
+            show_help_overlay = not show_help_overlay
+            continue
+
         if ch in (ord('q'), ord('Q')):
             break
         elif ch in (curses.KEY_UP, ord('k')):
@@ -396,7 +434,7 @@ def run_tui(stdscr):
         elif ch in (curses.KEY_DOWN, ord('j')):
             if selected_index < len(filtered_mods) - 1:
                 selected_index += 1
-        elif ch == ord(' '): # Toggle Star / Select
+        elif ch in (ord(' '), ord('s'), ord('S')): # Toggle Star / Select
             if filtered_mods and selected_index < len(filtered_mods):
                 k = filtered_mods[selected_index]["key"]
                 CURATION_DB["mods"][k] = "NONE" if CURATION_DB["mods"].get(k) == "SELECTED" else "SELECTED"
@@ -408,7 +446,7 @@ def run_tui(stdscr):
                 CURATION_DB["mods"][k] = "NONE" if CURATION_DB["mods"].get(k) == "REJECTED" else "REJECTED"
                 save_curation_db(CURATION_DB)
                 status_msg = f"Toggled rejection for {filtered_mods[selected_index]['name']}"
-        elif ch == ord('c'): # Toggle Consider
+        elif ch in (ord('c'), ord('C')): # Toggle Consider
             if filtered_mods and selected_index < len(filtered_mods):
                 k = filtered_mods[selected_index]["key"]
                 CURATION_DB["mods"][k] = "NONE" if CURATION_DB["mods"].get(k) == "CONSIDERING" else "CONSIDERING"
@@ -421,7 +459,7 @@ def run_tui(stdscr):
                     status_msg = f"Opened Nexus link: {url}"
                 else:
                     status_msg = "No valid Nexus URL for this mod."
-        elif ch == ord('n'): # Edit Note
+        elif ch in (ord('n'), ord('N')): # Edit Note
             if filtered_mods and selected_index < len(filtered_mods):
                 k = filtered_mods[selected_index]["key"]
                 curses.echo()
