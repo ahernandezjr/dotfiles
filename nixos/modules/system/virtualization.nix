@@ -46,8 +46,13 @@ in
     (lib.mkIf cfg.waydroid.enable {
       virtualisation.waydroid.enable = true;
       networking.firewall.trustedInterfaces = [ "waydroid0" ];
+      environment.systemPackages = [ pkgs.waydroid ];
 
       systemd.services.waydroid-container = {
+        serviceConfig = {
+          Delegate = true;
+          KillMode = "mixed";
+        };
         preStart = ''
           ${pkgs.python3}/bin/python3 -c '
           import configparser, os, glob, re
@@ -72,6 +77,9 @@ in
           if "waydroid" not in config: config["waydroid"] = {}
           if "properties" not in config: config["properties"] = {}
 
+          # Disable container auto-freeze on idle (prevents lockups during downloads/updates)
+          config["waydroid"]["suspend_action"] = "sleep"
+
           if gpu_node:
               print(f"Waydroid setup: Found AMD/Intel GPU at {gpu_node}")
               config["waydroid"]["drm_device"] = gpu_node
@@ -95,6 +103,9 @@ in
               new_lines = []
               has_gralloc = False
               has_egl = False
+              has_suspend = False
+              has_host_folder = False
+
               for line in lines:
                   if line.startswith("gralloc.gbm.device="):
                       if use_swiftshader: continue
@@ -107,10 +118,22 @@ in
                       has_egl = True
                       if use_swiftshader: line = "ro.hardware.egl=swiftshader\n"
                       else: line = "ro.hardware.egl=mesa\n"
+                  elif line.startswith("persist.waydroid.suspend="):
+                      has_suspend = True
+                      line = "persist.waydroid.suspend=false\n"
+                  elif line.startswith("persist.waydroid.host_folder="):
+                      has_host_folder = True
+                      line = "persist.waydroid.host_folder=/home/alex\n"
                   new_lines.append(line)
+
               if use_swiftshader:
                   if not has_gralloc: new_lines.append("ro.hardware.gralloc=default\n")
                   if not has_egl: new_lines.append("ro.hardware.egl=swiftshader\n")
+              if not has_suspend:
+                  new_lines.append("persist.waydroid.suspend=false\n")
+              if not has_host_folder:
+                  new_lines.append("persist.waydroid.host_folder=/home/alex\n")
+
               with open(prop_path, "w") as f:
                   f.writelines(new_lines)
 
