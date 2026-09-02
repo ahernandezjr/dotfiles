@@ -5,7 +5,12 @@ let
 in
 {
   config = lib.mkIf (cfg.enable && cfg.type == "fish") (lib.mkMerge [
-    { home.sessionVariables.SHELL = "${pkgs.fish}/bin/fish"; }
+    {
+      home.sessionVariables = {
+        SHELL = "${pkgs.fish}/bin/fish";
+        NIXPKGS_ALLOW_UNFREE = "1";
+      };
+    }
     (lib.mkIf cfg.manageConfig {
       programs.fish = {
         enable = true;
@@ -15,6 +20,8 @@ in
           { name = "fzf-fish"; src = fishPlugins.fzf-fish; }
         ];
         shellInit = ''
+          set -gx NIXPKGS_ALLOW_UNFREE 1
+
           # Add custom paths using the idiomatic fish_add_path (handles duplicates and existence checks)
           fish_add_path $HOME/.npm-global/bin
           fish_add_path /run/wrappers/bin

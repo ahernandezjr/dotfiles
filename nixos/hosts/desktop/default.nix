@@ -29,6 +29,7 @@
     gaming = {
       enable = true;
       sunshine.enable = true;
+      skyrim.enable = true;
     };
     vfio.enable = true;
     cachyos-kernel.enable = true;

@@ -7,6 +7,7 @@
     gaming = {
       enable = true;
       sunshine.enable = true;
+      skyrim.enable = true;
     };
     cuda.enable = true;
     editors.enable = true;

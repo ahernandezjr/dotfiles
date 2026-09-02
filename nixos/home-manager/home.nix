@@ -24,6 +24,10 @@
     noctalia.enable = lib.mkDefault true;
   };
 
+  home.sessionVariables = {
+    NIXPKGS_ALLOW_UNFREE = "1";
+  };
+
   home.file.".config/vim/.vimrc".source = ./config/vim/.vimrc;
   home.file.".config/nixpkgs/config.nix".text = ''
     {

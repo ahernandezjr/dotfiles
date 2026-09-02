@@ -1,4 +1,4 @@
-# Keybinds (spawn = list; spawn-sh = string; Noctalia via noctalia "cmd")
+# Keybinds (spawn = list; spawn-sh = string; Noctalia via noctalia "msg")
 { config, lib, noctalia, term }: {
   binds = {
     "MOD+SHIFT+ESCAPE" = { action."show-hotkey-overlay" = [ ]; };

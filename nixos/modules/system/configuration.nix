@@ -150,6 +150,10 @@
       settings.KbdInteractiveAuthentication = false;
     };
 
+    environment.variables = {
+      NIXPKGS_ALLOW_UNFREE = "1";
+    };
+
     environment.sessionVariables = {
       EDITOR = "nvim";
       TERMINAL = "alacritty";
