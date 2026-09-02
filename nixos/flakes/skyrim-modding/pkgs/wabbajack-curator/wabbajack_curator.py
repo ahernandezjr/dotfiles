@@ -237,7 +237,7 @@ def run_tui(stdscr):
     tab_mode = 0  # 0: All, 1: Common, 2: Unique, 3: Curated
     cat_filter_idx = 0
     show_help_overlay = False
-    status_msg = "Ready. Use hotkeys (press [h/?] for Help Window)"
+    status_msg = "Curator Active. Use hotkeys (press [h/?] for Help Window)"
 
     while True:
         stdscr.clear()
@@ -368,7 +368,7 @@ def run_tui(stdscr):
             stdscr.addstr(footer_top + 3, 0, detail_3[:width-1], curses.color_pair(0))
 
         # Bottom Action Feedback Bar (Dedicated to showing action output)
-        stdscr.addstr(height - 1, 0, f" STATUS: {status_msg}".ljust(width-1)[:width-1], curses.color_pair(2) | curses.A_BOLD)
+        stdscr.addstr(height - 1, 0, f" ACTION STATUS: {status_msg}".ljust(width-1)[:width-1], curses.color_pair(2) | curses.A_BOLD)
 
         # Render Help Overlay Window if toggled
         if show_help_overlay:
@@ -431,9 +431,17 @@ def run_tui(stdscr):
         elif ch in (curses.KEY_UP, ord('k')):
             if selected_index > 0:
                 selected_index -= 1
+                if filtered_mods and selected_index < len(filtered_mods):
+                    cur = filtered_mods[selected_index]
+                    cur_st = CURATION_DB["mods"].get(cur["key"], "UNMARKED")
+                    status_msg = f"Highlighted [{cur['name']}] | Status: {cur_st}"
         elif ch in (curses.KEY_DOWN, ord('j')):
             if selected_index < len(filtered_mods) - 1:
                 selected_index += 1
+                if filtered_mods and selected_index < len(filtered_mods):
+                    cur = filtered_mods[selected_index]
+                    cur_st = CURATION_DB["mods"].get(cur["key"], "UNMARKED")
+                    status_msg = f"Highlighted [{cur['name']}] | Status: {cur_st}"
         elif ch in (ord(' '), ord('s'), ord('S')): # Toggle Star / Select
             if filtered_mods and selected_index < len(filtered_mods):
                 k = filtered_mods[selected_index]["key"]
@@ -507,7 +515,7 @@ def run_tui(stdscr):
 
             if load_input:
                 def update_cb(msg):
-                    stdscr.addstr(height - 1, 0, f" STATUS: {msg}".ljust(width-1), curses.color_pair(1) | curses.A_BOLD)
+                    stdscr.addstr(height - 1, 0, f" ACTION STATUS: {msg}".ljust(width-1), curses.color_pair(1) | curses.A_BOLD)
                     stdscr.refresh()
 
                 update_cb("Loading modlist...")
