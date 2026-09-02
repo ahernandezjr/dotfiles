@@ -82,18 +82,31 @@ in
       $DRY_RUN_CMD mkdir -p "${cfg.modlistsDir}"
     '';
 
-    # Configure Amethyst Mod Manager defaults to use shared download directory
-    xdg.configFile."AmethystModManager/amethyst.ini".text = lib.mkDefault ''
-      [meta]
-      version = 2
+    # Configure Amethyst Mod Manager download location JSON file
+    xdg.configFile."AmethystModManager/download_locations.json" = {
+      force = true;
+      text = builtins.toJSON {
+        extras = [ cfg.downloadDir ];
+        default_disabled = false;
+        cache_disabled = false;
+      };
+    };
 
-      [paths]
-      downloads = ${cfg.downloadDir}
-      modlists = ${cfg.modlistsDir}
+    # Configure Amethyst Mod Manager defaults
+    xdg.configFile."AmethystModManager/amethyst.ini" = {
+      force = true;
+      text = ''
+        [meta]
+        version = 2
 
-      [ui]
-      appearance_mode = dark
-    '';
+        [paths]
+        downloads = ${cfg.downloadDir}
+        modlists = ${cfg.modlistsDir}
+
+        [ui]
+        appearance_mode = dark
+      '';
+    };
 
     # Desktop Applications & Nexus nxm:// scheme handling using official application icon assets
     xdg.desktopEntries = lib.mkMerge [
