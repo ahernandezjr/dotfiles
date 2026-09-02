@@ -25,13 +25,40 @@ in
       package = pkgs.millennium-steam;
     };
 
+    services.envfs.enable = true;
+
+    programs.nix-ld = {
+      enable = true;
+      libraries = with pkgs; [
+        stdenv.cc.cc
+        zlib
+        fuse
+        icu
+        openssl
+        freetype
+        gnutls
+        libGL
+        pkgsi686Linux.freetype
+        pkgsi686Linux.gnutls
+        pkgsi686Linux.libGL
+      ];
+    };
+
     environment.systemPackages = with pkgs; [
       gamescope-wsi # Required for HDR to work
       steam-run
+      protontricks
+      winetricks
+      cabextract
+      p7zip
+      unzip
+      zenity
+      wget
       fuse
     ];
 
     environment.sessionVariables = {
+      STEAM_COMPAT_MOUNTS = "/mnt/linuxgames";
     };
   };
 }
