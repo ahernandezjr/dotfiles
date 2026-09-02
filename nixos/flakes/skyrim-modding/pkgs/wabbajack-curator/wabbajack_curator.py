@@ -237,7 +237,7 @@ def run_tui(stdscr):
     tab_mode = 0  # 0: All, 1: Common, 2: Unique, 3: Curated
     cat_filter_idx = 0
     show_help_overlay = False
-    status_msg = "Press 'h' or '?' for Hotkey Help Window"
+    status_msg = "Ready. Use hotkeys (press [h/?] for Help Window)"
 
     while True:
         stdscr.clear()
@@ -367,8 +367,8 @@ def run_tui(stdscr):
             stdscr.addstr(footer_top + 2, 0, detail_2[:width-1], curses.color_pair(4))
             stdscr.addstr(footer_top + 3, 0, detail_3[:width-1], curses.color_pair(0))
 
-        # Bottom Status Bar
-        stdscr.addstr(height - 1, 0, status_msg[:width-1], curses.color_pair(1) | curses.A_REVERSE)
+        # Bottom Action Feedback Bar (Dedicated to showing action output)
+        stdscr.addstr(height - 1, 0, f" STATUS: {status_msg}".ljust(width-1)[:width-1], curses.color_pair(2) | curses.A_BOLD)
 
         # Render Help Overlay Window if toggled
         if show_help_overlay:
@@ -437,28 +437,32 @@ def run_tui(stdscr):
         elif ch in (ord(' '), ord('s'), ord('S')): # Toggle Star / Select
             if filtered_mods and selected_index < len(filtered_mods):
                 k = filtered_mods[selected_index]["key"]
-                CURATION_DB["mods"][k] = "NONE" if CURATION_DB["mods"].get(k) == "SELECTED" else "SELECTED"
+                new_st = "NONE" if CURATION_DB["mods"].get(k) == "SELECTED" else "SELECTED"
+                CURATION_DB["mods"][k] = new_st
                 save_curation_db(CURATION_DB)
-                status_msg = f"Updated status for {filtered_mods[selected_index]['name']}"
+                status_msg = f"⭐ Marked [{filtered_mods[selected_index]['name']}] as {new_st}"
         elif ch in (ord('x'), ord('r')): # Toggle Reject
             if filtered_mods and selected_index < len(filtered_mods):
                 k = filtered_mods[selected_index]["key"]
-                CURATION_DB["mods"][k] = "NONE" if CURATION_DB["mods"].get(k) == "REJECTED" else "REJECTED"
+                new_st = "NONE" if CURATION_DB["mods"].get(k) == "REJECTED" else "REJECTED"
+                CURATION_DB["mods"][k] = new_st
                 save_curation_db(CURATION_DB)
-                status_msg = f"Toggled rejection for {filtered_mods[selected_index]['name']}"
+                status_msg = f"✕ Marked [{filtered_mods[selected_index]['name']}] as {new_st}"
         elif ch in (ord('c'), ord('C')): # Toggle Consider
             if filtered_mods and selected_index < len(filtered_mods):
                 k = filtered_mods[selected_index]["key"]
-                CURATION_DB["mods"][k] = "NONE" if CURATION_DB["mods"].get(k) == "CONSIDERING" else "CONSIDERING"
+                new_st = "NONE" if CURATION_DB["mods"].get(k) == "CONSIDERING" else "CONSIDERING"
+                CURATION_DB["mods"][k] = new_st
                 save_curation_db(CURATION_DB)
+                status_msg = f"? Marked [{filtered_mods[selected_index]['name']}] as {new_st}"
         elif ch in (ord('o'), ord('O'), 10, 13): # Open Nexus URL in browser
             if filtered_mods and selected_index < len(filtered_mods):
                 url = filtered_mods[selected_index]["nexus_url"]
                 if url:
                     webbrowser.open(url)
-                    status_msg = f"Opened Nexus link: {url}"
+                    status_msg = f"🔗 Opened Nexus link: {url}"
                 else:
-                    status_msg = "No valid Nexus URL for this mod."
+                    status_msg = "⚠️ No direct Nexus URL for this mod."
         elif ch in (ord('n'), ord('N')): # Edit Note
             if filtered_mods and selected_index < len(filtered_mods):
                 k = filtered_mods[selected_index]["key"]
@@ -473,7 +477,7 @@ def run_tui(stdscr):
                     CURATION_DB["notes"] = {}
                 CURATION_DB["notes"][k] = note_input
                 save_curation_db(CURATION_DB)
-                status_msg = "Saved note."
+                status_msg = f"📝 Saved note for [{filtered_mods[selected_index]['name']}]"
         elif ch == ord('/'): # Search Query
             curses.echo()
             curses.curs_set(1)
@@ -483,12 +487,15 @@ def run_tui(stdscr):
             curses.noecho()
             curses.curs_set(0)
             selected_index = 0
+            status_msg = f"🔍 Filtered by query: '{search_query}'" if search_query else "🔍 Search cleared."
         elif ch == 9: # Tab Key -> Cycle Tabs
             tab_mode = (tab_mode + 1) % len(tab_names)
             selected_index = 0
+            status_msg = f"📑 Switched view to: [{tab_names[tab_mode]}]"
         elif ch in (ord('t'), ord('T')): # Cycle Categories
             cat_filter_idx = (cat_filter_idx + 1) % len(CATEGORIES_LIST)
             selected_index = 0
+            status_msg = f"🏷️ Switched category filter to: [{CATEGORIES_LIST[cat_filter_idx]}]"
         elif ch in (ord('l'), ord('L')): # Load .wabbajack File or URL
             curses.echo()
             curses.curs_set(1)
@@ -500,7 +507,7 @@ def run_tui(stdscr):
 
             if load_input:
                 def update_cb(msg):
-                    stdscr.addstr(height - 1, 0, msg.ljust(width-1), curses.color_pair(1))
+                    stdscr.addstr(height - 1, 0, f" STATUS: {msg}".ljust(width-1), curses.color_pair(1) | curses.A_BOLD)
                     stdscr.refresh()
 
                 update_cb("Loading modlist...")
@@ -510,9 +517,9 @@ def run_tui(stdscr):
                     else:
                         parsed = extract_modlist_info(Path(load_input))
                     LOADED_MODLISTS[parsed["id"]] = parsed
-                    status_msg = f"Successfully loaded {parsed['name']} ({len(parsed['mods'])} mods)"
+                    status_msg = f"📂 Successfully loaded {parsed['name']} ({len(parsed['mods'])} mods)"
                 except Exception as e:
-                    status_msg = f"Error loading modlist: {e}"
+                    status_msg = f"❌ Error loading modlist: {e}"
         elif ch in (ord('e'), ord('E')): # Export Curated List
             export_path = Path.home() / "curated_skyrim_modlist.md"
             lines = ["# Curated Skyrim Modlist Draft\n", "Generated by Wabbajack Curator TUI\n"]
@@ -541,7 +548,7 @@ def run_tui(stdscr):
 
             with open(export_path, "w", encoding="utf-8") as f:
                 f.write("\n".join(lines))
-            status_msg = f"Exported curated selection to {export_path}"
+            status_msg = f"💾 Exported curated selection to {export_path}"
 
 def main():
     parser = argparse.ArgumentParser(description="Wabbajack Modlist Curator & Analyzer (Terminal TUI)")
