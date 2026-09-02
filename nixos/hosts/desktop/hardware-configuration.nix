@@ -37,7 +37,7 @@
     };
 
   fileSystems."/mnt/linuxgames" = 
-    { device = "dev/disk/by-uuid/757d02dc-f516-4f45-b1aa-922733eb90ae";
+    { device = "/dev/disk/by-uuid/757d02dc-f516-4f45-b1aa-922733eb90ae";
       fsType = "ext4";
     };
 
