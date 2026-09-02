@@ -15,6 +15,8 @@ in
       baobab
       switcheroo
       handy
+      mpv
+      vlc
     ];
   };
 }
