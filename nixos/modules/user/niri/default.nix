@@ -92,13 +92,27 @@ EOF
       '';
     };
 
+    xdg.desktopEntries.input-remapper-autoload = {
+      name = "input-remapper-autoload";
+      exec = "true";
+      noDisplay = true;
+    };
+
+    xdg.desktopEntries.input-remapper-gtk = {
+      name = "Input Remapper";
+      exec = "${pkgs.input-remapper}/bin/input-remapper-gtk";
+      icon = "input-remapper";
+      categories = [ "Settings" ];
+      comment = "GUI for device specific key mappings";
+    };
+
     programs.niri.settings = lib.mkMerge ([
       (import ./input.nix { inherit lib; })
       (import ./binds.nix { inherit config lib noctalia term; })
       (import ./layout.nix { inherit lib config; })
       (import ./animations.nix { inherit lib; })
       (import ./rules.nix { inherit lib; })
-      (import ./misc.nix { inherit config lib term; })
+      (import ./misc.nix { inherit config lib pkgs term; })
       matugenColorsSettings
     ] ++ outputsFragment ++ [{
       xwayland-satellite = {

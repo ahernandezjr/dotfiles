@@ -13,6 +13,16 @@ in
     (lib.mkIf cfg.peripherals.enable {
       hardware.openrazer.enable = true;
 
+      services.input-remapper.enable = true;
+
+      security.polkit.extraConfig = ''
+        polkit.addRule(function(action, subject) {
+          if (action.id == "inputremapper" && subject.isInGroup("wheel")) {
+            return polkit.Result.YES;
+          }
+        });
+      '';
+
       hardware.logitech.wireless = {
         enable = true;
         enableGraphical = true;
@@ -23,7 +33,7 @@ in
         polychromatic
       ];
 
-      users.users.alex = { extraGroups = [ "openrazer" ]; };
+      users.users.alex = { extraGroups = [ "openrazer" "input" ]; };
     })
 
     (lib.mkIf cfg.lenovo-legion.enable {

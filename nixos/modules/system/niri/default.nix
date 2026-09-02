@@ -15,7 +15,11 @@ in
       enable = true;
       package = pkgs.niri;
     };
-    environment.systemPackages = with pkgs; [ wl-clipboard ];
+    security.polkit.enable = true;
+    environment.systemPackages = with pkgs; [
+      wl-clipboard
+      polkit_gnome
+    ];
 
     services.greetd = {
       enable = true;

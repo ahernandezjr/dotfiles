@@ -1,6 +1,7 @@
 # Window rules, layer rules, overview, debug
 { lib }: {
   window-rules = [
+    { matches = [ { app-id = "input-remapper-gtk"; } ]; open-focused = true; }
     { matches = [ { app-id = "floorp$"; title = "^Picture-in-Picture$"; } ]; open-floating = true; }
     { matches = [ { app-id = "remote-viewer"; } ]; open-fullscreen = true; }
     { matches = [ ]; geometry-corner-radius = { top-left = 20.0; top-right = 20.0; bottom-right = 20.0; bottom-left = 20.0; }; clip-to-geometry = true; }
