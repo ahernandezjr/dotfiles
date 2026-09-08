@@ -30,11 +30,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1787894376,
-        "narHash": "sha256-0K6rPb99e7xVcO/Xzzre0RecKgk78Z5Xa6PiRnFOYVk=",
+        "lastModified": 1788832338,
+        "narHash": "sha256-LwUC8R4CAawjP01I3ALD3ADKhyegBxRetrFAaQTaq1o=",
         "ref": "refs/heads/master",
-        "rev": "8137d802b686b8ebfdea9e37a821d8dd04cd5582",
-        "revCount": 15,
+        "rev": "65faef76158e6d5d97869b77a5cd6e5ad3cbda6c",
+        "revCount": 16,
         "type": "git",
         "url": "file:///home/alex/dotfiles/nixos/pkgs-private"
       },
