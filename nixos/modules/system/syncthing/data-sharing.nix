@@ -20,10 +20,10 @@
     openDefaultPorts = true;
     overrideDevices = true;
     overrideFolders = true;
-    
+
     # Official way to handle GUI password without the Nix store
     guiPasswordFile = config.age.secrets.syncthing-password.path;
-    
+
     settings = {
       gui = {
         user = "alex"; # The user is less sensitive, but we can manage it here
@@ -70,9 +70,9 @@
   };
 
   # Identity paths for Agenix
-  age.identityPaths = [ 
+  age.identityPaths = [
     "/etc/ssh/ssh_host_ed25519_key"
-    "/home/alex/.ssh/id_ed25519" 
+    "/home/alex/.ssh/id_ed25519"
   ];
 
   # Agenix secrets for Syncthing GUI credentials

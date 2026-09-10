@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.systemSettings.nvidia;
@@ -51,7 +56,7 @@ in
     hardware.nvidia = {
       # Modesetting is required for Wayland.
       modesetting.enable = true;
-      
+
       # Enable to avoid niri blackscreen on reboot
       powerManagement = {
         enable = true;
@@ -59,15 +64,17 @@ in
         kernelSuspendNotifier = false;
       };
 
-      prime = lib.mkIf cfg.prime.enable (lib.filterAttrs (n: v: v != null) {
-        offload = {
-          enable = true;
-          enableOffloadCmd = true;
-        };
-        intelBusId = cfg.prime.intelBusId;
-        amdgpuBusId = cfg.prime.amdgpuBusId;
-        nvidiaBusId = cfg.prime.nvidiaBusId;
-      });
+      prime = lib.mkIf cfg.prime.enable (
+        lib.filterAttrs (n: v: v != null) {
+          offload = {
+            enable = true;
+            enableOffloadCmd = true;
+          };
+          intelBusId = cfg.prime.intelBusId;
+          amdgpuBusId = cfg.prime.amdgpuBusId;
+          nvidiaBusId = cfg.prime.nvidiaBusId;
+        }
+      );
 
       # Use the NVidia open source kernel module.
       open = true;

@@ -1,5 +1,11 @@
 # Base system config (moved from common/configuration.nix). Applied to every host.
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
   options.systemSettings.minimal = {
@@ -18,11 +24,16 @@
             autoGenerateKeys = lib.mkDefault (!config.systemSettings.minimal.enable);
             autoEnrollKeys.enable = lib.mkDefault (!config.systemSettings.minimal.enable);
           };
-        };  
+        };
         grub.enable = lib.mkDefault false;
       };
 
-      supportedFilesystems = lib.mkDefault [ "btrfs" "ext" "ntfs" "fuse" ];
+      supportedFilesystems = lib.mkDefault [
+        "btrfs"
+        "ext"
+        "ntfs"
+        "fuse"
+      ];
     };
 
     hardware = {
@@ -33,13 +44,15 @@
 
     systemd.services.NetworkManager-wait-online.enable = false;
 
-
     networking = {
       hostName = lib.mkDefault "nixos";
       networkmanager.enable = true;
       firewall = {
         enable = true;
-        allowedTCPPorts = [ 25555 30000 ];
+        allowedTCPPorts = [
+          25555
+          30000
+        ];
       };
     };
 
@@ -57,7 +70,10 @@
         "cachyos.cachix.org-1:f/sS2icLGBP65963X54dz26wXxl4M93LAd6BGL+V3S4="
         "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
       ];
-      trusted-users = [ "root" "@wheel" ];
+      trusted-users = [
+        "root"
+        "@wheel"
+      ];
       accept-flake-config = false;
     };
 
@@ -110,27 +126,35 @@
     users.users.alex = {
       isNormalUser = true;
       description = "alex";
-      extraGroups = [ "networkmanager" "wheel" "video" "render" ];
+      extraGroups = [
+        "networkmanager"
+        "wheel"
+        "video"
+        "render"
+      ];
       packages = with pkgs; [ tree ];
       shell = pkgs.fish;
     };
 
-    environment.systemPackages = with pkgs; [
-      vim 
-      wget
-      pciutils
-      neovim
-      fish
-      gh
-      jq
-      inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
-    ] ++ lib.optionals (!config.systemSettings.minimal.enable) [
-      sbctl
-      efibootmgr
-      alacritty
-      ghostty
-      xwayland-satellite
-    ];
+    environment.systemPackages =
+      with pkgs;
+      [
+        vim
+        wget
+        pciutils
+        neovim
+        fish
+        gh
+        jq
+        inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
+      ]
+      ++ lib.optionals (!config.systemSettings.minimal.enable) [
+        sbctl
+        efibootmgr
+        alacritty
+        ghostty
+        xwayland-satellite
+      ];
 
     programs.fish.enable = true;
 
@@ -165,7 +189,12 @@
     systemd.settings.Manager.DefaultLimitNOFILE = "524288";
     systemd.user.settings.Manager.DefaultLimitNOFILE = "524288";
     security.pam.loginLimits = [
-      { domain = "*"; type = "-"; item = "nofile"; value = "524288"; }
+      {
+        domain = "*";
+        type = "-";
+        item = "nofile";
+        value = "524288";
+      }
     ];
 
     system.stateVersion = "26.05";

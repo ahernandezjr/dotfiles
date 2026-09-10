@@ -8,14 +8,16 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
-  outputs = { self, nixpkgs }:
+  outputs =
+    { self, nixpkgs }:
     let
       systems = [ "x86_64-linux" ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
     in
     {
       # Exported package set for x86_64-linux
-      packages = forAllSystems (system:
+      packages = forAllSystems (
+        system:
         let
           pkgs = import nixpkgs {
             inherit system;
@@ -64,11 +66,25 @@
       };
 
       # NixOS System Module (Kernel tuning, open file limits, steam mounts)
-      nixosModules.default = { config, lib, pkgs, ... }: import ./modules/system.nix { inherit config lib pkgs; };
+      nixosModules.default =
+        {
+          config,
+          lib,
+          pkgs,
+          ...
+        }:
+        import ./modules/system.nix { inherit config lib pkgs; };
       nixosModules.skyrim = self.nixosModules.default;
 
       # Home Manager User Module (Packages, XDG shortcuts, nxm:// URL handler)
-      homeManagerModules.default = { config, lib, pkgs, ... }: import ./modules/user.nix { inherit config lib pkgs; };
+      homeManagerModules.default =
+        {
+          config,
+          lib,
+          pkgs,
+          ...
+        }:
+        import ./modules/user.nix { inherit config lib pkgs; };
       homeManagerModules.skyrim = self.homeManagerModules.default;
     };
 }

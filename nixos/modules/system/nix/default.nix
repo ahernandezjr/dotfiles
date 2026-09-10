@@ -16,7 +16,10 @@
         trusted-users = [ "@wheel" ];
         auto-optimise-store = true;
         download-buffer-size = 500000000;
-        experimental-features = [ "nix-command" "flakes" ];
+        experimental-features = [
+          "nix-command"
+          "flakes"
+        ];
       };
     };
     programs.nix-ld = {

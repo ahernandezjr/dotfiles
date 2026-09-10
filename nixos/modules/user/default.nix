@@ -6,7 +6,8 @@ with lib;
 let
   moduleLib = import ../../lib/import-all.nix { inherit lib; };
   # Exclude partials (niri/*.nix) except their default.nix, and matugen template fragments.
-  filter = file:
+  filter =
+    file:
     hasSuffix ".nix" file
     && file != "default.nix"
     && !(hasPrefix "niri/" file && file != "niri/default.nix")

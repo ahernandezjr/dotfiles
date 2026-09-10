@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.userSettings.creativity;
@@ -25,7 +30,10 @@ in
       icon = "draw-freehand";
       comment = "Collaborative digital whiteboard";
       terminal = false;
-      categories = [ "Utility" "Graphics" ];
+      categories = [
+        "Utility"
+        "Graphics"
+      ];
     };
   };
 }

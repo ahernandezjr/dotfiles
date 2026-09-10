@@ -1,7 +1,12 @@
 # Brave browser configuration with sane defaults.
 # Source: https://gist.github.com/hoyhoy/1c675f6f02118f6e0db7616c070917ac
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.userSettings.browsers.brave;
@@ -97,7 +102,9 @@ let
     ExtensionManifestV2Availability = 2;
 
     # Inject the extension list into the policy
-    ExtensionInstallForcelist = map (id: "${id};https://clients2.google.com/service/update2/crx") managedExtensions;
+    ExtensionInstallForcelist = map (
+      id: "${id};https://clients2.google.com/service/update2/crx"
+    ) managedExtensions;
   };
 in
 {

@@ -1,4 +1,10 @@
-{ config, pkgs, inputs, lib, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  lib,
+  ...
+}:
 
 {
   imports = [
@@ -21,10 +27,12 @@
   };
 
   # Swap file: prevents OOM panics when running containerized applications
-  swapDevices = [ {
-    device = "/var/lib/swapfile";
-    size = 2048; # 2GB
-  } ];
+  swapDevices = [
+    {
+      device = "/var/lib/swapfile";
+      size = 2048; # 2GB
+    }
+  ];
 
   # NetworkManager Wi-Fi configuration
   networking.networkmanager.enable = true;

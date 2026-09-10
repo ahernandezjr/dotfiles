@@ -1,38 +1,56 @@
 # Niri user config: programs.niri.settings from split files.
 # See https://github.com/sodiboo/niri-flake/blob/main/docs.md
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.userSettings.niri;
-  noctalia = cmd:
-    [ "noctalia" "msg" ]
+  noctalia =
+    cmd:
+    [
+      "noctalia"
+      "msg"
+    ]
     ++ (lib.splitString " " cmd);
   term = config.home.sessionVariables.TERMINAL or "ghostty";
-  parseMode = s:
+  parseMode =
+    s:
     let
       m = builtins.match "([0-9]+)x([0-9]+)@([0-9.]+)" s;
     in
-    if m == null then null else {
-      width = builtins.fromJSON (builtins.elemAt m 0);
-      height = builtins.fromJSON (builtins.elemAt m 1);
-      refresh = (builtins.fromJSON (builtins.elemAt m 2)) + 0.0;
-    };
+    if m == null then
+      null
+    else
+      {
+        width = builtins.fromJSON (builtins.elemAt m 0);
+        height = builtins.fromJSON (builtins.elemAt m 1);
+        refresh = (builtins.fromJSON (builtins.elemAt m 2)) + 0.0;
+      };
   useDesktopOutputs = cfg.useDesktopOutputs;
   useWorkOutputs = cfg.useWorkOutputs;
-  outputsFragment = 
-    if useDesktopOutputs then [ (import ./outputs.nix { inherit lib parseMode; }) ]
-    else if useWorkOutputs then [ (import ./work-outputs.nix { inherit lib parseMode; }) ]
-    else [];
+  outputsFragment =
+    if useDesktopOutputs then
+      [ (import ./outputs.nix { inherit lib parseMode; }) ]
+    else if useWorkOutputs then
+      [ (import ./work-outputs.nix { inherit lib parseMode; }) ]
+    else
+      [ ];
   # matugen-dots style: matugen writes a .nix file into the repo; we import it if present.
   matugenColorsPath = ./. + "/matugen-colors.nix";
-  matugenColorsSettings = let
-    raw = if builtins.pathExists matugenColorsPath then import matugenColorsPath else {};
-  in raw.programs.niri.settings or {};
+  matugenColorsSettings =
+    let
+      raw = if builtins.pathExists matugenColorsPath then import matugenColorsPath else { };
+    in
+    raw.programs.niri.settings or { };
 in
 {
   options.userSettings.niri = {
     enable = lib.mkEnableOption "Niri Wayland compositor user configuration";
-    
+
     useDesktopOutputs = lib.mkOption {
       type = lib.types.bool;
       default = false;
@@ -51,45 +69,48 @@ in
     # We override it to add our noctalia.kdl include and raw blur config.
     xdg.configFile.niri-config = lib.mkForce {
       target = "niri/config.kdl";
-      source = pkgs.runCommand "niri-config-with-noctalia" {
-        baseConfig = config.programs.niri.finalConfig;
-      } ''
-        echo "$baseConfig" > config.kdl
-        cat >> config.kdl <<EOF
-/* Global Blur Fine-tuning */
-blur {
-    passes 2
-    offset 3.0
-    noise 0.03
-    saturation 1.0
-}
+      source =
+        pkgs.runCommand "niri-config-with-noctalia"
+          {
+            baseConfig = config.programs.niri.finalConfig;
+          }
+          ''
+                    echo "$baseConfig" > config.kdl
+                    cat >> config.kdl <<EOF
+            /* Global Blur Fine-tuning */
+            blur {
+                passes 2
+                offset 3.0
+                noise 0.03
+                saturation 1.0
+            }
 
-/* Apps: blur them all without xray for a better look */
-window-rule {
-    background-effect {
-        blur true
-        xray false
-    }
-}
+            /* Apps: blur them all without xray for a better look */
+            window-rule {
+                background-effect {
+                    blur true
+                    xray false
+                }
+            }
 
-/* Ensure Ghostty is transparent enough to see the blur */
-window-rule {
-    match app-id="ghostty"
-    opacity 0.9
-}
+            /* Ensure Ghostty is transparent enough to see the blur */
+            window-rule {
+                match app-id="ghostty"
+                opacity 0.9
+            }
 
-/* Noctalia: blur everywhere without xray for a better look */
-layer-rule {
-    match namespace="^noctalia-(background|launcher-overlay|dock)-.*$"
-    background-effect {
-        blur true
-        xray false
-    }
-}
-EOF
-        echo 'include optional=true "./noctalia.kdl"' >> config.kdl
-        cp config.kdl $out
-      '';
+            /* Noctalia: blur everywhere without xray for a better look */
+            layer-rule {
+                match namespace="^noctalia-(background|launcher-overlay|dock)-.*$"
+                background-effect {
+                    blur true
+                    xray false
+                }
+            }
+            EOF
+                    echo 'include optional=true "./noctalia.kdl"' >> config.kdl
+                    cp config.kdl $out
+          '';
     };
 
     xdg.desktopEntries.input-remapper-autoload = {
@@ -106,19 +127,39 @@ EOF
       comment = "GUI for device specific key mappings";
     };
 
-    programs.niri.settings = lib.mkMerge ([
-      (import ./input.nix { inherit lib; })
-      (import ./binds.nix { inherit config lib noctalia term; })
-      (import ./layout.nix { inherit lib config; })
-      (import ./animations.nix { inherit lib; })
-      (import ./rules.nix { inherit lib; })
-      (import ./misc.nix { inherit config lib pkgs term; })
-      matugenColorsSettings
-    ] ++ outputsFragment ++ [{
-      xwayland-satellite = {
-        enable = true;
-        path = lib.getExe pkgs.xwayland-satellite;
-      };
-    }]);
+    programs.niri.settings = lib.mkMerge (
+      [
+        (import ./input.nix { inherit lib; })
+        (import ./binds.nix {
+          inherit
+            config
+            lib
+            noctalia
+            term
+            ;
+        })
+        (import ./layout.nix { inherit lib config; })
+        (import ./animations.nix { inherit lib; })
+        (import ./rules.nix { inherit lib; })
+        (import ./misc.nix {
+          inherit
+            config
+            lib
+            pkgs
+            term
+            ;
+        })
+        matugenColorsSettings
+      ]
+      ++ outputsFragment
+      ++ [
+        {
+          xwayland-satellite = {
+            enable = true;
+            path = lib.getExe pkgs.xwayland-satellite;
+          };
+        }
+      ]
+    );
   };
 }

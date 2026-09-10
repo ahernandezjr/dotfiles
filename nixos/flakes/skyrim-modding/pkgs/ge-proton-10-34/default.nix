@@ -1,6 +1,10 @@
 # GloriousEggroll GE-Proton10-34 Compatibility Tool Derivation
 # Downloads and extracts GE-Proton10-34 tarball into $out/share/steam/compatibilitytools.d/GE-Proton10-34.
-{ lib, stdenv, fetchurl }:
+{
+  lib,
+  stdenv,
+  fetchurl,
+}:
 
 stdenv.mkDerivation rec {
   pname = "ge-proton-bin";

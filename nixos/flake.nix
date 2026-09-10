@@ -70,7 +70,7 @@
       lib = nixpkgs.lib;
       system = "x86_64-linux";
       ourOverlays = import ./overlays { inherit inputs; };
-      
+
       hostSystems = {
         pizero = "aarch64-linux";
       };
@@ -94,33 +94,38 @@
           inputs.nix-cachyos-kernel.overlays.pinned
         ];
       };
-      
+
       hosts = lib.attrNames (lib.filterAttrs (_: type: type == "directory") (builtins.readDir ./hosts));
       # Path to this repo on disk so matugen can write generated .nix into it (matugen-dots style).
       repoPath = "/home/alex/dotfiles";
-      
-      mkNixosSystem = profile:
+
+      mkNixosSystem =
+        profile:
         let
           hostSystem = hostSystems.${profile} or "x86_64-linux";
-          pkgsForHost = if hostSystem == system then pkgs else import nixpkgs {
-            system = hostSystem;
-            config = {
-              allowUnfree = true;
-              segger-jlink.acceptLicense = true;
-              permittedInsecurePackages = [
-                "pnpm-10.29.2"
-              ];
-            };
-            overlays = [
-              ourOverlays.additions
-              ourOverlays.modifications
-              ourOverlays.unstable-packages
-              inputs.skyrim-modding.overlays.default
-              inputs.niri.overlays.niri
-              inputs.millennium.overlays.default
-              inputs.nix-cachyos-kernel.overlays.pinned
-            ];
-          };
+          pkgsForHost =
+            if hostSystem == system then
+              pkgs
+            else
+              import nixpkgs {
+                system = hostSystem;
+                config = {
+                  allowUnfree = true;
+                  segger-jlink.acceptLicense = true;
+                  permittedInsecurePackages = [
+                    "pnpm-10.29.2"
+                  ];
+                };
+                overlays = [
+                  ourOverlays.additions
+                  ourOverlays.modifications
+                  ourOverlays.unstable-packages
+                  inputs.skyrim-modding.overlays.default
+                  inputs.niri.overlays.niri
+                  inputs.millennium.overlays.default
+                  inputs.nix-cachyos-kernel.overlays.pinned
+                ];
+              };
         in
         lib.nixosSystem {
           system = hostSystem;
@@ -142,13 +147,19 @@
                 backupFileExtension = "hmbkp";
               };
             }
-          ] ++ lib.optionals (profile != "pizero") [
+          ]
+          ++ lib.optionals (profile != "pizero") [
             inputs.custom-pkgs.nixosModules.default
           ];
         };
     in
     {
-      nixosConfigurations = builtins.listToAttrs (map (host: { name = host; value = mkNixosSystem host; }) hosts);
+      nixosConfigurations = builtins.listToAttrs (
+        map (host: {
+          name = host;
+          value = mkNixosSystem host;
+        }) hosts
+      );
       packages.${system} = pkgs;
       formatter.${system} = pkgs.nixfmt-tree;
     };

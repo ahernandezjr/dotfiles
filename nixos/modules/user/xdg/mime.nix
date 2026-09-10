@@ -41,20 +41,57 @@ in
         "image/gif" = [ "org.gnome.Loupe.desktop" ];
         "image/webp" = [ "org.gnome.Loupe.desktop" ];
 
-        "video/mp4" = [ "mpv.desktop" "vlc.desktop" ];
-        "video/mpeg" = [ "mpv.desktop" "vlc.desktop" ];
-        "video/x-matroska" = [ "mpv.desktop" "vlc.desktop" ];
-        "video/quicktime" = [ "mpv.desktop" "vlc.desktop" ];
-        "video/x-msvideo" = [ "mpv.desktop" "vlc.desktop" ];
-        "video/x-flv" = [ "mpv.desktop" "vlc.desktop" ];
-        "video/webm" = [ "mpv.desktop" "vlc.desktop" ];
+        "video/mp4" = [
+          "mpv.desktop"
+          "vlc.desktop"
+        ];
+        "video/mpeg" = [
+          "mpv.desktop"
+          "vlc.desktop"
+        ];
+        "video/x-matroska" = [
+          "mpv.desktop"
+          "vlc.desktop"
+        ];
+        "video/quicktime" = [
+          "mpv.desktop"
+          "vlc.desktop"
+        ];
+        "video/x-msvideo" = [
+          "mpv.desktop"
+          "vlc.desktop"
+        ];
+        "video/x-flv" = [
+          "mpv.desktop"
+          "vlc.desktop"
+        ];
+        "video/webm" = [
+          "mpv.desktop"
+          "vlc.desktop"
+        ];
 
-        "audio/mpeg" = [ "vlc.desktop" "mpv.desktop" ];
-        "audio/x-wav" = [ "vlc.desktop" "mpv.desktop" ];
-        "audio/x-flac" = [ "vlc.desktop" "mpv.desktop" ];
-        "audio/x-m4a" = [ "vlc.desktop" "mpv.desktop" ];
+        "audio/mpeg" = [
+          "vlc.desktop"
+          "mpv.desktop"
+        ];
+        "audio/x-wav" = [
+          "vlc.desktop"
+          "mpv.desktop"
+        ];
+        "audio/x-flac" = [
+          "vlc.desktop"
+          "mpv.desktop"
+        ];
+        "audio/x-m4a" = [
+          "vlc.desktop"
+          "mpv.desktop"
+        ];
 
-        "text/plain" = [ "nvim.desktop" "cursor.desktop" "code.desktop" ];
+        "text/plain" = [
+          "nvim.desktop"
+          "cursor.desktop"
+          "code.desktop"
+        ];
 
         "x-scheme-handler/discord" = [ "vesktop.desktop" ];
         "x-scheme-handler/stremio" = [ "stremio.desktop" ];

@@ -1,7 +1,12 @@
 # Home Manager User-level module for Skyrim SE/AE modding suite
 # Installs mod managers, tool runners, XDG desktop shortcuts, nxm:// URL protocol handlers,
 # and configures shared download/modlist directories between Amethyst, Jackify, Wabbajack Curator, and MO2.
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.userSettings.gaming.skyrim;
@@ -69,13 +74,17 @@ in
       pkgs.winetricks
       pkgs.vulkan-tools
       pkgs.zenity
-    ] ++ lib.optionals cfg.amethyst.enable [
+    ]
+    ++ lib.optionals cfg.amethyst.enable [
       amethystPkg
-    ] ++ lib.optionals cfg.jackify.enable [
+    ]
+    ++ lib.optionals cfg.jackify.enable [
       jackifyPkg
-    ] ++ lib.optionals cfg.wabbajackCurator.enable [
+    ]
+    ++ lib.optionals cfg.wabbajackCurator.enable [
       wabbajackCuratorPkg
-    ] ++ lib.optionals cfg.mo2.enable [
+    ]
+    ++ lib.optionals cfg.mo2.enable [
       mo2Pkg
     ];
 
@@ -86,14 +95,13 @@ in
       MO2_EXE_PATH = "${cfg.modlistsDir}/skyrim/ModOrganizer.exe";
     };
 
-    # Automatically create shared directories
+    # Automatically create shared directories and seed Amethyst defaults if not present
     home.activation.createSkyrimModdingDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      $DRY_RUN_CMD mkdir -p "${cfg.downloadDir}"
-      $DRY_RUN_CMD mkdir -p "${cfg.modlistsDir}"
-    '';
-
-    # Configure Amethyst Mod Manager defaults to use shared download directory
-    xdg.configFile."AmethystModManager/amethyst.ini".text = lib.mkDefault ''
+            $DRY_RUN_CMD mkdir -p "${cfg.downloadDir}"
+            $DRY_RUN_CMD mkdir -p "${cfg.modlistsDir}"
+            if [ ! -f "$HOME/.config/AmethystModManager/amethyst.ini" ]; then
+              $DRY_RUN_CMD mkdir -p "$HOME/.config/AmethystModManager"
+              $DRY_RUN_CMD cat <<'EOF' > "$HOME/.config/AmethystModManager/amethyst.ini"
       [meta]
       version = 2
 
@@ -103,6 +111,8 @@ in
 
       [ui]
       appearance_mode = dark
+      EOF
+            fi
     '';
 
     # Desktop Applications & Nexus nxm:// scheme handling using official application icon assets
@@ -113,7 +123,10 @@ in
           exec = "${amethystPkg}/bin/amethyst-mod-manager %u";
           icon = "amethyst-mod-manager";
           terminal = false;
-          categories = [ "Game" "Utility" ];
+          categories = [
+            "Game"
+            "Utility"
+          ];
           mimeType = [ "x-scheme-handler/nxm" ];
         };
       })
@@ -124,7 +137,10 @@ in
           exec = "${jackifyPkg}/bin/jackify";
           icon = "com.jackify.app";
           terminal = false;
-          categories = [ "Game" "Utility" ];
+          categories = [
+            "Game"
+            "Utility"
+          ];
         };
       })
 
@@ -134,7 +150,10 @@ in
           exec = "${wabbajackCuratorPkg}/bin/wabbajack-curator";
           icon = "wabbajack-curator";
           terminal = false;
-          categories = [ "Game" "Utility" ];
+          categories = [
+            "Game"
+            "Utility"
+          ];
         };
       })
 
@@ -144,7 +163,10 @@ in
           exec = "${mo2Pkg}/bin/mo2-fhs %u";
           icon = "modorganizer2";
           terminal = false;
-          categories = [ "Game" "Utility" ];
+          categories = [
+            "Game"
+            "Utility"
+          ];
           mimeType = [ "x-scheme-handler/nxm" ];
         };
 
@@ -153,7 +175,10 @@ in
           exec = "${runnerPkg}/bin/skyrim-tools-runner";
           icon = "wine";
           terminal = true;
-          categories = [ "Game" "Utility" ];
+          categories = [
+            "Game"
+            "Utility"
+          ];
         };
       })
     ];

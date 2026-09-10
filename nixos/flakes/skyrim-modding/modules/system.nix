@@ -1,6 +1,11 @@
 # System-level NixOS prerequisites for Skyrim SE/AE modding
 # Handles kernel sysctl limits, open file descriptors for USVFS/DynDOLOD, and Steam compat mounts.
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.systemSettings.gaming.skyrim;
@@ -21,8 +26,18 @@ in
     # High open-files limits (nofile = 524288) required by USVFS virtual file system (MO2)
     # and batch asset processing in DynDOLOD/TexGen.
     security.pam.loginLimits = [
-      { domain = "*"; item = "nofile"; type = "soft"; value = "524288"; }
-      { domain = "*"; item = "nofile"; type = "hard"; value = "524288"; }
+      {
+        domain = "*";
+        item = "nofile";
+        type = "soft";
+        value = "524288";
+      }
+      {
+        domain = "*";
+        item = "nofile";
+        type = "hard";
+        value = "524288";
+      }
     ];
 
     # Prerequisite system packages & utilities for Wine GE-10-34 compatibility

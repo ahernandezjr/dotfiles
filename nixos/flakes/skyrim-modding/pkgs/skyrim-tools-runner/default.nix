@@ -1,7 +1,11 @@
 # Skyrim Tools Wine/Proton Runner Script
 # Sets up Steam GE-Proton10-34 compatibility sandbox, maps WINEPREFIX to Skyrim SE compatdata (App ID 489830),
 # sets STEAM_COMPAT_MOUNTS, and runs Windows tools (xEdit, DynDOLOD, Nemesis, Synthesis) using steam-run.
-{ pkgs, writeShellScriptBin, ge-proton-10-34 }:
+{
+  pkgs,
+  writeShellScriptBin,
+  ge-proton-10-34,
+}:
 
 writeShellScriptBin "skyrim-tools-runner" ''
   set -euo pipefail

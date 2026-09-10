@@ -1,5 +1,11 @@
 # spawn-at-startup, prefer-no-csd, screenshot-path, environment, hotkey-overlay
-{ config, lib, pkgs, term }: {
+{
+  config,
+  lib,
+  pkgs,
+  term,
+}:
+{
   spawn-at-startup = [
     { argv = [ "noctalia" ]; }
     { argv = [ "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1" ]; }
@@ -21,7 +27,7 @@
     PATH = "${config.home.profileDirectory}/bin:/run/current-system/sw/bin:/run/wrappers/bin:$PATH";
   };
   hotkey-overlay.skip-at-startup = true;
-  
+
   # Reference the central Home Manager cursor settings
   cursor = {
     theme = config.home.pointerCursor.name;

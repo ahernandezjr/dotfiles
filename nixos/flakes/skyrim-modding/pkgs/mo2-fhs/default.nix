@@ -2,7 +2,12 @@
 # Automatically discovers ModOrganizer.exe under /mnt/linuxgames (or custom MO2_EXE_PATH)
 # and launches it inside the GE-Proton10-34 Skyrim SE Wine prefix using skyrim-tools-runner.
 # Installs official Mod Organizer 2 icon into $out/share/icons/hicolor/256x256/apps/modorganizer2.png.
-{ stdenv, fetchurl, writeShellScriptBin, skyrim-tools-runner }:
+{
+  stdenv,
+  fetchurl,
+  writeShellScriptBin,
+  skyrim-tools-runner,
+}:
 
 let
   mo2Icon = fetchurl {

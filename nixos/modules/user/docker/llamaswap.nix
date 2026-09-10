@@ -1,10 +1,21 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.userSettings.docker.containers.localai or { enable = false; };
   llamaswap = pkgs.writeShellApplication {
     name = "llamaswap";
-    runtimeInputs = with pkgs; [ fzf docker-compose coreutils findutils gnused ];
+    runtimeInputs = with pkgs; [
+      fzf
+      docker-compose
+      coreutils
+      findutils
+      gnused
+    ];
     text = ''
       MODEL_DIR="''${HOME}/.hai/models/llm/gguf"
       DOTFILES_DIR="''${HOME}/dotfiles"

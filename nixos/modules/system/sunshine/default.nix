@@ -22,10 +22,21 @@ in
   config = lib.mkIf cfg.enable {
     # Sunshine requires these ports to be open
     networking.firewall = {
-      allowedTCPPorts = [ 47984 47989 47990 48010 ];
+      allowedTCPPorts = [
+        47984
+        47989
+        47990
+        48010
+      ];
       allowedUDPPortRanges = [
-        { from = 47998; to = 48000; }
-        { from = 48002; to = 48010; }
+        {
+          from = 47998;
+          to = 48000;
+        }
+        {
+          from = 48002;
+          to = 48010;
+        }
       ];
     };
 

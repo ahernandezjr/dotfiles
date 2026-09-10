@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.systemSettings.virtualization;
   libvirtInit = pkgs.writeShellScriptBin "libvirt-init" ''
@@ -23,7 +28,12 @@ in
           vhostUserPackages = [ pkgs.virtiofsd ];
         };
       };
-      boot.kernelModules = [ "kvm-intel" "vfio" "vfio_pci" "virtiofs" ];
+      boot.kernelModules = [
+        "kvm-intel"
+        "vfio"
+        "vfio_pci"
+        "virtiofs"
+      ];
       programs.dconf.enable = true;
       environment.sessionVariables.LIBVIRT_DEFAULT_URI = "qemu:///system";
       systemd.services.libvirt-init = {
@@ -38,10 +48,19 @@ in
         };
       };
       environment.systemPackages = with pkgs; [
-        virt-manager virt-viewer virtiofsd libguestfs
-        cifs-utils spice-vdagent bridge-utils
+        virt-manager
+        virt-viewer
+        virtiofsd
+        libguestfs
+        cifs-utils
+        spice-vdagent
+        bridge-utils
       ];
-      users.users.alex.extraGroups = [ "libvirtd" "kvm" "qemu-libvirtd" ];
+      users.users.alex.extraGroups = [
+        "libvirtd"
+        "kvm"
+        "qemu-libvirtd"
+      ];
     })
     (lib.mkIf cfg.waydroid.enable {
       virtualisation.waydroid.enable = true;
@@ -95,7 +114,7 @@ in
 
           # 3. Patch property and lxc config files directly
           use_swift = (gpu_node is None)
-          
+
           def patch_prop_file(prop_path, target_node, use_swiftshader):
               if not os.path.exists(prop_path): return
               with open(prop_path, "r") as f:

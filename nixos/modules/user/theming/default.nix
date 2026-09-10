@@ -1,4 +1,9 @@
-{ config, pkgs, repoPath ? "/home/alex/dotfiles", ... }:
+{
+  config,
+  pkgs,
+  repoPath ? "/home/alex/dotfiles",
+  ...
+}:
 
 let
   wallpaper = "${repoPath}/images/wallpaper.jpg";
@@ -16,7 +21,8 @@ let
     }
   '';
   niriOutputPath = "${repoPath}/nixos/modules/user/niri/matugen-colors.nix";
-in {
+in
+{
   home.pointerCursor = {
     enable = true;
     name = "Vimix-cursors";

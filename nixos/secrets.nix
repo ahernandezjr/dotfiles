@@ -5,7 +5,22 @@ let
   laptop = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFgm2CmB1ULN2Z0J7EMfHczSfRXoqn5K7ZWnhjTEqd8e root@work";
 in
 {
-  "secrets/syncthing-password.age".publicKeys = [ alex_desktop alex_laptop desktop laptop ];
-  "secrets/syncthing-user.age".publicKeys = [ alex_desktop alex_laptop desktop laptop ];
-  "secrets/obsidian-password.age".publicKeys = [ alex_desktop alex_laptop desktop laptop ];
+  "secrets/syncthing-password.age".publicKeys = [
+    alex_desktop
+    alex_laptop
+    desktop
+    laptop
+  ];
+  "secrets/syncthing-user.age".publicKeys = [
+    alex_desktop
+    alex_laptop
+    desktop
+    laptop
+  ];
+  "secrets/obsidian-password.age".publicKeys = [
+    alex_desktop
+    alex_laptop
+    desktop
+    laptop
+  ];
 }

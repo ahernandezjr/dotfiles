@@ -1,4 +1,10 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 
 let
   cfg = config.userSettings.editors;
@@ -25,7 +31,11 @@ in
       icon = "nvim";
       mimeType = [ "text/plain" ];
       terminal = false;
-      categories = [ "Utility" "TextEditor" "Development" ];
+      categories = [
+        "Utility"
+        "TextEditor"
+        "Development"
+      ];
     };
 
     home.packages = with pkgs; [
@@ -78,13 +88,21 @@ in
           };
           languages = {
             nix.enable = true;
+            markdown = {
+              enable = true;
+              extensions.markview-nvim.enable = true;
+            };
             python = {
               enable = true;
-              lsp = { servers = [ "pyright" ]; };
+              lsp = {
+                servers = [ "pyright" ];
+              };
             };
             csharp = {
               enable = true;
-              lsp = { servers = [ "omnisharp" ]; };
+              lsp = {
+                servers = [ "omnisharp" ];
+              };
             };
             typescript.enable = true;
             qml.enable = true;
@@ -94,5 +112,3 @@ in
     };
   };
 }
-
-

@@ -8,16 +8,24 @@
       { proportion = 0.5; }
       { proportion = 0.66667; }
     ];
-    default-column-width = { proportion = 0.5; };
+    default-column-width = {
+      proportion = 0.5;
+    };
     focus-ring = {
       width = 3;
     };
     shadow = {
       softness = 30;
       spread = 5;
-      offset = { x = 0; y = 5; };
+      offset = {
+        x = 0;
+        y = 5;
+      };
     };
-    struts = { left = -13; right = -13; };
+    struts = {
+      left = -13;
+      right = -13;
+    };
     background-color = "transparent";
   };
 }

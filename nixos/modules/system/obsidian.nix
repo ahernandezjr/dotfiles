@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.systemSettings.obsidian;
@@ -32,7 +37,7 @@ in
         ports = [ "${toString cfg.port}:8080" ];
         environment = {
           PUID = "1000"; # alex
-          PGID = "100";  # users
+          PGID = "100"; # users
           TZ = "America/Chicago";
         };
         environmentFiles = [ cfg.passwordFile ];

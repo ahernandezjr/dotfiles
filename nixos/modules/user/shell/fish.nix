@@ -1,81 +1,94 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.userSettings.shell;
 in
 {
-  config = lib.mkIf (cfg.enable && cfg.type == "fish") (lib.mkMerge [
-    {
-      home.sessionVariables = {
-        SHELL = "${pkgs.fish}/bin/fish";
-        NIXPKGS_ALLOW_UNFREE = "1";
-      };
-    }
-    (lib.mkIf cfg.manageConfig {
-      programs.fish = {
-        enable = true;
-        # Plugins: each entry must be { name = "..."; src = <package>; }
-        plugins = with pkgs; [
-          { name = "autopair"; src = fishPlugins.autopair; }
-          { name = "fzf-fish"; src = fishPlugins.fzf-fish; }
-        ];
-        shellInit = ''
-          set -gx NIXPKGS_ALLOW_UNFREE 1
+  config = lib.mkIf (cfg.enable && cfg.type == "fish") (
+    lib.mkMerge [
+      {
+        home.sessionVariables = {
+          SHELL = "${pkgs.fish}/bin/fish";
+          NIXPKGS_ALLOW_UNFREE = "1";
+        };
+      }
+      (lib.mkIf cfg.manageConfig {
+        programs.fish = {
+          enable = true;
+          # Plugins: each entry must be { name = "..."; src = <package>; }
+          plugins = with pkgs; [
+            {
+              name = "autopair";
+              src = fishPlugins.autopair;
+            }
+            {
+              name = "fzf-fish";
+              src = fishPlugins.fzf-fish;
+            }
+          ];
+          shellInit = ''
+            set -gx NIXPKGS_ALLOW_UNFREE 1
 
-          # Add custom paths using the idiomatic fish_add_path (handles duplicates and existence checks)
-          fish_add_path $HOME/.npm-global/bin
-          fish_add_path /run/wrappers/bin
+            # Add custom paths using the idiomatic fish_add_path (handles duplicates and existence checks)
+            fish_add_path $HOME/.npm-global/bin
+            fish_add_path /run/wrappers/bin
 
-          set -gx fish_browser floorp
+            set -gx fish_browser floorp
 
-          function reboot-windows
-              sudo efibootmgr -n 0 && sudo systemctl reboot
-          end
+            function reboot-windows
+                sudo efibootmgr -n 0 && sudo systemctl reboot
+            end
 
-          function nyx-rb --description 'Rebuild NixOS system based on current hostname or specified profile'
-              set -l host (hostname)
-              set -l flake_path "$HOME/dotfiles/nixos"
-              set -l flags ""
-              if test -d $flake_path/pkgs-private/pkgs
-                  set flags --override-input custom-pkgs "git+file://$flake_path/pkgs-private"
-              end
-              
-              if set -q argv[1]; and not string match -r "^-" -- $argv[1]
-                  set host $argv[1]
-                  set -e argv[1]
-              end
+            function nyx-rb --description 'Rebuild NixOS system based on current hostname or specified profile'
+                set -l host (hostname)
+                set -l flake_path "$HOME/dotfiles/nixos"
+                set -l flags ""
+                if test -d $flake_path/pkgs-private/pkgs
+                    set flags --override-input custom-pkgs "git+file://$flake_path/pkgs-private"
+                end
+                
+                if set -q argv[1]; and not string match -r "^-" -- $argv[1]
+                    set host $argv[1]
+                    set -e argv[1]
+                end
 
-              if test -d $flake_path
-                  if test "$host" = "nixos"
-                      echo "Warning: Hostname is still 'nixos'. You may need to specify the profile name (e.g., 'nyx-rb work')."
-                      echo "Available profiles: (desktop, laptop, vm, work)"
-                      return 1
-                  end
+                if test -d $flake_path
+                    if test "$host" = "nixos"
+                        echo "Warning: Hostname is still 'nixos'. You may need to specify the profile name (e.g., 'nyx-rb work')."
+                        echo "Available profiles: (desktop, laptop, vm, work)"
+                        return 1
+                    end
 
-                  echo "Rebuilding NixOS for host: $host..."
-                  sudo nixos-rebuild switch --flake "$flake_path#$host" $flags $argv
-              else
-                  echo "Error: Flake directory not found at $flake_path"
-                  return 1
-              end
-          end
+                    echo "Rebuilding NixOS for host: $host..."
+                    sudo nixos-rebuild switch --flake "$flake_path#$host" $flags $argv
+                else
+                    echo "Error: Flake directory not found at $flake_path"
+                    return 1
+                end
+            end
 
-          # function mount-work --description 'Mount the Windows VM OneDrive folder'
-          #     sudo mkdir -p /mnt/onedrive
-          #     sudo mount -t cifs //192.168.122.1/OneDrive /mnt/onedrive -o username=alex,uid=1000,gid=100,vers=3.0,soft
-          #     echo "OneDrive mounted at /mnt/onedrive"
-          # end
-        '';
-        interactiveShellInit = ''
-          if type -q fastfetch
-              fastfetch
-          end
-        '';
-	shellAliases = {
-	  cat = "bat";
-	  ls = "eza -lah -s modified --git --smart-group --color=always --classify=always --hyperlink --follow-symlinks --group-directories-first";
-	};
-      };
-    })
-  ]);
+            # function mount-work --description 'Mount the Windows VM OneDrive folder'
+            #     sudo mkdir -p /mnt/onedrive
+            #     sudo mount -t cifs //192.168.122.1/OneDrive /mnt/onedrive -o username=alex,uid=1000,gid=100,vers=3.0,soft
+            #     echo "OneDrive mounted at /mnt/onedrive"
+            # end
+          '';
+          interactiveShellInit = ''
+            if type -q fastfetch
+                fastfetch
+            end
+          '';
+          shellAliases = {
+            cat = "bat";
+            ls = "eza -lah -s modified --git --smart-group --color=always --classify=always --hyperlink --follow-symlinks --group-directories-first";
+          };
+        };
+      })
+    ]
+  );
 }

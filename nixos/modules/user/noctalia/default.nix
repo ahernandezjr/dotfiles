@@ -1,13 +1,25 @@
 # Noctalia: Home Manager config for Noctalia v5.
-{ config, inputs, lib, pkgs, ... }:
+{
+  config,
+  inputs,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.userSettings.noctalia;
   baseColors = import ./colors.nix;
 
-  endWidgets = [ "volume" "brightness" "tray" "notifications" "sysmon" ]
-    ++ lib.optional cfg.isPortable "battery"
-    ++ [ "clock" ];
+  endWidgets = [
+    "volume"
+    "brightness"
+    "tray"
+    "notifications"
+    "sysmon"
+  ]
+  ++ lib.optional cfg.isPortable "battery"
+  ++ [ "clock" ];
 in
 {
   imports = [ inputs.noctalia.homeModules.default ];
@@ -25,30 +37,32 @@ in
     programs.noctalia = {
       enable = true;
       # Apply build-time patches to Noctalia source files
-      package = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs (oldAttrs: {
-        postPatch = (oldAttrs.postPatch or "") + ''
-          # Patch 1: Prevent crash if HotCorners reload is called before config is loaded
-          substituteInPlace src/shell/hot_corners/hot_corners.cpp \
-            --replace-warn 'void HotCorners::onConfigReload() {' 'void HotCorners::onConfigReload() { if (m_config == nullptr) return;'
+      package =
+        inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs
+          (oldAttrs: {
+            postPatch = (oldAttrs.postPatch or "") + ''
+                      # Patch 1: Prevent crash if HotCorners reload is called before config is loaded
+                      substituteInPlace src/shell/hot_corners/hot_corners.cpp \
+                        --replace-warn 'void HotCorners::onConfigReload() {' 'void HotCorners::onConfigReload() { if (m_config == nullptr) return;'
 
-          # Patch 2: Treat standard numbers and keypad numbers interchangeably for shortcut matching
-          substituteInPlace src/core/input/key_chord.cpp \
-            --replace-warn 'bool keyChordMatches(const KeyChord& chord, std::uint32_t sym, std::uint32_t modifiers) noexcept {' \
-                           'bool keyChordMatches(const KeyChord& chord, std::uint32_t sym, std::uint32_t modifiers) noexcept {
-  // Map standard numbers and KP number keys to each other for shortcuts
-  std::uint32_t targetSym = chord.sym;
-  if (targetSym >= XKB_KEY_1 && targetSym <= XKB_KEY_9 && sym >= XKB_KEY_KP_1 && sym <= XKB_KEY_KP_9) {
-    if ((targetSym - XKB_KEY_1) == (sym - XKB_KEY_KP_1)) {
-      targetSym = sym;
-    }
-  } else if (targetSym >= XKB_KEY_KP_1 && targetSym <= XKB_KEY_KP_9 && sym >= XKB_KEY_1 && sym <= XKB_KEY_9) {
-    if ((targetSym - XKB_KEY_KP_1) == (sym - XKB_KEY_1)) {
-      targetSym = sym;
-    }
-  }
-  return targetSym == sym && chord.modifiers == modifiers;'
-        '';
-      });
+                      # Patch 2: Treat standard numbers and keypad numbers interchangeably for shortcut matching
+                      substituteInPlace src/core/input/key_chord.cpp \
+                        --replace-warn 'bool keyChordMatches(const KeyChord& chord, std::uint32_t sym, std::uint32_t modifiers) noexcept {' \
+                                       'bool keyChordMatches(const KeyChord& chord, std::uint32_t sym, std::uint32_t modifiers) noexcept {
+              // Map standard numbers and KP number keys to each other for shortcuts
+              std::uint32_t targetSym = chord.sym;
+              if (targetSym >= XKB_KEY_1 && targetSym <= XKB_KEY_9 && sym >= XKB_KEY_KP_1 && sym <= XKB_KEY_KP_9) {
+                if ((targetSym - XKB_KEY_1) == (sym - XKB_KEY_KP_1)) {
+                  targetSym = sym;
+                }
+              } else if (targetSym >= XKB_KEY_KP_1 && targetSym <= XKB_KEY_KP_9 && sym >= XKB_KEY_1 && sym <= XKB_KEY_9) {
+                if ((targetSym - XKB_KEY_KP_1) == (sym - XKB_KEY_1)) {
+                  targetSym = sym;
+                }
+              }
+              return targetSym == sym && chord.modifiers == modifiers;'
+            '';
+          });
       settings = {
         accessibility = {
           ui_scale = 1.1;
@@ -76,9 +90,18 @@ in
           };
           session = {
             actions = [
-              { action = "lock"; shortcut = "1"; }
-              { action = "logout"; shortcut = "2"; }
-              { action = "lock_and_suspend"; shortcut = "3"; }
+              {
+                action = "lock";
+                shortcut = "1";
+              }
+              {
+                action = "logout";
+                shortcut = "2";
+              }
+              {
+                action = "lock_and_suspend";
+                shortcut = "3";
+              }
               {
                 action = "command";
                 label = "Hibernate";
@@ -86,8 +109,15 @@ in
                 command = "systemctl hibernate";
                 shortcut = "4";
               }
-              { action = "reboot"; shortcut = "5"; }
-              { action = "shutdown"; shortcut = "6"; variant = "destructive"; }
+              {
+                action = "reboot";
+                shortcut = "5";
+              }
+              {
+                action = "shutdown";
+                shortcut = "6";
+                variant = "destructive";
+              }
               {
                 action = "command";
                 label = "Windows";
@@ -105,9 +135,21 @@ in
           wallpaper_scheme = "m3-content";
           templates = {
             enable_builtin_templates = true;
-            builtin_ids = [ "btop" "gtk3" "gtk4" "ghostty" "niri" "qt" ];
+            builtin_ids = [
+              "btop"
+              "gtk3"
+              "gtk4"
+              "ghostty"
+              "niri"
+              "qt"
+            ];
             enable_community_templates = true;
-            community_ids = [ "neovim" "obsidian" "discord" "steam" ];
+            community_ids = [
+              "neovim"
+              "obsidian"
+              "discord"
+              "steam"
+            ];
           };
         };
         location = {
@@ -141,7 +183,11 @@ in
           margin_edge = 0;
           widget_spacing = 6;
           capsule = true;
-          start = [ "control-center" "active_window" "media" ];
+          start = [
+            "control-center"
+            "active_window"
+            "media"
+          ];
           center = [ "workspaces" ];
           end = endWidgets;
         };
@@ -150,7 +196,8 @@ in
             format = "%I:%M %p\n%b %d";
             vertical_format = "%H\n%M\n—\n%m\n%d";
           };
-        } // lib.optionalAttrs cfg.isPortable {
+        }
+        // lib.optionalAttrs cfg.isPortable {
           battery = {
             type = "battery";
             show_label = false;

@@ -1,5 +1,10 @@
 # Development tools: Python, uv. Enable via userSettings.development.enable.
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.userSettings.development;

@@ -1,7 +1,12 @@
 # Amethyst Mod Manager Derivation
 # Copies the Linux-native Amethyst Mod Manager (v2.4.0) AppImage directly into $out/bin,
 # and installs the official Amethyst Logo icon into $out/share/icons/hicolor/256x256/apps/amethyst-mod-manager.png.
-{ lib, stdenv, fetchurl, makeWrapper }:
+{
+  lib,
+  stdenv,
+  fetchurl,
+  makeWrapper,
+}:
 
 let
   amethystLogo = fetchurl {

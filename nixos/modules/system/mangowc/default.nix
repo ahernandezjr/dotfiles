@@ -1,5 +1,10 @@
 # Mangowc: lightweight Wayland compositor (dwl-based).
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.systemSettings.mangowc;

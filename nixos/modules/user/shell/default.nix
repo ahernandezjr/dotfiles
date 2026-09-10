@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.userSettings.shell;
@@ -9,7 +14,11 @@ in
       enable = lib.mkEnableOption "Enable shell and base CLI config";
       type = lib.mkOption {
         default = "fish";
-        type = lib.types.enum [ "bash" "zsh" "fish" ];
+        type = lib.types.enum [
+          "bash"
+          "zsh"
+          "fish"
+        ];
         description = "Login shell to use";
       };
       manageConfig = lib.mkOption {
@@ -20,136 +29,148 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable (lib.mkMerge [
-    {
-      programs.ghostty = {
-        enable = true;
-        settings = {
-          font-family = "JetBrains Mono";
-          theme = "noctalia";
-          background-opacity = 0.85;
-          copy-on-select = true;
-          keybind = [
-            "ctrl+shift+c=copy_to_clipboard"
-            "ctrl+shift+v=paste_from_clipboard"
-          ];
-        };
-      };
-
-      programs.zoxide = {
-        enable = true;
-        enableFishIntegration = true;
-        enableZshIntegration = true;
-        enableBashIntegration = true;
-        enableNushellIntegration = true;
-        options = [ "--cmd cd" ];
-      };
-      programs.fzf = {
-        enable = true;
-        enableFishIntegration = true;
-        enableZshIntegration = true;
-        enableBashIntegration = true;
-        defaultCommand = "fd --type f";
-        defaultOptions = [ "--height 40%" "--layout=reverse-list" "--border" ];
-        fileWidget.command = "fd --type f";
-        changeDirWidget.command = "fd --type d";
-        tmux.enableShellIntegration = true;
-        tmux.shellIntegrationOptions = [ "-d 40%" ];
-      };
-      programs.bat = {
-        enable = true;
-        config = {
-          pager = "less -FR";
-        };
-      };
-      programs.eza = {
-        enable = true;
-        enableFishIntegration = false; # keep custom ls alias in fish
-      };
-      programs.tmux = {
-        enable = true;
-        mouse = true;
-        baseIndex = 1;
-        sensibleOnTop = true;
-        terminal = "tmux-256color";
-        newSession = true;
-        historyLimit = 5000;
-      };
-      programs.starship = {
-        enable = true;
-        enableFishIntegration = true;
-        enableZshIntegration = true;
-        enableBashIntegration = true;
-        enableNushellIntegration = true;
-        settings = { scan_timeout = 10; };
-      };
-      programs.nushell = {
-        enable = true;
-        settings = { show_banner = false; };
-      };
-      home.packages = with pkgs; [
-        (btop.override { cudaSupport = true; })
-        nix-search-cli
-        fd
-        lazygit
-        lazydocker
-        fastfetch
-        ripgrep
-        yazi
-        # Archiving
-        p7zip
-        unrar
-      ];
-
-      home.file.".local/share/icons/hicolor/scalable/apps/com.mitchellh.ghostty.svg".source = ./../../../../images/ghost.svg;
-      home.file.".local/share/icons/hicolor/scalable/apps/ghostty.svg".source = ./../../../../images/ghost.svg;
-
-      # Allow HM to overwrite existing fastfetch config so activation doesn't abort.
-      xdg.configFile."fastfetch/config.jsonc".force = true;
-      programs.fastfetch = {
-        enable = true;
-        settings = {
-          logo = {
-            source = "~/dotfiles/images/blood_ascii.txt";
-            type = "file";
-            color = {
-              "1" = "#ffffff";
-              "2" = "#8b0000";
-            };
+  config = lib.mkIf cfg.enable (
+    lib.mkMerge [
+      {
+        programs.ghostty = {
+          enable = true;
+          settings = {
+            font-family = "JetBrains Mono";
+            theme = "noctalia";
+            background-opacity = 0.85;
+            copy-on-select = true;
+            keybind = [
+              "ctrl+shift+c=copy_to_clipboard"
+              "ctrl+shift+v=paste_from_clipboard"
+            ];
           };
-          modules = [
-            "title"
-            "separator"
-            "os"
-            "host"
-            "kernel"
-            "uptime"
-            "packages"
-            "shell"
-            "display"
-            "de"
-            "wm"
-            "wmtheme"
-            "theme"
-            "icons"
-            "font"
-            "cursor"
-            "terminal"
-            "terminalfont"
-            "cpu"
-            "gpu"
-            "memory"
-            "swap"
-            "disk"
-            "localip"
-            "battery"
-            "poweradapter"
-            "locale"
-            "break"
-            "colors"
-          ];
         };
-      };
-    }
-  ]);
+
+        programs.zoxide = {
+          enable = true;
+          enableFishIntegration = true;
+          enableZshIntegration = true;
+          enableBashIntegration = true;
+          enableNushellIntegration = true;
+          options = [ "--cmd cd" ];
+        };
+        programs.fzf = {
+          enable = true;
+          enableFishIntegration = true;
+          enableZshIntegration = true;
+          enableBashIntegration = true;
+          defaultCommand = "fd --type f";
+          defaultOptions = [
+            "--height 40%"
+            "--layout=reverse-list"
+            "--border"
+          ];
+          fileWidget.command = "fd --type f";
+          changeDirWidget.command = "fd --type d";
+          tmux.enableShellIntegration = true;
+          tmux.shellIntegrationOptions = [ "-d 40%" ];
+        };
+        programs.bat = {
+          enable = true;
+          config = {
+            pager = "less -FR";
+          };
+        };
+        programs.eza = {
+          enable = true;
+          enableFishIntegration = false; # keep custom ls alias in fish
+        };
+        programs.tmux = {
+          enable = true;
+          mouse = true;
+          baseIndex = 1;
+          sensibleOnTop = true;
+          terminal = "tmux-256color";
+          newSession = true;
+          historyLimit = 5000;
+        };
+        programs.starship = {
+          enable = true;
+          enableFishIntegration = true;
+          enableZshIntegration = true;
+          enableBashIntegration = true;
+          enableNushellIntegration = true;
+          settings = {
+            scan_timeout = 10;
+          };
+        };
+        programs.nushell = {
+          enable = true;
+          settings = {
+            show_banner = false;
+          };
+        };
+        home.packages = with pkgs; [
+          (btop.override { cudaSupport = true; })
+          nix-search-cli
+          fd
+          lazygit
+          lazydocker
+          fastfetch
+          ripgrep
+          yazi
+          # Archiving
+          p7zip
+          unrar
+        ];
+
+        home.file.".local/share/icons/hicolor/scalable/apps/com.mitchellh.ghostty.svg".source =
+          ./../../../../images/ghost.svg;
+        home.file.".local/share/icons/hicolor/scalable/apps/ghostty.svg".source =
+          ./../../../../images/ghost.svg;
+
+        # Allow HM to overwrite existing fastfetch config so activation doesn't abort.
+        xdg.configFile."fastfetch/config.jsonc".force = true;
+        programs.fastfetch = {
+          enable = true;
+          settings = {
+            logo = {
+              source = "~/dotfiles/images/blood_ascii.txt";
+              type = "file";
+              color = {
+                "1" = "#ffffff";
+                "2" = "#8b0000";
+              };
+            };
+            modules = [
+              "title"
+              "separator"
+              "os"
+              "host"
+              "kernel"
+              "uptime"
+              "packages"
+              "shell"
+              "display"
+              "de"
+              "wm"
+              "wmtheme"
+              "theme"
+              "icons"
+              "font"
+              "cursor"
+              "terminal"
+              "terminalfont"
+              "cpu"
+              "gpu"
+              "memory"
+              "swap"
+              "disk"
+              "localip"
+              "battery"
+              "poweradapter"
+              "locale"
+              "break"
+              "colors"
+            ];
+          };
+        };
+      }
+    ]
+  );
 }

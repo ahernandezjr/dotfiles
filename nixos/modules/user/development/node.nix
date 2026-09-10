@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   dev = config.userSettings.development;
@@ -15,5 +20,3 @@ in
     ];
   };
 }
-
-

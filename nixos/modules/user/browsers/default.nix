@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.userSettings.browsers;
@@ -11,7 +16,7 @@ let
     firefox = "firefox.desktop";
   };
 
-  # Determine the primary browser ID. 
+  # Determine the primary browser ID.
   # It uses the explicit 'default' if set, otherwise picks the first enabled one.
   primaryId =
     if cfg.default != "" then
@@ -48,12 +53,9 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.sessionVariables.BROWSER =
-      if primaryId == "brave" then "brave" else primaryId;
+    home.sessionVariables.BROWSER = if primaryId == "brave" then "brave" else primaryId;
 
     home.packages =
-      (lib.optional cfg.firefox.enable pkgs.firefox)
-      ++ (lib.optional cfg.floorp.enable pkgs.floorp-bin);
+      (lib.optional cfg.firefox.enable pkgs.firefox) ++ (lib.optional cfg.floorp.enable pkgs.floorp-bin);
   };
 }
-

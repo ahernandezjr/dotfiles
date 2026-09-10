@@ -6,10 +6,10 @@
 
 let
   cfg = config.systemSettings.browsers.brave;
-  
+
   # Access the policies defined in the user's home-manager config
   # We use the primary user 'alex' as defined in your flake
-  userBravePolicies = config.home-manager.users.alex.userSettings.browsers.brave.policies or {};
+  userBravePolicies = config.home-manager.users.alex.userSettings.browsers.brave.policies or { };
   braveEnabled = config.home-manager.users.alex.userSettings.browsers.brave.enable or false;
 in
 {
@@ -43,6 +43,7 @@ in
 
     # Apply the user-defined policies to Brave's system paths
     environment.etc."brave/policies/managed/policy.json".text = builtins.toJSON userBravePolicies;
-    environment.etc."brave-browser/policies/managed/policy.json".text = builtins.toJSON userBravePolicies;
+    environment.etc."brave-browser/policies/managed/policy.json".text =
+      builtins.toJSON userBravePolicies;
   };
 }

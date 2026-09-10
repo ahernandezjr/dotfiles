@@ -1,5 +1,10 @@
 # PostgreSQL. Enable per-host via systemSettings.development.postgresql.enable.
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.systemSettings.development.postgresql;

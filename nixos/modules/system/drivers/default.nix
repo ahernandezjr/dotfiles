@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.systemSettings.drivers;
@@ -31,7 +36,12 @@ in
         polychromatic
       ];
 
-      users.users.alex = { extraGroups = [ "openrazer" "input" ]; };
+      users.users.alex = {
+        extraGroups = [
+          "openrazer"
+          "input"
+        ];
+      };
     })
 
     (lib.mkIf cfg.lenovo-legion.enable {

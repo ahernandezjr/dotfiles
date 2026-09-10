@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.userSettings.xdg;
@@ -19,18 +24,21 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.packages = with pkgs; [ 
-      p7zip
-      unrar
-    ] ++ lib.optionals cfg.desktop.enable [
-      nautilus
-      file-roller
-      loupe
-      grim
-      slurp
-      tesseract
-      wl-clipboard
-    ];
+    home.packages =
+      with pkgs;
+      [
+        p7zip
+        unrar
+      ]
+      ++ lib.optionals cfg.desktop.enable [
+        nautilus
+        file-roller
+        loupe
+        grim
+        slurp
+        tesseract
+        wl-clipboard
+      ];
     xdg.enable = true;
     xdg.userDirs = {
       enable = true;
@@ -56,7 +64,12 @@ in
       };
       "org/gnome/nautilus/list-view" = {
         use-tree-view = true;
-        default-visible-columns = [ "name" "size" "type" "date_modified" ];
+        default-visible-columns = [
+          "name"
+          "size"
+          "type"
+          "date_modified"
+        ];
       };
     };
   };
