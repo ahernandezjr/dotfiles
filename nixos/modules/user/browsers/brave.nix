@@ -59,7 +59,7 @@ let
     BravePlaylistEnabled = false;
     BraveWaybackMachineEnabled = false;
 
-    HardwareAccelerationModeEnabled = true;
+    HardwareAccelerationModeEnabled = false;
     MemorySaverEnabled = true;
     BackgroundModeEnabled = false;
     DefaultSearchProviderEnabled = true;

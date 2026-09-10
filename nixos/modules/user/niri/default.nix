@@ -54,7 +54,7 @@ in
     useDesktopOutputs = lib.mkOption {
       type = lib.types.bool;
       default = false;
-      description = "Use the desktop multi-monitor output config for the external Dell (DP-3), INNOCN 32M2V (HDMI-A-3), and BenQ XL2420TE (DP-5) monitors. When false, niri auto-detects (single display for laptop/vm).";
+      description = "Use the desktop multi-monitor output config targeting monitor titles/names (Dell S2417DG, INNOCN 32M2V). When false, niri auto-detects (single display for laptop/vm).";
     };
 
     useWorkOutputs = lib.mkOption {
