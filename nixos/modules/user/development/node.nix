@@ -11,7 +11,7 @@ in
       pnpm
       claude-code
       cursor-cli
-      gemini-cli
+      antigravity-cli
     ];
   };
 }
