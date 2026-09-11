@@ -82,7 +82,7 @@ in
       # Enable the Nvidia settings menu, accessible via `nvidia-settings`.
       nvidiaSettings = true;
 
-      package = config.boot.kernelPackages.nvidiaPackages.latest;
+      package = config.boot.kernelPackages.nvidiaPackages.stable;
     };
 
     # Add environment variables for Wayland sessions (only when not in Prime mode)
