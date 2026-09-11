@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Wabbajack Modlist Curator CLI Tool Suite
-Command-line tool suite to parse, compare, search, and curate Skyrim/game modlists from .wabbajack files or CDN URLs.
-Pure CLI script - fast, Unix-pipeable, no GUI/TUI overhead.
+Wabbajack Modlist Curator & Analyzer (Terminal TUI)
+Parses, compares, categorizes, and curates mods from 1 or more .wabbajack files.
+Pure local terminal tool - no WebUI, no hosted server.
 """
 
 import os
@@ -14,6 +14,8 @@ import urllib.request
 import urllib.parse
 import re
 import argparse
+import webbrowser
+import curses
 import io
 from pathlib import Path
 
@@ -27,7 +29,7 @@ def load_curation_db():
         try:
             with open(CURATION_DB_FILE, "r", encoding="utf-8") as f:
                 return json.load(f)
-        except Exception:
+        except Exception as e:
             pass
     return {"mods": {}, "notes": {}}
 
@@ -36,7 +38,11 @@ def save_curation_db(db):
         with open(CURATION_DB_FILE, "w", encoding="utf-8") as f:
             json.dump(db, f, indent=2)
     except Exception as e:
-        print(f"Error saving curation DB: {e}", file=sys.stderr)
+        pass
+
+# Global state
+LOADED_MODLISTS = {} # id -> list dict
+CURATION_DB = load_curation_db()
 
 CATEGORY_RULES = [
     ("Core & Bug Fixes", [r"skse", r"address library", r"bug fix", r"engine fix", r"po3", r"powerofthree", r"unofficial skyrim", r"ussep", r"displaytweaks", r"sse engine", r"skse64", r"crashlogger", r"scriptextender"]),
@@ -50,6 +56,8 @@ CATEGORY_RULES = [
     ("Quests & Locations", [r"quest", r"dungeon", r"city", r"town", r"expansion", r"lotd", r"legacy of the dragonborn", r"bruma", r"wyrmstooth", r"falskaar", r"location", r"world"]),
     ("Audio & Sound", [r"audio", r"sound", r"music", r"voice", r"sfx", r"ambient", r"acoustic"])
 ]
+
+CATEGORIES_LIST = ["All Categories"] + [c[0] for c in CATEGORY_RULES] + ["Miscellaneous"]
 
 def auto_categorize(mod_name, desc=""):
     combined = f"{mod_name} {desc}".lower()
@@ -79,8 +87,8 @@ def clean_game_name(g):
         return "starfield"
     return clean
 
-def parse_modlist_data(zip_source, list_name_override=None):
-    """Comprehensively parses a .wabbajack zip source (Archives + Directives/MO2 mods)."""
+def extract_modlist_info(zip_source, list_name_override=None):
+    """Comprehensively parses a .wabbajack file (Archives + Directives/MO2 mods)."""
     if isinstance(zip_source, (str, Path)):
         z = zipfile.ZipFile(zip_source, 'r')
     else:
@@ -98,9 +106,10 @@ def parse_modlist_data(zip_source, list_name_override=None):
 
     all_mods = {}
 
-    # 1. Archives
+    # 1. Parse Archives
     for a in archives:
         st = a.get("State", {})
+        st_type = st.get("$type", "")
         mod_name = st.get("Name") or a.get("Name") or "Unknown Archive"
         mod_id = st.get("ModID") or st.get("ModId") or None
         file_id = st.get("FileID") or st.get("FileId") or None
@@ -132,7 +141,7 @@ def parse_modlist_data(zip_source, list_name_override=None):
             "source": "Archive"
         }
 
-    # 2. Directives (MO2 installed mods)
+    # 2. Parse Directives for MO2 Installed Mod Folders (Ensures 100% Comprehensive Mod List)
     for d in directives:
         to_path = d.get("To", "")
         norm_path = to_path.replace("\\", "/")
@@ -168,275 +177,408 @@ def parse_modlist_data(zip_source, list_name_override=None):
         "mods": list(all_mods.values())
     }
 
-def load_source(source_path_or_url):
-    """Loads a .wabbajack file from local file path or remote CDN URL."""
-    clean_src = source_path_or_url.strip()
+def fetch_url_modlist(url, name=None, progress_cb=None):
+    """Fetches a .wabbajack file from URL, handling authored-files.wabbajack.org chunked downloads."""
+    clean_url = url.strip()
     headers = {"User-Agent": "Mozilla/5.0"}
 
-    if clean_src.startswith("http://") or clean_src.startswith("https://"):
-        if "authored-files.wabbajack.org" in clean_src:
-            munged = clean_src.rstrip("/").split("/")[-1]
-            def_url = f"https://authored-files.wabbajack.org/authored_files/{munged}/definition.json.gz"
+    if "authored-files.wabbajack.org" in clean_url:
+        munged = clean_url.rstrip("/").split("/")[-1]
+        def_url = f"https://authored-files.wabbajack.org/authored_files/{munged}/definition.json.gz"
 
-            print(f"Fetching manifest definition from {munged}...", file=sys.stderr)
-            req = urllib.request.Request(def_url, headers=headers)
-            gz_bytes = urllib.request.urlopen(req).read()
-            meta = json.loads(gzip.decompress(gz_bytes).decode("utf-8"))
+        if progress_cb:
+            progress_cb(f"Fetching definition for {munged}...")
 
-            parts = meta.get("Parts", [])
+        req = urllib.request.Request(def_url, headers=headers)
+        gz_bytes = urllib.request.urlopen(req).read()
+        meta = json.loads(gzip.decompress(gz_bytes).decode("utf-8"))
+
+        parts = meta.get("Parts", [])
+        if not name:
             name = meta.get("OriginalFileName", munged)
-            full_data = bytearray()
-            total_parts = len(parts)
 
-            for i in range(total_parts):
-                print(f"Downloading {name} (Chunk {i+1}/{total_parts})...", file=sys.stderr)
-                part_url = f"https://authored-files.wabbajack.org/authored_files/{munged}/parts/{i}"
-                r = urllib.request.Request(part_url, headers=headers)
-                p_bytes = urllib.request.urlopen(r).read()
-                full_data.extend(p_bytes)
+        full_data = bytearray()
+        total_parts = len(parts)
 
-            return parse_modlist_data(io.BytesIO(full_data), list_name_override=name)
-        else:
-            print(f"Downloading .wabbajack file from {clean_src}...", file=sys.stderr)
-            req = urllib.request.Request(clean_src, headers=headers)
-            data_bytes = urllib.request.urlopen(req).read()
-            return parse_modlist_data(io.BytesIO(data_bytes), list_name_override=clean_src.split("/")[-1])
+        for i in range(total_parts):
+            if progress_cb:
+                progress_cb(f"Downloading {name} (Part {i+1}/{total_parts})...")
+            part_url = f"https://authored-files.wabbajack.org/authored_files/{munged}/parts/{i}"
+            r = urllib.request.Request(part_url, headers=headers)
+            p_bytes = urllib.request.urlopen(r).read()
+            full_data.extend(p_bytes)
+
+        return extract_modlist_info(io.BytesIO(full_data), list_name_override=name)
     else:
-        p = Path(clean_src)
-        if not p.exists():
-            raise FileNotFoundError(f"File not found: {clean_src}")
-        return parse_modlist_data(p)
+        if progress_cb:
+            progress_cb("Downloading .wabbajack file...")
+        req = urllib.request.Request(clean_url, headers=headers)
+        data_bytes = urllib.request.urlopen(req).read()
+        return extract_modlist_info(io.BytesIO(data_bytes), list_name_override=name)
 
-# --- CLI Subcommands ---
+# --- Curses TUI Application ---
+def run_tui(stdscr):
+    curses.curs_set(0) # Hide cursor
+    stdscr.timeout(100) # Input timeout
 
-def cmd_parse(args):
-    """Parses a modlist and prints all mods in a clean table format."""
-    ml = load_source(args.source)
-    db = load_curation_db()
+    # Setup Colors
+    curses.start_color()
+    curses.use_default_colors()
+    curses.init_pair(1, curses.COLOR_CYAN, -1)     # Header / Category
+    curses.init_pair(2, curses.COLOR_GREEN, -1)    # Selected / Starred
+    curses.init_pair(3, curses.COLOR_RED, -1)      # Rejected
+    curses.init_pair(4, curses.COLOR_YELLOW, -1)   # Nexus / Highlight
+    curses.init_pair(5, curses.COLOR_MAGENTA, -1)  # Tab / Status
+    curses.init_pair(6, curses.COLOR_BLACK, curses.COLOR_CYAN) # Selection bar
 
-    print(f"\n==========================================================================================================")
-    print(f"⚡ WABBAJACK MODLIST: {ml['name']} (v{ml['version']})")
-    print(f"Author: {ml['author']} | Game: {ml['game']} | Total Extracted Mods: {len(ml['mods'])}")
-    print(f"==========================================================================================================\n")
+    selected_index = 0
+    top_scroll = 0
+    search_query = ""
+    tab_mode = 0  # 0: All, 1: Common, 2: Unique, 3: Curated
+    cat_filter_idx = 0
+    show_help_overlay = False
+    
+    # 2 SEPARATE STATUS LINES:
+    # 1) last_action: Dedicated ONLY to showing the output of the last action taken (never overwritten by help text)
+    # 2) info_msg: Dedicated to general status info / help hint
+    last_action = "None (No actions performed yet)"
+    info_msg = "Curator Active | Press [h/?] for Full Hotkey Help Window"
 
-    print(f"{'STATUS':<8} | {'MOD NAME':<40} | {'CATEGORY':<20} | {'AUTHOR':<18} | {'NEXUS LINK'}")
-    print("-" * 115)
+    while True:
+        stdscr.clear()
+        height, width = stdscr.getmaxyx()
 
-    count = 0
-    for m in ml["mods"]:
-        if args.search:
-            q = args.search.lower()
-            if q not in m["name"].lower() and q not in m["author"].lower() and q not in m["category"].lower():
+        # Build Aligned Combined Mods List
+        list_ids = list(LOADED_MODLISTS.keys())
+        mod_map = {}
+        for lid in list_ids:
+            ml = LOADED_MODLISTS[lid]
+            for m in ml["mods"]:
+                k = m["key"]
+                if k not in mod_map:
+                    mod_map[k] = {
+                        "key": k,
+                        "name": m["name"],
+                        "author": m["author"],
+                        "version": m["version"],
+                        "category": m["category"],
+                        "nexus_url": m["nexus_url"],
+                        "desc": m["description"],
+                        "presence": {}
+                    }
+                mod_map[k]["presence"][lid] = m["version"]
+
+        all_mods = list(mod_map.values())
+
+        # Filter mods based on tab, category, and search query
+        filtered_mods = []
+        for m in all_mods:
+            if search_query:
+                q = search_query.lower()
+                if q not in m["name"].lower() and q not in m["author"].lower() and q not in m["desc"].lower():
+                    continue
+            if cat_filter_idx > 0:
+                selected_cat = CATEGORIES_LIST[cat_filter_idx]
+                if m["category"] != selected_cat:
+                    continue
+            num_p = len(m["presence"])
+            if tab_mode == 1 and num_p < len(list_ids): # Common
+                continue
+            if tab_mode == 2 and num_p > 1: # Unique
+                continue
+            if tab_mode == 3 and CURATION_DB["mods"].get(m["key"]) != "SELECTED": # Curated
                 continue
 
-        st = db.get("mods", {}).get(m["key"], "[ ]")
-        if st == "SELECTED":
-            st = "[⭐]"
-        elif st == "REJECTED":
-            st = "[✕]"
-        elif st == "CONSIDERING":
-            st = "[?]"
-        else:
-            st = "[ ]"
+            filtered_mods.append(m)
 
-        n_url = m["nexus_url"] or "-"
-        print(f"{st:<8} | {m['name'][:40]:<40} | {m['category'][:20]:<20} | {m['author'][:18]:<18} | {n_url}")
-        count += 1
+        # Draw Title Header (Line 0)
+        tab_names = ["All Mods", "Common", "Unique", "⭐ Curated Selection"]
+        header_text = f"⚡ Wabbajack Curator | Modlists: {len(list_ids)} | Unique Mods: {len(all_mods)} | View: [{tab_names[tab_mode]}] | Cat: [{CATEGORIES_LIST[cat_filter_idx]}]"
+        stdscr.attron(curses.color_pair(1) | curses.A_BOLD)
+        stdscr.addstr(0, 0, header_text[:width-1])
+        stdscr.attroff(curses.color_pair(1) | curses.A_BOLD)
 
-    print("-" * 115)
-    print(f"Total displayed mods: {count}\n")
+        # Draw Persistent HOTKEY BAR (Line 1)
+        hotkey_bar = "HOTKEYS: [Space] Star | [x] Reject | [n] Note | [o/Enter] Open Nexus | [/] Search | [Tab] View | [t] Category | [l] Load | [e] Export | [h/?] Help | [q] Quit"
+        stdscr.addstr(1, 0, hotkey_bar[:width-1], curses.color_pair(4) | curses.A_BOLD)
+        stdscr.hline(2, 0, "-", width)
 
-def cmd_compare(args):
-    """Compares 2 or more modlists side-by-side."""
-    if len(args.sources) < 2:
-        print("Error: Compare requires 2 or more .wabbajack sources.", file=sys.stderr)
-        sys.exit(1)
+        # List Area Dimensions (adjusted for 2 status lines at bottom)
+        list_top = 3
+        list_height = height - 9
+        if list_height < 3:
+            list_height = 3
 
-    modlists = []
-    for s in args.sources:
-        modlists.append(load_source(s))
+        # Clamp Selected Index & Scroll
+        if selected_index >= len(filtered_mods):
+            selected_index = max(0, len(filtered_mods) - 1)
+        if selected_index < top_scroll:
+            top_scroll = selected_index
+        if selected_index >= top_scroll + list_height:
+            top_scroll = selected_index - list_height + 1
 
-    mod_map = {}
-    for ml in modlists:
-        lid = ml["id"]
-        for m in ml["mods"]:
-            k = m["key"]
-            if k not in mod_map:
-                mod_map[k] = {
-                    "key": k,
-                    "name": m["name"],
-                    "category": m["category"],
-                    "nexus_url": m["nexus_url"],
-                    "presence": {}
-                }
-            mod_map[k]["presence"][lid] = m["version"]
+        # Render Rows
+        for i in range(list_height):
+            idx = top_scroll + i
+            row_y = list_top + i
+            if row_y >= height - 6:
+                break
+            if idx < len(filtered_mods):
+                m = filtered_mods[idx]
+                is_selected = (idx == selected_index)
 
-    print(f"\n==========================================================================================================")
-    print(f"📊 MODLIST COMPARISON: {len(modlists)} Modlists ({len(mod_map)} Total Unique Mods)")
-    for ml in modlists:
-        print(f"  • {ml['name']} (Total Mods: {len(ml['mods'])})")
-    print(f"==========================================================================================================\n")
+                status = CURATION_DB["mods"].get(m["key"], "NONE")
+                status_icon = "[ ]"
+                status_color = curses.color_pair(0)
+                if status == "SELECTED":
+                    status_icon = "[⭐]"
+                    status_color = curses.color_pair(2) | curses.A_BOLD
+                elif status == "REJECTED":
+                    status_icon = "[✕]"
+                    status_color = curses.color_pair(3)
+                elif status == "CONSIDERING":
+                    status_icon = "[?]"
+                    status_color = curses.color_pair(4)
 
-    list_ids = [ml["id"] for ml in modlists]
-    pres_headers = " | ".join([lid[:12] for lid in list_ids])
-    print(f"{'MOD NAME':<42} | {'CATEGORY':<20} | {pres_headers} | {'NEXUS LINK'}")
-    print("-" * 115)
+                pres_str = "".join(["[✓]" if lid in m["presence"] else "[-]" for lid in list_ids])
+                note = CURATION_DB.get("notes", {}).get(m["key"], "")
+                note_str = f" 📝 {note}" if note else ""
+                nexus_badge = " [NEXUS]" if m["nexus_url"] else ""
 
-    common_count = 0
-    unique_counts = {lid: 0 for lid in list_ids}
+                row_str = f"{status_icon} {m['name'][:35]:<35} | {m['category'][:18]:<18} | {m['author'][:15]:<15} | {pres_str}{nexus_badge}{note_str}"
 
-    for m in mod_map.values():
-        p_str = " | ".join(["  ✓  " if lid in m["presence"] else "  -  " for lid in list_ids])
-        num_pres = len(m["presence"])
-        if num_pres == len(list_ids):
-            common_count += 1
-        elif num_pres == 1:
-            only_lid = list(m["presence"].keys())[0]
-            unique_counts[only_lid] += 1
+                if is_selected:
+                    stdscr.attron(curses.color_pair(6) | curses.A_BOLD)
+                    stdscr.addstr(row_y, 0, row_str[:width-1].ljust(width-1))
+                    stdscr.attroff(curses.color_pair(6) | curses.A_BOLD)
+                else:
+                    stdscr.attron(status_color)
+                    stdscr.addstr(row_y, 0, row_str[:width-1])
+                    stdscr.attroff(status_color)
 
-        if args.mode == "common" and num_pres < len(list_ids):
+        # Draw Divider & Details Footer Box
+        footer_top = height - 6
+        stdscr.hline(footer_top, 0, "=", width)
+
+        if filtered_mods and selected_index < len(filtered_mods):
+            cur_m = filtered_mods[selected_index]
+            n_url = cur_m["nexus_url"] or "No direct Nexus URL"
+            n_note = CURATION_DB.get("notes", {}).get(cur_m["key"], "None")
+            detail_1 = f"Selected Mod: {cur_m['name']} (v{cur_m['version']}) | Author: {cur_m['author']} | Category: {cur_m['category']}"
+            detail_2 = f"Nexus Link: {n_url}"
+            detail_3 = f"Notes: {n_note} | Description: {cur_m['desc'][:80]}"
+
+            stdscr.addstr(footer_top + 1, 0, detail_1[:width-1], curses.color_pair(1) | curses.A_BOLD)
+            stdscr.addstr(footer_top + 2, 0, detail_2[:width-1], curses.color_pair(4))
+            stdscr.addstr(footer_top + 3, 0, detail_3[:width-1], curses.color_pair(0))
+
+        # --- 2 SEPARATE STATUS LINES AT BOTTOM ---
+        # Line height - 2: LAST ACTION (Never overwritten by help text)
+        action_bar_text = f" LAST ACTION: {last_action}".ljust(width-1)[:width-1]
+        stdscr.addstr(height - 2, 0, action_bar_text, curses.color_pair(2) | curses.A_BOLD)
+
+        # Line height - 1: INFO / HELP HINT
+        info_bar_text = f" INFO: {info_msg}".ljust(width-1)[:width-1]
+        stdscr.addstr(height - 1, 0, info_bar_text, curses.color_pair(1) | curses.A_REVERSE)
+
+        # Render Help Overlay Window if toggled
+        if show_help_overlay:
+            box_h = 16
+            box_w = 70
+            box_y = max(1, (height - box_h) // 2)
+            box_x = max(1, (width - box_w) // 2)
+
+            for py in range(box_h):
+                stdscr.addstr(box_y + py, box_x, " " * box_w, curses.color_pair(6))
+
+            stdscr.attron(curses.color_pair(6) | curses.A_BOLD)
+            stdscr.addstr(box_y, box_x + 2, " Wabbajack Curator - Keyboard Hotkeys & Help ")
+            stdscr.attroff(curses.color_pair(6) | curses.A_BOLD)
+
+            help_lines = [
+                "↑ / ↓ or k / j : Navigate up/down mod list",
+                "Space or s     : Toggle ⭐ Star / Select Mod (Add to My Custom List)",
+                "x or r         : Toggle ✕ Reject Mod",
+                "c              : Toggle ? Consider Mod",
+                "n              : Add / Edit custom note for highlighted mod",
+                "o or Enter     : Open Nexus Mods link in default web browser",
+                "/              : Live Search filter (by name, author, or desc)",
+                "Tab            : Cycle View (All, Common, Unique, Curated)",
+                "t              : Cycle Category filter",
+                "l              : Load local .wabbajack file or authored-files URL",
+                "e              : Export curated selection to Markdown report",
+                "h or ?         : Toggle this Help Window",
+                "q              : Quit application"
+            ]
+
+            for idx, hl in enumerate(help_lines):
+                if box_y + 2 + idx < height - 1:
+                    stdscr.addstr(box_y + 2 + idx, box_x + 3, hl[:box_w-4], curses.color_pair(6))
+
+            stdscr.addstr(box_y + box_h - 1, box_x + 2, " Press any key or 'h' to close help ", curses.color_pair(6) | curses.A_BOLD)
+
+        stdscr.refresh()
+
+        # Handle Keyboard Input
+        try:
+            ch = stdscr.getch()
+        except:
             continue
-        if args.mode == "unique" and num_pres > 1:
+
+        if ch == -1:
             continue
 
-        n_url = m["nexus_url"] or "-"
-        print(f"{m['name'][:42]:<42} | {m['category'][:20]:<20} | {p_str} | {n_url}")
+        if show_help_overlay:
+            show_help_overlay = False
+            continue
 
-    print("-" * 115)
-    print(f"SUMMARY: Shared Common Mods across all lists: {common_count}")
-    for lid, c in unique_counts.items():
-        print(f"  • Unique to {lid}: {c} mods")
-    print()
+        if ch in (ord('h'), ord('?')):
+            show_help_overlay = not show_help_overlay
+            continue
 
-def cmd_select(args):
-    """Marks a mod as Selected (Starred) in the curation DB."""
-    db = load_curation_db()
-    key = f"name_{args.mod_name.lower().strip()}"
-    db["mods"][key] = "SELECTED"
-    save_curation_db(db)
-    print(f"⭐ Marked mod '{args.mod_name}' as SELECTED in curation DB.")
+        if ch in (ord('q'), ord('Q')):
+            break
+        elif ch in (curses.KEY_UP, ord('k')):
+            if selected_index > 0:
+                selected_index -= 1
+        elif ch in (curses.KEY_DOWN, ord('j')):
+            if selected_index < len(filtered_mods) - 1:
+                selected_index += 1
+        elif ch in (ord(' '), ord('s'), ord('S')): # Toggle Star / Select
+            if filtered_mods and selected_index < len(filtered_mods):
+                k = filtered_mods[selected_index]["key"]
+                new_st = "NONE" if CURATION_DB["mods"].get(k) == "SELECTED" else "SELECTED"
+                CURATION_DB["mods"][k] = new_st
+                save_curation_db(CURATION_DB)
+                last_action = f"⭐ Marked [{filtered_mods[selected_index]['name']}] as {new_st}"
+        elif ch in (ord('x'), ord('r')): # Toggle Reject
+            if filtered_mods and selected_index < len(filtered_mods):
+                k = filtered_mods[selected_index]["key"]
+                new_st = "NONE" if CURATION_DB["mods"].get(k) == "REJECTED" else "REJECTED"
+                CURATION_DB["mods"][k] = new_st
+                save_curation_db(CURATION_DB)
+                last_action = f"✕ Marked [{filtered_mods[selected_index]['name']}] as {new_st}"
+        elif ch in (ord('c'), ord('C')): # Toggle Consider
+            if filtered_mods and selected_index < len(filtered_mods):
+                k = filtered_mods[selected_index]["key"]
+                new_st = "NONE" if CURATION_DB["mods"].get(k) == "CONSIDERING" else "CONSIDERING"
+                CURATION_DB["mods"][k] = new_st
+                save_curation_db(CURATION_DB)
+                last_action = f"? Marked [{filtered_mods[selected_index]['name']}] as {new_st}"
+        elif ch in (ord('o'), ord('O'), 10, 13): # Open Nexus URL in browser
+            if filtered_mods and selected_index < len(filtered_mods):
+                url = filtered_mods[selected_index]["nexus_url"]
+                if url:
+                    webbrowser.open(url)
+                    last_action = f"🔗 Opened Nexus link: {url}"
+                else:
+                    last_action = "⚠️ No direct Nexus URL for this mod."
+        elif ch in (ord('n'), ord('N')): # Edit Note
+            if filtered_mods and selected_index < len(filtered_mods):
+                k = filtered_mods[selected_index]["key"]
+                curses.echo()
+                curses.curs_set(1)
+                stdscr.addstr(height - 1, 0, "Enter note: ".ljust(width-1), curses.color_pair(4))
+                stdscr.refresh()
+                note_input = stdscr.getstr(height - 1, 12, 100).decode("utf-8")
+                curses.noecho()
+                curses.curs_set(0)
+                if not CURATION_DB.get("notes"):
+                    CURATION_DB["notes"] = {}
+                CURATION_DB["notes"][k] = note_input
+                save_curation_db(CURATION_DB)
+                last_action = f"📝 Saved note for [{filtered_mods[selected_index]['name']}]"
+        elif ch == ord('/'): # Search Query
+            curses.echo()
+            curses.curs_set(1)
+            stdscr.addstr(height - 1, 0, "Search query: ".ljust(width-1), curses.color_pair(4))
+            stdscr.refresh()
+            search_query = stdscr.getstr(height - 1, 14, 60).decode("utf-8")
+            curses.noecho()
+            curses.curs_set(0)
+            selected_index = 0
+            last_action = f"🔍 Filtered by query: '{search_query}'" if search_query else "🔍 Search cleared."
+        elif ch == 9: # Tab Key -> Cycle Tabs
+            tab_mode = (tab_mode + 1) % len(tab_names)
+            selected_index = 0
+            last_action = f"📑 Switched view to: [{tab_names[tab_mode]}]"
+        elif ch in (ord('t'), ord('T')): # Cycle Categories
+            cat_filter_idx = (cat_filter_idx + 1) % len(CATEGORIES_LIST)
+            selected_index = 0
+            last_action = f"🏷️ Switched category filter to: [{CATEGORIES_LIST[cat_filter_idx]}]"
+        elif ch in (ord('l'), ord('L')): # Load .wabbajack File or URL
+            curses.echo()
+            curses.curs_set(1)
+            stdscr.addstr(height - 1, 0, "Enter .wabbajack path or URL: ".ljust(width-1), curses.color_pair(4))
+            stdscr.refresh()
+            load_input = stdscr.getstr(height - 1, 30, 200).decode("utf-8").strip()
+            curses.noecho()
+            curses.curs_set(0)
 
-def cmd_reject(args):
-    """Marks a mod as Rejected in the curation DB."""
-    db = load_curation_db()
-    key = f"name_{args.mod_name.lower().strip()}"
-    db["mods"][key] = "REJECTED"
-    save_curation_db(db)
-    print(f"✕ Marked mod '{args.mod_name}' as REJECTED in curation DB.")
+            if load_input:
+                def update_cb(msg):
+                    stdscr.addstr(height - 2, 0, f" LAST ACTION: {msg}".ljust(width-1), curses.color_pair(2) | curses.A_BOLD)
+                    stdscr.refresh()
 
-def cmd_note(args):
-    """Adds or updates a personal note for a mod in the curation DB."""
-    db = load_curation_db()
-    key = f"name_{args.mod_name.lower().strip()}"
-    if "notes" not in db:
-        db["notes"] = {}
-    db["notes"][key] = args.text
-    save_curation_db(db)
-    print(f"📝 Saved note for '{args.mod_name}': {args.text}")
+                update_cb("Loading modlist...")
+                try:
+                    if load_input.startswith("http://") or load_input.startswith("https://"):
+                        parsed = fetch_url_modlist(load_input, progress_cb=update_cb)
+                    else:
+                        parsed = extract_modlist_info(Path(load_input))
+                    LOADED_MODLISTS[parsed["id"]] = parsed
+                    last_action = f"📂 Successfully loaded {parsed['name']} ({len(parsed['mods'])} mods)"
+                except Exception as e:
+                    last_action = f"❌ Error loading modlist: {e}"
+        elif ch in (ord('e'), ord('E')): # Export Curated List
+            export_path = Path.home() / "curated_skyrim_modlist.md"
+            lines = ["# Curated Skyrim Modlist Draft\n", "Generated by Wabbajack Curator TUI\n"]
+            selected_keys = [k for k, v in CURATION_DB.get("mods", {}).items() if v == "SELECTED"]
+            notes_map = CURATION_DB.get("notes", {})
 
-def cmd_status(args):
-    """Displays current curation DB selections, rejections, and notes."""
-    db = load_curation_db()
-    mods = db.get("mods", {})
-    notes = db.get("notes", {})
+            selected_mods = []
+            for ml in LOADED_MODLISTS.values():
+                for m in ml["mods"]:
+                    if m["key"] in selected_keys and m not in selected_mods:
+                        selected_mods.append(m)
 
-    selected = [k for k, v in mods.items() if v == "SELECTED"]
-    rejected = [k for k, v in mods.items() if v == "REJECTED"]
+            by_cat = {}
+            for m in selected_mods:
+                c = m["category"]
+                by_cat.setdefault(c, []).append(m)
 
-    print(f"\n==========================================================================================================")
-    print(f"📋 CURATION DATABASE STATUS")
-    print(f"==========================================================================================================")
-    print(f"⭐ Total Selected Mods : {len(selected)}")
-    print(f"✕ Total Rejected Mods : {len(rejected)}")
-    print(f"📝 Total Notes Saved   : {len(notes)}\n")
+            for cat, mods in by_cat.items():
+                lines.append(f"## {cat}\n")
+                for m in mods:
+                    note = notes_map.get(m["key"])
+                    note_str = f" - *Note: {note}*" if note else ""
+                    link_str = f"[{m['name']}]({m['nexus_url']})" if m['nexus_url'] else m['name']
+                    lines.append(f"- **{link_str}** (by {m['author']}, v{m['version']}){note_str}")
+                lines.append("")
 
-    if selected:
-        print("⭐ Selected Mods List:")
-        for s in selected:
-            n = notes.get(s, "")
-            n_str = f" (Note: {n})" if n else ""
-            clean_n = s.replace("name_", "")
-            print(f"  • {clean_n}{n_str}")
-        print()
-
-def cmd_export(args):
-    """Exports all selected/curated mods with notes to a Markdown file."""
-    db = load_curation_db()
-    selected_keys = [k for k, v in db.get("mods", {}).items() if v == "SELECTED"]
-    notes = db.get("notes", {})
-
-    out_file = Path(args.output or (Path.home() / "curated_skyrim_modlist.md"))
-
-    lines = [
-        "# Curated Skyrim Modlist Draft\n",
-        f"Generated by Wabbajack Curator CLI | Total Curated Mods: {len(selected_keys)}\n"
-    ]
-
-    if not selected_keys:
-        lines.append("*(No mods currently selected in curation database)*\n")
-    else:
-        for k in selected_keys:
-            clean_n = k.replace("name_", "").title()
-            note = notes.get(k, "")
-            note_str = f"\n  - *Note: {note}*" if note else ""
-            lines.append(f"- **{clean_n}**{note_str}")
-        lines.append("")
-
-    with open(out_file, "w", encoding="utf-8") as f:
-        f.write("\n".join(lines))
-
-    print(f"💾 Successfully exported curated modlist to: {out_file}")
+            with open(export_path, "w", encoding="utf-8") as f:
+                f.write("\n".join(lines))
+            last_action = f"💾 Exported curated selection to {export_path}"
 
 def main():
-    parser = argparse.ArgumentParser(
-        prog="wabbajack-curator",
-        description="Wabbajack Modlist Curator CLI Tool Suite - Fast CLI tool to parse, compare, filter, and curate Wabbajack modlists."
-    )
-    subparsers = parser.add_subparsers(dest="command", help="Available subcommands")
-
-    # 1. parse / list
-    p_parse = subparsers.add_parser("parse", help="Parse and print all mods from a .wabbajack file or URL")
-    p_parse.add_argument("source", help="Path to local .wabbajack file or URL (authored-files.wabbajack.org)")
-    p_parse.add_argument("-s", "--search", help="Optional keyword search filter")
-    p_parse.set_defaults(func=cmd_parse)
-
-    # 2. compare
-    p_comp = subparsers.add_parser("compare", help="Compare 2 or more .wabbajack modlists side-by-side")
-    p_comp.add_argument("sources", nargs="+", help="2 or more .wabbajack files or URLs")
-    p_comp.add_argument("-m", "--mode", choices=["all", "common", "unique"], default="all", help="Display mode")
-    p_comp.set_defaults(func=cmd_compare)
-
-    # 3. select
-    p_sel = subparsers.add_parser("select", help="Mark a mod as Selected (⭐ Starred)")
-    p_sel.add_argument("mod_name", help="Name of the mod to select")
-    p_sel.set_defaults(func=cmd_select)
-
-    # 4. reject
-    p_rej = subparsers.add_parser("reject", help="Mark a mod as Rejected (✕)")
-    p_rej.add_argument("mod_name", help="Name of the mod to reject")
-    p_rej.set_defaults(func=cmd_reject)
-
-    # 5. note
-    p_note = subparsers.add_parser("note", help="Add or update a personal note for a mod")
-    p_note.add_argument("mod_name", help="Name of the mod")
-    p_note.add_argument("text", help="Note text to attach to the mod")
-    p_note.set_defaults(func=cmd_note)
-
-    # 6. status
-    p_stat = subparsers.add_parser("status", help="Show current curation DB selections and notes")
-    p_stat.set_defaults(func=cmd_status)
-
-    # 7. export
-    p_exp = subparsers.add_parser("export", help="Export curated selection to Markdown report")
-    p_exp.add_argument("-o", "--output", help="Output markdown file path (defaults to ~/curated_skyrim_modlist.md)")
-    p_exp.set_defaults(func=cmd_export)
-
+    parser = argparse.ArgumentParser(description="Wabbajack Modlist Curator & Analyzer (Terminal TUI)")
+    parser.add_argument("files", nargs="*", help="Optional .wabbajack file paths or URLs to load")
     args = parser.parse_args()
-    if not args.command:
-        parser.print_help()
-        sys.exit(1)
 
-    args.func(args)
+    if args.files:
+        for f in args.files:
+            try:
+                if f.startswith("http://") or f.startswith("https://"):
+                    print(f"Fetching URL: {f}...")
+                    parsed = fetch_url_modlist(f, progress_cb=lambda m: print(m))
+                else:
+                    parsed = extract_modlist_info(Path(f))
+                LOADED_MODLISTS[parsed["id"]] = parsed
+                print(f"Loaded modlist: {parsed['name']} ({len(parsed['mods'])} mods)")
+            except Exception as e:
+                print(f"Error loading {f}: {e}")
+
+    curses.wrapper(run_tui)
 
 if __name__ == "__main__":
     main()
