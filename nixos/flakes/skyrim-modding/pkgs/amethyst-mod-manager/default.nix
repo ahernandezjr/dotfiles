@@ -35,6 +35,9 @@ let
       rm $out/opt/amethyst.AppImage
       mv squashfs-root $out/opt/AppDir
       find $out -xtype l -delete
+
+      substituteInPlace $out/opt/AppDir/share/amethyst-mod-manager/Utils/xedit_tools.py \
+        --replace '"Version"="winxp"' '"Version"="win10"'
     '';
   };
 
@@ -76,6 +79,9 @@ let
       export PYTHONPATH="${extracted}/opt/AppDir/share/amethyst-mod-manager:${extracted}/opt/AppDir/share/amethyst-mod-manager/_vendor:$PYTHONPATH"
       export LD_LIBRARY_PATH="/run/opengl-driver/lib:/run/opengl-driver-32/lib:$LD_LIBRARY_PATH"
       export APPIMAGE="amethyst-mod-manager"
+      export USERPROFILE="Z:$HOME/.config/AmethystModManager/wine_prefixes/shared_GE-Proton10-34/pfx/drive_c/users/steamuser"
+      export LOCALAPPDATA="Z:$HOME/.config/AmethystModManager/wine_prefixes/shared_GE-Proton10-34/pfx/drive_c/users/steamuser/AppData/Local"
+      export APPDATA="Z:$HOME/.config/AmethystModManager/wine_prefixes/shared_GE-Proton10-34/pfx/drive_c/users/steamuser/AppData/Roaming"
       cd "${extracted}/opt/AppDir/share/amethyst-mod-manager"
       exec "${extracted}/opt/AppDir/AppRun" "$@"
     '';
