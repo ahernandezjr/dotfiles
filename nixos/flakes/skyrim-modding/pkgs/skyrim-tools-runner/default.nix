@@ -1,6 +1,6 @@
 # Skyrim Tools Wine/Proton Runner Script
-# Sets up Steam GE-Proton10-34 compatibility sandbox, maps WINEPREFIX to Skyrim SE compatdata (App ID 489830),
-# sets STEAM_COMPAT_MOUNTS, and runs Windows tools (xEdit, DynDOLOD, Nemesis, Synthesis) using steam-run.
+# Sets up Steam Proton compatibility sandbox, maps WINEPREFIX to Skyrim SE compatdata (App ID 489830),
+# sets STEAM_COMPAT_MOUNTS, Win32 AppData environment variables, and executes Windows tools (SSEEdit, DynDOLOD, Nemesis, Synthesis).
 {
   pkgs,
   writeShellScriptBin,
@@ -11,13 +11,16 @@ writeShellScriptBin "skyrim-tools-runner" ''
   set -euo pipefail
 
   COMPAT_TOOLS_DIR="$HOME/.local/share/Steam/compatibilitytools.d"
-  GE_DIR="$COMPAT_TOOLS_DIR/GE-Proton10-34"
+  PROTON_NAME="''${PROTON_NAME:-UMU-Proton-10.0-4}"
+  if [ ! -d "$COMPAT_TOOLS_DIR/$PROTON_NAME" ]; then
+    PROTON_NAME="GE-Proton10-34"
+  fi
+  TOOL_DIR="$COMPAT_TOOLS_DIR/$PROTON_NAME"
 
   # Ensure GE-Proton10-34 is linked into Steam's compatibilitytools.d directory
-  if [ ! -d "$GE_DIR" ]; then
-    echo "Linking GE-Proton10-34 to Steam compatibilitytools.d..."
+  if [ ! -d "$COMPAT_TOOLS_DIR/GE-Proton10-34" ]; then
     mkdir -p "$COMPAT_TOOLS_DIR"
-    ln -sfn "${ge-proton-10-34}/share/steam/compatibilitytools.d/GE-Proton10-34" "$GE_DIR"
+    ln -sfn "${ge-proton-10-34}/share/steam/compatibilitytools.d/GE-Proton10-34" "$COMPAT_TOOLS_DIR/GE-Proton10-34"
   fi
 
   # Default environment variables for Skyrim SE (App ID: 489830)
@@ -26,32 +29,35 @@ writeShellScriptBin "skyrim-tools-runner" ''
   export WINEPREFIX="''${WINEPREFIX:-$STEAM_COMPAT_DATA_PATH/pfx}"
   export STEAM_COMPAT_MOUNTS="''${STEAM_COMPAT_MOUNTS:-/mnt/linuxgames}"
 
+  # Fix Win32 AppData environment variables and FreeType library path for Delphi/FontAwesome UI (SSEEdit Code 203)
+  export USERPROFILE="''${USERPROFILE:-Z:$WINEPREFIX/drive_c/users/steamuser}"
+  export LOCALAPPDATA="''${LOCALAPPDATA:-Z:$WINEPREFIX/drive_c/users/steamuser/AppData/Local}"
+  export APPDATA="''${APPDATA:-Z:$WINEPREFIX/drive_c/users/steamuser/AppData/Roaming}"
+  export LD_LIBRARY_PATH="${pkgs.freetype}/lib:${pkgs.pkgsi686Linux.freetype}/lib:''${LD_LIBRARY_PATH:-}"
+
   mkdir -p "$WINEPREFIX"
 
-  echo "=== Skyrim Modding Tools Proton Runner (GE-Proton10-34) ==="
-  echo "WINEPREFIX: $WINEPREFIX"
-  echo "STEAM_COMPAT_MOUNTS: $STEAM_COMPAT_MOUNTS"
-
   if [ "$#" -eq 0 ]; then
+    echo "=== Skyrim Modding Tools Proton Runner ($PROTON_NAME) ==="
+    echo "WINEPREFIX: $WINEPREFIX"
+    echo "STEAM_COMPAT_MOUNTS: $STEAM_COMPAT_MOUNTS"
     echo "Usage: skyrim-tools-runner <executable or command> [args...]"
     echo "Examples:"
-    echo "  skyrim-tools-runner /mnt/linuxgames/Modlists/skyrim/ModOrganizer.exe"
-    echo "  skyrim-tools-runner /path/to/SSEEdit.exe -sse"
-    echo "  skyrim-tools-runner /path/to/DynDOLOD.exe"
-    echo "  skyrim-tools-runner /path/to/Nemesis.exe"
+    echo "  skyrim-tools-runner /mnt/linuxgames/Modlists/Amethyst/Skyrim\\ Special\\ Edition/Applications/SSEEdit/SSEEdit.exe"
+    echo "  skyrim-tools-runner /mnt/linuxgames/Modlists/Amethyst/Skyrim\\ Special\\ Edition/Applications/SSEEdit/SSEEditQuickAutoClean.exe"
     exit 0
   fi
 
   EXEC="$1"
   shift
 
-  # Run via steam-run using GE-Proton10-34's proton executable for complete DXVK/VKD3D/Wine library loading
-  if [ -f "$GE_DIR/proton" ]; then
-    exec ${pkgs.steam-run}/bin/steam-run "$GE_DIR/proton" run "$EXEC" "$@"
-  elif [ -f "$GE_DIR/files/bin/wine" ]; then
-    exec ${pkgs.steam-run}/bin/steam-run "$GE_DIR/files/bin/wine" "$EXEC" "$@"
+  if [ -f "$TOOL_DIR/proton" ]; then
+    exec "$TOOL_DIR/proton" run "$EXEC" "$@"
+  elif [ -f "$TOOL_DIR/files/bin/wine" ]; then
+    exec "$TOOL_DIR/files/bin/wine" "$EXEC" "$@"
   else
-    echo "Error: Could not locate Proton launcher inside GE-Proton10-34 at $GE_DIR" >&2
+    echo "Error: Could not locate Proton launcher inside $TOOL_DIR" >&2
     exit 1
   fi
 ''
+
