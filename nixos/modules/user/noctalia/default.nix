@@ -85,48 +85,6 @@ in
             control_center_position = "top_left";
             wallpaper_placement = "attached";
             wallpaper_position = "bottom_left";
-            session_placement = "floating";
-            session_position = "center";
-          };
-          session = {
-            actions = [
-              {
-                action = "lock";
-                shortcut = "1";
-              }
-              {
-                action = "logout";
-                shortcut = "2";
-              }
-              {
-                action = "lock_and_suspend";
-                shortcut = "3";
-              }
-              {
-                action = "command";
-                label = "Hibernate";
-                glyph = "hibernate";
-                command = "systemctl hibernate";
-                shortcut = "4";
-              }
-              {
-                action = "reboot";
-                shortcut = "5";
-              }
-              {
-                action = "shutdown";
-                shortcut = "6";
-                variant = "destructive";
-              }
-              {
-                action = "command";
-                label = "Windows";
-                glyph = "windows";
-                command = "/run/wrappers/bin/sudo /run/current-system/sw/bin/rb windows";
-                shortcut = "w";
-                variant = "secondary";
-              }
-            ];
           };
         };
         theme = {

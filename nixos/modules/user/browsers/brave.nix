@@ -24,6 +24,12 @@ let
 
   # The "Sane Defaults" policies from the Gist
   bravePolicies = {
+    AutoLaunchProtocolsFromOrigins = [
+      {
+        allowed_protocols = [ "nxm" ];
+        allowed_origins = [ "https://www.nexusmods.com" ];
+      }
+    ];
     AIModeSettings = 1;
     ShowFullURLs = true;
     WideAddressBar = true;

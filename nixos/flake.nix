@@ -152,12 +152,52 @@
             inputs.custom-pkgs.nixosModules.default
           ];
         };
+
+      mkHomeConfig =
+        profile:
+        let
+          hostSystem = hostSystems.${profile} or "x86_64-linux";
+          pkgsForHost =
+            if hostSystem == system then
+              pkgs
+            else
+              import nixpkgs {
+                system = hostSystem;
+                config = {
+                  allowUnfree = true;
+                  segger-jlink.acceptLicense = true;
+                };
+                overlays = [
+                  ourOverlays.additions
+                  ourOverlays.modifications
+                  ourOverlays.unstable-packages
+                  inputs.skyrim-modding.overlays.default
+                  inputs.niri.overlays.niri
+                  inputs.millennium.overlays.default
+                  inputs.nix-cachyos-kernel.overlays.pinned
+                ];
+              };
+        in
+        home-manager.lib.homeManagerConfiguration {
+          pkgs = pkgsForHost;
+          extraSpecialArgs = { inherit inputs repoPath; };
+          modules = [
+            inputs.niri.homeModules.config
+            ./home-manager/hosts/${profile}.nix
+          ];
+        };
     in
     {
       nixosConfigurations = builtins.listToAttrs (
         map (host: {
           name = host;
           value = mkNixosSystem host;
+        }) hosts
+      );
+      homeManagerConfigurations = builtins.listToAttrs (
+        map (host: {
+          name = "alex@" + host;
+          value = mkHomeConfig host;
         }) hosts
       );
       packages.${system} = pkgs;

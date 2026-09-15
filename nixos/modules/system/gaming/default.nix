@@ -43,9 +43,12 @@ in
         freetype
         gnutls
         libGL
+        vulkan-loader
+        pkgsi686Linux.glibc
         pkgsi686Linux.freetype
         pkgsi686Linux.gnutls
         pkgsi686Linux.libGL
+        pkgsi686Linux.vulkan-loader
       ];
     };
 

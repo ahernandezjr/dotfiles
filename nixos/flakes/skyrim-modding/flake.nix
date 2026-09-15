@@ -47,7 +47,7 @@
             skyrim-tools-runner = "skyrim-tools-runner";
           };
 
-          default = "amethyst-mod-manager";
+          default = pkgs.callPackage ./pkgs/amethyst-mod-manager { };
         }
       );
 

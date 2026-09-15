@@ -72,6 +72,35 @@ in
                 end
             end
 
+            function nyx-hm --description 'Rebuild Home Manager standalone configuration based on user@host profile'
+                set -l host (hostname)
+                set -l user (whoami)
+                set -l flake_path "$HOME/dotfiles/nixos"
+                set -l flags ""
+                if test -d $flake_path/pkgs-private/pkgs
+                    set flags --override-input custom-pkgs "git+file://$flake_path/pkgs-private"
+                end
+                
+                if set -q argv[1]; and not string match -r "^-" -- $argv[1]
+                    set host $argv[1]
+                    set -e argv[1]
+                end
+
+                if test -d $flake_path
+                    if test "$host" = "nixos"
+                        echo "Warning: Hostname is still 'nixos'. You may need to specify the profile name (e.g., 'nyx-hm work')."
+                        echo "Available profiles: (desktop, laptop, vm, work)"
+                        return 1
+                    end
+
+                    echo "Rebuilding Home Manager for profile: $user@$host..."
+                    home-manager switch --flake "$flake_path#$user@$host" $flags $argv
+                else
+                    echo "Error: Flake directory not found at $flake_path"
+                    return 1
+                end
+            end
+
             # function mount-work --description 'Mount the Windows VM OneDrive folder'
             #     sudo mkdir -p /mnt/onedrive
             #     sudo mount -t cifs //192.168.122.1/OneDrive /mnt/onedrive -o username=alex,uid=1000,gid=100,vers=3.0,soft

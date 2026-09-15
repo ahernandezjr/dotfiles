@@ -8,11 +8,11 @@
 
 let
   pname = "jackify";
-  version = "0.8.0";
+  version = "0.8.1.1";
 
   src = fetchurl {
     url = "https://github.com/Omni-guides/Jackify/releases/download/v${version}/Jackify.AppImage";
-    hash = "sha256-NZWeoijFAl4xVoF7Gl7TRx3DTxcb6fTk4KFjFdRCt5o=";
+    hash = "sha256-ORIuDpleQBxjcOvl1t34Zuo39QIJ6UAmEyunY7hr03c=";
   };
 
   appimageContents = appimageTools.extract {
@@ -23,6 +23,12 @@ buildFHSEnv {
   name = pname;
 
   multiArch = true;
+
+  extraBwrapArgs = [
+    "--bind-try /mnt /mnt"
+    "--bind-try /media /media"
+    "--bind-try /run/media /run/media"
+  ];
 
   targetPkgs =
     pkgs:
@@ -183,7 +189,8 @@ buildFHSEnv {
     if [ -f ${appimageContents}/com.jackify.app.desktop ]; then
       cp ${appimageContents}/com.jackify.app.desktop $out/share/applications/com.jackify.app.desktop
       substituteInPlace $out/share/applications/com.jackify.app.desktop \
-        --replace-warn "Exec=jackify" "Exec=$out/bin/${pname}"
+        --replace-warn "Exec=jackify" "Exec=$out/bin/${pname}" \
+        --replace-warn "Terminal=true" "Terminal=false"
     fi
 
     mkdir -p $out/share/icons/hicolor/256x256/apps
@@ -192,7 +199,22 @@ buildFHSEnv {
     fi
   '';
 
-  runScript = "${appimageContents}/AppRun";
+  runScript = pkgs.writeShellScript "jackify-wrapper" ''
+    if [ -d "$HOME/.jackify" ]; then
+      chmod -R u+w "$HOME/.jackify" 2>/dev/null || true
+    fi
+
+    ${appimageContents}/AppRun "$@"
+    EXIT_CODE=$?
+
+    DESKTOP_FILE="$HOME/.local/share/applications/com.jackify.app.desktop"
+    if [ -f "$DESKTOP_FILE" ]; then
+      sed -i 's|"/usr/bin/python3" -m jackify.frontends.gui|jackify|g' "$DESKTOP_FILE" 2>/dev/null || true
+      sed -i 's|/usr/bin/python3 -m jackify.frontends.gui|jackify|g' "$DESKTOP_FILE" 2>/dev/null || true
+    fi
+
+    exit $EXIT_CODE
+  '';
 
   meta = with lib; {
     description = "Linux-native Wabbajack modlist installer";
