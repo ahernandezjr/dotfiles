@@ -74,13 +74,13 @@ let
       export QT_QPA_PLATFORM=xcb
       export APPDIR="${extracted}/opt/AppDir"
       export PYTHONPATH="${extracted}/opt/AppDir/share/amethyst-mod-manager:${extracted}/opt/AppDir/share/amethyst-mod-manager/_vendor:$PYTHONPATH"
-      export LD_LIBRARY_PATH="/run/opengl-driver/lib:/run/opengl-driver-32/lib:$LD_LIBRARY_PATH"
+      export LD_LIBRARY_PATH="/lib:/lib64:/run/opengl-driver/lib:/run/opengl-driver-32/lib:$LD_LIBRARY_PATH"
       export APPIMAGE="amethyst-mod-manager"
 
       # Export default Win32 AppData environment variables for SSEEdit / Delphi / Proton tools launched INSIDE Amethyst
-      export USERPROFILE="''${USERPROFILE:-Z:$HOME/.config/AmethystModManager/wine_prefixes/shared_GE-Proton10-34/pfx/drive_c/users/steamuser}"
-      export LOCALAPPDATA="''${LOCALAPPDATA:-Z:$HOME/.config/AmethystModManager/wine_prefixes/shared_GE-Proton10-34/pfx/drive_c/users/steamuser/AppData/Local}"
-      export APPDATA="''${APPDATA:-Z:$HOME/.config/AmethystModManager/wine_prefixes/shared_GE-Proton10-34/pfx/drive_c/users/steamuser/AppData/Roaming}"
+      export USERPROFILE="C:\\users\\steamuser"
+      export LOCALAPPDATA="C:\\users\\steamuser\\AppData\\Local"
+      export APPDATA="C:\\users\\steamuser\\AppData\\Roaming"
 
       cd "${extracted}/opt/AppDir/share/amethyst-mod-manager"
       exec "${extracted}/opt/AppDir/AppRun" "$@"
