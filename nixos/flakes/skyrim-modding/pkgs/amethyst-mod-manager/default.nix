@@ -9,11 +9,11 @@
 
 let
   pname = "amethyst-mod-manager";
-  version = "2.4.0";
+  version = "2.5.0";
 
   src = fetchurl {
     url = "https://github.com/ChrisDKN/Amethyst-Mod-Manager/releases/download/v${version}/AmethystModManager-${version}-x86_64.AppImage";
-    sha256 = "11pmy9gj93fqahbl4vmxyhn0r6zi9hpp7rzdj089b0k482gb5x99";
+    sha256 = "17yqwhdc7a1080ivszlf78fg9ylfc0gs7b4dyq1svfi7ahfs1jvz";
   };
 
   amethystLogo = fetchurl {
@@ -34,13 +34,22 @@ let
       $out/opt/amethyst.AppImage --appimage-extract >/dev/null
       rm $out/opt/amethyst.AppImage
       mv squashfs-root $out/opt/AppDir
+      substituteInPlace $out/opt/AppDir/share/amethyst-mod-manager/Utils/launchers/steam.py \
+        --replace-warn $'        for descriptor in Path(f"/proc/{pid}/fd").iterdir():\n            try:\n                descriptor_stat = descriptor.stat()\n            except OSError:' $'        for descriptor in Path(f"/proc/{pid}/fd").iterdir():\n            try:\n                descriptor_stat = descriptor.stat()\n            except PermissionError:\n                return True\n            except OSError:'
       find $out -xtype l -delete
     '';
   };
 
   fhs = buildFHSEnv {
     name = "amethyst-mod-manager-fhs";
+    extraBwrapArgs = [
+      "--bind"
+      "/proc"
+      "/proc"
+    ];
     targetPkgs = pkgs: with pkgs; [
+      bubblewrap
+      fuse-overlayfs
       icu
       openssl
       vulkan-loader
@@ -51,17 +60,53 @@ let
       dbus
       libglvnd
       freetype
+      fontconfig
       fuse
       zenity
       xdg-utils
       coreutils
       bash
       python3
+      sqlite
+      mesa
+      alsa-lib
+      gnutls
+      libx11
+      libxext
+      libxcursor
+      libxrandr
+      libxinerama
+      libxi
+      libxxf86vm
+      libxrender
+      libxcomposite
+      libxdamage
+      libxcb
+
       pkgsi686Linux.glibc
       pkgsi686Linux.freetype
+      pkgsi686Linux.fontconfig
       pkgsi686Linux.vulkan-loader
+      pkgsi686Linux.sqlite
+      pkgsi686Linux.libglvnd
+      pkgsi686Linux.mesa
+      pkgsi686Linux.alsa-lib
+      pkgsi686Linux.gnutls
+      pkgsi686Linux.libx11
+      pkgsi686Linux.libxext
+      pkgsi686Linux.libxcursor
+      pkgsi686Linux.libxrandr
+      pkgsi686Linux.libxinerama
+      pkgsi686Linux.libxi
+      pkgsi686Linux.libxxf86vm
+      pkgsi686Linux.libxrender
+      pkgsi686Linux.libxcomposite
+      pkgsi686Linux.libxdamage
+      pkgsi686Linux.libxcb
     ];
+    extraOutputsToInstall = [ "lib" "out" ];
     extraBinds = [
+      "/tmp"
       "/mnt"
       "/media"
       "/run/user"
@@ -71,7 +116,7 @@ let
     ];
     runScript = writeScript "amethyst-runner" ''
       #!/usr/bin/env bash
-      export QT_QPA_PLATFORM=xcb
+      export QT_QPA_PLATFORM="''${QT_QPA_PLATFORM:-wayland;xcb}"
       export APPDIR="${extracted}/opt/AppDir"
       export PYTHONPATH="${extracted}/opt/AppDir/share/amethyst-mod-manager:${extracted}/opt/AppDir/share/amethyst-mod-manager/_vendor:$PYTHONPATH"
       export LD_LIBRARY_PATH="/lib:/lib64:/run/opengl-driver/lib:/run/opengl-driver-32/lib:$LD_LIBRARY_PATH"

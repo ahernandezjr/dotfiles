@@ -24,13 +24,13 @@ in
 
       downloadDir = lib.mkOption {
         type = lib.types.str;
-        default = "/mnt/linuxgames/modlists/mods";
+        default = "/mnt/linuxgames/Modlists/Mods";
         description = "Shared directory for downloaded mod archives (.zip, .7z, .rar) across Amethyst, Jackify, and MO2";
       };
 
       modlistsDir = lib.mkOption {
         type = lib.types.str;
-        default = "/mnt/linuxgames/modlists";
+        default = "/mnt/linuxgames/Modlists";
         description = "Root directory for installed modlists and Mod Organizer 2 instances";
       };
 

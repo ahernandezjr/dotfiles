@@ -29,10 +29,6 @@ writeShellScriptBin "skyrim-tools-runner" ''
   export WINEPREFIX="''${WINEPREFIX:-$STEAM_COMPAT_DATA_PATH/pfx}"
   export STEAM_COMPAT_MOUNTS="''${STEAM_COMPAT_MOUNTS:-/mnt/linuxgames}"
 
-  # Fix Win32 AppData environment variables and FreeType library path for Delphi/FontAwesome UI (SSEEdit Code 203)
-  export USERPROFILE="''${USERPROFILE:-Z:$WINEPREFIX/drive_c/users/steamuser}"
-  export LOCALAPPDATA="''${LOCALAPPDATA:-Z:$WINEPREFIX/drive_c/users/steamuser/AppData/Local}"
-  export APPDATA="''${APPDATA:-Z:$WINEPREFIX/drive_c/users/steamuser/AppData/Roaming}"
   export LD_LIBRARY_PATH="${pkgs.freetype}/lib:${pkgs.pkgsi686Linux.freetype}/lib:''${LD_LIBRARY_PATH:-}"
 
   mkdir -p "$WINEPREFIX"

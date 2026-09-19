@@ -28,7 +28,7 @@
           # GloriousEggroll Proton GE 10-34 compatibility tool
           "ge-proton-10-34" = pkgs.callPackage ./pkgs/ge-proton-10-34 { };
 
-          # Native Qt6/Rust Amethyst Mod Manager (v2.4.0)
+          # Native Qt6/Rust Amethyst Mod Manager (v2.5.0)
           "amethyst-mod-manager" = pkgs.callPackage ./pkgs/amethyst-mod-manager { };
 
           # Native Wabbajack automated modlist installer
