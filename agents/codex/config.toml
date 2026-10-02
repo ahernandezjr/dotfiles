@@ -1,0 +1,47 @@
+model_provider = "llamacpp"
+model = "qwen3.8-27b"
+model_reasoning_effort = "high"
+model_catalog_json = "/home/alex/.codex/model-catalog.json"
+web_search = "disabled"
+
+[projects."/home/alex/repos/titandev/titandev_site"]
+trust_level = "trusted"
+
+[projects."/home/alex/repos/titandev/prospective_clients"]
+trust_level = "trusted"
+
+[projects."/home/alex/.codex"]
+trust_level = "trusted"
+
+[projects."/tmp/cxtest"]
+trust_level = "trusted"
+
+[projects."/tmp/cxtest/proj"]
+trust_level = "trusted"
+
+[projects."/home/alex/.pi"]
+trust_level = "trusted"
+
+[projects."/home/alex/dotfiles"]
+trust_level = "trusted"
+
+[notice]
+"hide_gpt-5.1-codex-max_migration_prompt" = true
+
+[tui]
+screen_reader_detection_done = true
+
+[tui.model_availability_nux]
+"gpt-6.1-sol" = 3
+
+[features]
+multi_agent = false
+goals = false
+
+[model_providers.llamacpp]
+name = "llama.cpp"
+base_url = "http://localhost:3420/v1"
+wire_api = "responses"
+stream_idle_timeout_ms = 10000000
+request_max_retries = 2
+stream_max_retries = 2

@@ -1,0 +1,58 @@
+{
+  "providers": {
+    "llamacpp": {
+      "api": "openai-completions",
+      "apiKey": "local-not-needed",
+      "baseUrl": "http://localhost:3420/v1",
+      "compat": {
+        "chatTemplateKwargs": {
+          "enable_thinking": {
+            "$var": "thinking.enabled"
+          },
+          "preserve_thinking": true,
+          "reasoning_effort": {
+            "$var": "thinking.effort",
+            "omitWhenOff": true
+          }
+        },
+        "maxTokensField": "max_tokens",
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "chat-template"
+      },
+      "models": [
+        {
+          "contextWindow": 131072,
+          "cost": {
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "input": 0,
+            "output": 0
+          },
+          "id": "qwen3.8-27b",
+          "input": [
+            "text"
+          ],
+          "maxTokens": 32768,
+          "name": "Qwen3.8 27B (local llama.cpp)",
+          "reasoning": true,
+          "samplingParams": {
+            "min_p": 0.0,
+            "temperature": 0.6,
+            "top_k": 20,
+            "top_p": 0.95
+          },
+          "thinkingLevelMap": {
+            "high": "xhigh",
+            "low": "low",
+            "max": null,
+            "medium": "medium",
+            "minimal": "low",
+            "xhigh": "xhigh"
+          }
+        }
+      ]
+    }
+  }
+}

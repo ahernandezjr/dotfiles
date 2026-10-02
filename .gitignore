@@ -17,3 +17,7 @@ docker/dnd-kit/.env
 # Debugging
 result
 
+# Agents
+agents/*/auth.json
+agents/llm/**/models/
+

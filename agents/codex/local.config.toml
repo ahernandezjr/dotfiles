@@ -1,0 +1,7 @@
+model_provider = "llamacpp"
+model = "qwen3.8-27b"
+oss_provider = "llamacpp"
+web_search = "disabled"
+
+[tools]
+web_search = "disabled"

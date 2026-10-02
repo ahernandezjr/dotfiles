@@ -1,0 +1,31 @@
+{
+  "debugLog": false,
+  "permissionReviewLog": true,
+  "yoloMode": false,
+  "permission": {
+    "*": "allow",
+    "path": {
+      "*": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "*.env.example": "allow"
+    },
+    "external_directory": "ask",
+    "bash": {
+      "*": "ask",
+      "rm -rf *": "deny",
+      "sudo *": "ask",
+      "ps *": "ask",
+      "docker *": "ask",
+      "systemctl *": "allow",
+      "journalctl *": "allow",
+      "ls *": "allow",
+      "cd *": "allow",
+      "cat *": "allow",
+      "echo *": "allow",
+      "grep *": "allow",
+      "head *": "allow",
+      "tail *": "allow"
+    }
+  }
+}
