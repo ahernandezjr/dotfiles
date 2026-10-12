@@ -3,6 +3,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -10,6 +11,14 @@ let
   cfg = config.userSettings.development;
 in
 {
+  # pi.nix provides the pi binary and declarative extension wiring.
+  # Imported unconditionally: its config is gated by its own enable option,
+  # which we only set when development is enabled (imports may not depend
+  # on final config).
+  imports = [
+    inputs.pi.homeModules.default
+  ];
+
   options.userSettings.development = {
     enable = lib.mkEnableOption "Development tools (Python, uv)";
   };
@@ -51,43 +60,12 @@ in
       };
     };
 
+    # Home-manager's pi module would install a second pi binary; pi.nix
+    # (programs.pi.coding-agent below) provides the one we use. This block
+    # only owns ~/.pi/agent/models.json.
     programs.pi-coding-agent = {
       enable = true;
-
-      # Home-manager owns ~/.pi/agent/settings.json from this block (was a
-      # hand-written file; home-manager keeps a .hmbkp backup next to it).
-      # `packages` is the extensions list (same entries `pi install npm:<pkg>`
-      # writes to settings.json).
-      settings = {
-        defaultProvider = "ninfer";
-        defaultModel = "qwen3.8-27b-ninfer";
-        defaultThinkingLevel = "high";
-        lastChangelogVersion = "0.85.1";
-        compaction = {
-          enabled = true;
-          reserveTokens = 20000;
-          keepRecentTokens = 24000;
-        };
-        retry = {
-          enabled = true;
-          maxRetries = 3;
-          baseDelayMs = 2000;
-          provider = { timeoutMs = 1800000; };
-        };
-        theme = "dark";
-        images = { blockImages = false; };
-        enableInstallTelemetry = false;
-        terminal = { showTerminalProgress = true; };
-        packages = [
-          "npm:@gotgenes/pi-permission-system"
-          "npm:pi-web-access"
-          "npm:pi-hermes-memory"
-          "npm:pi-lens"
-          "npm:@juicesharp/rpiv-todo"
-          "npm:@juicesharp/rpiv-ask-user-question"
-          "npm:pi-subagents"
-        ];
-      };
+      package = null;
 
       # Home-manager owns ~/.pi/agent/models.json from this block (was a
       # hand-written file; backup kept as models.json.bak next to it).
@@ -181,6 +159,23 @@ in
           ];
         };
       };
+    };
+
+    # pi.nix (inputs.pi): provides the pi binary and passes `extensions` as
+    # --extension flags on every invocation. Specs match settings.json's
+    # `packages`; pi dedupes by package name and reconciles the npm
+    # packages under ~/.pi/agent/npm.
+    programs.pi.coding-agent = {
+      enable = true;
+      extensions = [
+        "npm:@gotgenes/pi-permission-system"
+        "npm:pi-web-access"
+        "npm:pi-hermes-memory"
+        "npm:pi-lens"
+        "npm:@juicesharp/rpiv-todo"
+        "npm:@juicesharp/rpiv-ask-user-question"
+        "npm:pi-subagents"
+      ];
     };
   };
 }

@@ -48,6 +48,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    pi = {
+      url = "github:lukasl-dev/pi.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     custom-pkgs = {
       url = "git+file:///home/alex/dotfiles/nixos/pkgs-private";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -57,6 +62,18 @@
       url = "path:./flakes/skyrim-modding";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+  };
+
+  # pi.nix build results (pi-coding-agent) and the Bun toolchain it uses.
+  nixConfig = {
+    extra-substituters = [
+      "https://pi.cachix.org"
+      "https://nix-community.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "pi.cachix.org-1:lGeoGJaZ5ZDabuRzkcD5EBTNnDM4HJ1vqeOxlWk1Flk="
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+    ];
   };
 
   outputs =
