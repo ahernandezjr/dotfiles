@@ -9,11 +9,11 @@
 
 let
   pname = "amethyst-mod-manager";
-  version = "2.5.0";
+  version = "2.5.2";
 
   src = fetchurl {
     url = "https://github.com/ChrisDKN/Amethyst-Mod-Manager/releases/download/v${version}/AmethystModManager-${version}-x86_64.AppImage";
-    sha256 = "17yqwhdc7a1080ivszlf78fg9ylfc0gs7b4dyq1svfi7ahfs1jvz";
+    sha256 = "1dsf3xb44rsbihd4dmq9di3czibsqkp5h42mvwggnnyd6slgzwir";
   };
 
   amethystLogo = fetchurl {
