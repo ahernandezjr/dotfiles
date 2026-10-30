@@ -22,6 +22,7 @@
     email = lib.mkDefault "ahernandezjr0@gmail.com";
     development.enable = lib.mkDefault true;
     creativity.enable = lib.mkDefault true;
+    streaming.enable = lib.mkDefault true;
     git.enable = lib.mkDefault true;
     shell.enable = lib.mkDefault true;
     shell.manageConfig = lib.mkDefault true;

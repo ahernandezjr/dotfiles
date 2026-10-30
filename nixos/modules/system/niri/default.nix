@@ -23,7 +23,7 @@ in
     security.polkit.enable = true;
     environment.systemPackages = with pkgs; [
       wl-clipboard
-      polkit_gnome
+      # polkit_gnome
     ];
 
     services.greetd = {

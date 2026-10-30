@@ -16,7 +16,10 @@ in
 
   config = lib.mkMerge [
     (lib.mkIf cfg.peripherals.enable {
-      hardware.openrazer.enable = true;
+      hardware.openrazer = {
+        enable = true;
+        batteryNotifier.enable = false;
+      };
 
       services.input-remapper.enable = true;
 
@@ -35,6 +38,11 @@ in
         openrazer-daemon
         polychromatic
       ];
+
+      programs.gpu-screen-recorder = {
+        enable = true;
+        ui.enable = true; # overlay
+      };
 
       users.users.alex = {
         extraGroups = [

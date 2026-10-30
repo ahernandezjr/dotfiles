@@ -11,7 +11,7 @@ in
 {
   options = {
     userSettings.utilities = {
-      enable = lib.mkEnableOption "Utility programs (baobab)";
+      enable = lib.mkEnableOption "Utility programs";
     };
   };
 
@@ -19,9 +19,13 @@ in
     home.packages = with pkgs; [
       baobab
       switcheroo
+      eyedropper
       handy
       mpv
       vlc
+      (ffmpeg-full.override {
+          withUnfree = true;
+      })
     ];
   };
 }

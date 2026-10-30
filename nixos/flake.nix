@@ -96,6 +96,7 @@
         inherit system;
         config = {
           allowUnfree = true;
+          # cudaSupport = true; # TODO: Modify this to only apply for cuda based hosts
           segger-jlink.acceptLicense = true;
           permittedInsecurePackages = [
             "pnpm-10.29.2"

@@ -8,7 +8,7 @@
 {
   spawn-at-startup = [
     { argv = [ "noctalia" ]; }
-    { argv = [ "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1" ]; }
+    # { argv = [ "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1" ]; }
   ];
   prefer-no-csd = true;
   screenshot-path = null;

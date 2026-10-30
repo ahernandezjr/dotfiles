@@ -104,6 +104,7 @@ in
           settings = {
             show_banner = false;
           };
+          loadSessionVariables = true;
         };
         home.packages = with pkgs; [
           (btop.override { cudaSupport = true; })

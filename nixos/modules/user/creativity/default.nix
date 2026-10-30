@@ -22,6 +22,7 @@ in
     home.packages = with pkgs; [
       orca-slicer
       excalidraw
+      gimp
     ];
 
     xdg.desktopEntries.excalidraw = {

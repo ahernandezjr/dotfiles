@@ -9,7 +9,7 @@
         y = 192;
       };
       focus-at-startup = true;
-      variable-refresh-rate = true;
+      variable-refresh-rate = false;
     };
     "Dell Inc. Dell S2417DG #ASMYHG2M2s7d" = {
       mode = parseMode "2560x1440@143.998";

@@ -23,25 +23,18 @@ in
     lib.mkMerge [
       {
         home.packages = with pkgs; [
-          # Better wine package for 32/64 bit support
-          wineWow64Packages.staging
-          wine-wayland
-          winetricks
-
           # Optimizers and Utils
           mangohud
           protonup-qt
           protontricks
           vulkan-tools
+          adwaita-icon-theme
+          heroic
+          prismlauncher
 
           deadlock-mod-manager
           # Platforms
           (lutris.override {
-            extraPkgs = pkgs: [
-              wineWow64Packages.staging
-              winetricks
-              vulkan-tools
-            ];
             extraLibraries = pkgs: [
               vulkan-loader
               gnutls
@@ -59,9 +52,6 @@ in
               gettext
             ];
           })
-          adwaita-icon-theme
-          heroic
-          prismlauncher
           # ScopeBuddy (gamescope helper)
           (inputs.just-one-more-repo.packages.${pkgs.stdenv.hostPlatform.system}.scopebuddy)
         ];

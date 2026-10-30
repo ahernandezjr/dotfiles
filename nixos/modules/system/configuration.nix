@@ -62,13 +62,13 @@
         "https://cache.nixos.org"
         "https://nix-community.cachix.org"
         "https://cachyos.cachix.org"
-        "https://attic.xuyh0120.win/lantian"
+        "https://cache.lantian.pub/lantian"
       ];
       trusted-public-keys = [
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "cachyos.cachix.org-1:f/sS2icLGBP65963X54dz26wXxl4M93LAd6BGL+V3S4="
-        "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
+        "lantian:WVGO7vsRMSEN+h7Lp7kv6SAmrkEXgUGbbXm7jMDjBuQ="
       ];
       trusted-users = [
         "root"
@@ -183,6 +183,7 @@
       TERMINAL = "alacritty";
       SHELL = "fish";
       NIXPKGS_ALLOW_UNFREE = "1";
+      LD_LIBRARY_PATH = "${pkgs.stdenv.cc.cc.lib}/lib";
     };
 
     # Raise open file limits (ulimit -n) globally for Steam/Proton/Wine

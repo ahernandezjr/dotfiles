@@ -18,7 +18,8 @@ let
     "eimadpbcbfnmbkopoojfekhnkhdbieeh" # dark reader
     "dbepggeogbaibhgnhhndojpepiihcmeb" # vimium
     "mnjggcdmjocbbbhaepdhchncahnbgone" # sponsor block
-    "ammjkodgmmoknidbanneddgankgfejfh" # 7tv
+    # "ammjkodgmmoknidbanneddgankgfejfh" # 7tv
+    "lppmekppnliemjclknbagdhoocikieoi" # new 7tv
     "bpaoeijjlplfjbagceilcgbkcdjbomjd" # ttv lol pro
   ];
 

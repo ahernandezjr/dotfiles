@@ -53,10 +53,12 @@ in
     };
 
     environment.systemPackages = with pkgs; [
+      wineWow64Packages.stable
       gamescope-wsi # Required for HDR to work
       steam-run
       protontricks
       winetricks
+      vulkan-tools
       cabextract
       p7zip
       unzip

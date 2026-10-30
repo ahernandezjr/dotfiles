@@ -85,13 +85,6 @@ in
       package = config.boot.kernelPackages.nvidiaPackages.stable;
     };
 
-    # Add environment variables for Wayland sessions (only when not in Prime mode)
-    environment.sessionVariables = lib.mkIf (!cfg.prime.enable) {
-      LIBVA_DRIVER_NAME = "nvidia";
-      GBM_BACKEND = "nvidia-drm";
-      __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-    };
-
     hardware.graphics = {
       enable = true;
       enable32Bit = true;
@@ -103,6 +96,14 @@ in
         nvidia-vaapi-driver
         libvdpau-va-gl
       ];
+    };
+
+    # Add environment variables for Wayland sessions (only when not in Prime mode)
+    environment.sessionVariables = lib.mkIf (!cfg.prime.enable) {
+      LIBVA_DRIVER_NAME = "nvidia";
+      NVD_BACKEND = "direct";
+      GBM_BACKEND = "nvidia-drm";
+      __GLX_VENDOR_LIBRARY_NAME = "nvidia";
     };
   };
 }

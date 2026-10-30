@@ -30,7 +30,9 @@ in
       uv
 
       # Other
+      bubblewrap
       opencode
+      codex
     ];
 
     # OpenCode (anomalyco) global config: ~/.config/opencode/opencode.json
@@ -44,13 +46,13 @@ in
             baseURL = "http://127.0.0.1:3420/v1";
           };
           models = {
-            "Qwen3.5-35B-A3B-UD-Q4_K_XL.gguf" = {
-              name = "Qwen3.5-35B-A3B (local)";
+            "Qwen3.8-27B-UD-Q4_K_XL.gguf" = {
+              name = "Qwen3.8 27B (local)";
             };
           };
         };
       };
-      model = "llama.cpp/Qwen3.5-35B-A3B-UD-Q4_K_XL.gguf";
+      model = "llama.cpp/Qwen3.8-27B-UD-Q4_K_XL.gguf";
       mcp = {
         cognee = {
           type = "remote";
@@ -175,6 +177,7 @@ in
         "npm:@juicesharp/rpiv-todo"
         "npm:@juicesharp/rpiv-ask-user-question"
         "npm:pi-subagents"
+        "npm:pi-blackhole"
       ];
     };
   };
